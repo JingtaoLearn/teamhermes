@@ -1,22 +1,22 @@
 ---
 sidebar_position: 1
 title: "Quickstart"
-description: "Your first conversation with Hermes Agent — from install to chatting in under 5 minutes"
+description: "Your first conversation with TeamHermes Agent — from install to chatting in under 5 minutes"
 ---
 
 # Quickstart
 
-This guide gets you from zero to a working Hermes setup that survives real use. Install, choose a provider, verify a working chat, and know exactly what to do when something breaks.
+This guide gets you from zero to a working TeamHermes setup that survives real use. Install, choose a provider, verify a working chat, and know exactly what to do when something breaks.
 
 ## Prefer to watch?
 
-**Onchain AI Garage** put together a Masterclass walkthrough of installation, setup, and basic commands — a good companion to this page if you'd rather follow along on video. For more, see the full [Hermes Agent Tutorials & Use Cases](https://www.youtube.com/playlist?list=PLmpUb_PWAkDxewld5ZYyKifuHxgIbiq2d) playlist.
+**Onchain AI Garage** put together a Masterclass walkthrough of installation, setup, and basic commands — a good companion to this page if you'd rather follow along on video. For more, see the full [TeamHermes Agent Tutorials & Use Cases](https://www.youtube.com/playlist?list=PLmpUb_PWAkDxewld5ZYyKifuHxgIbiq2d) playlist.
 
 <div style={{position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', maxWidth: '100%', marginBottom: '1.5rem'}}>
   <iframe
     style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}
     src="https://www.youtube-nocookie.com/embed/R3YOGfTBcQg"
-    title="Hermes Agent Masterclass: Installation, Setup, Basic Commands"
+    title="TeamHermes Agent Masterclass: Installation, Setup, Basic Commands"
     frameBorder="0"
     allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
     allowFullScreen
@@ -27,7 +27,7 @@ This guide gets you from zero to a working Hermes setup that survives real use. 
 
 - Brand new and want the shortest path to a working setup
 - Switching providers and don't want to lose time to config mistakes
-- Setting up Hermes for a team, bot, or always-on workflow
+- Setting up TeamHermes for a team, bot, or always-on workflow
 - Tired of "it installed, but it still does nothing"
 
 ## The fastest path
@@ -36,17 +36,17 @@ Pick the row that matches your goal:
 
 | Goal | Do this first | Then do this |
 |---|---|---|
-| I just want Hermes working on my machine | `hermes setup` | Run a real chat and verify it responds |
+| I just want TeamHermes working on my machine | `hermes setup` | Run a real chat and verify it responds |
 | I already know my provider | `hermes model` | Save the config, then start chatting |
 | I want a bot or always-on setup | `hermes gateway setup` after CLI works | Connect Telegram, Discord, Slack, or another platform |
 | I want a local or self-hosted model | `hermes model` → custom endpoint | Verify the endpoint, model name, and context length |
 | I want multi-provider fallback | `hermes model` first | Add routing and fallback only after the base chat works |
 
-**Rule of thumb:** if Hermes cannot complete a normal chat, do not add more features yet. Get one clean conversation working first, then layer on gateway, cron, skills, voice, or routing.
+**Rule of thumb:** if TeamHermes cannot complete a normal chat, do not add more features yet. Get one clean conversation working first, then layer on gateway, cron, skills, voice, or routing.
 
 ---
 
-## 1. Install Hermes Agent
+## 1. Install TeamHermes Agent
 
 **Option A — pip (simplest):**
 
@@ -141,7 +141,7 @@ Good defaults:
 For most first-time users: choose a provider, accept the defaults unless you know why you're changing them. The full provider catalog with env vars and setup steps lives on the [Providers](../integrations/providers.md) page.
 
 :::caution Minimum context: 64K tokens
-Hermes Agent requires a model with at least **64,000 tokens** of context. Models with smaller windows cannot maintain enough working memory for multi-step tool-calling workflows and will be rejected at startup. Most hosted models (Claude, GPT, Gemini, Qwen, DeepSeek) meet this easily. If you're running a local model, set its context size to at least 64K (e.g. `--ctx-size 65536` for llama.cpp or `-c 65536` for Ollama).
+TeamHermes Agent requires a model with at least **64,000 tokens** of context. Models with smaller windows cannot maintain enough working memory for multi-step tool-calling workflows and will be rejected at startup. Most hosted models (Claude, GPT, Gemini, Qwen, DeepSeek) meet this easily. If you're running a local model, set its context size to at least 64K (e.g. `--ctx-size 65536` for llama.cpp or `-c 65536` for Ollama).
 :::
 
 :::tip
@@ -150,7 +150,7 @@ You can switch providers at any time with `hermes model` — no lock-in. For a f
 
 ### How settings are stored
 
-Hermes separates secrets from normal config:
+TeamHermes separates secrets from normal config:
 
 - **Secrets and tokens** → `~/.teamhermes/.env`
 - **Non-secret settings** → `~/.teamhermes/config.yaml`
@@ -175,7 +175,7 @@ hermes --tui      # modern TUI (recommended)
 You'll see a welcome banner with your model, available tools, and skills. Use a prompt that's specific and easy to verify:
 
 :::tip Pick your interface
-Hermes ships with two terminal interfaces: the classic `prompt_toolkit` CLI and a newer [TUI](../user-guide/tui.md) with modal overlays, mouse selection, and non-blocking input. Both share the same sessions, slash commands, and config — try each with `hermes` vs `hermes --tui`.
+TeamHermes ships with two terminal interfaces: the classic `prompt_toolkit` CLI and a newer [TUI](../user-guide/tui.md) with modal overlays, mouse selection, and non-blocking input. Both share the same sessions, slash commands, and config — try each with `hermes` vs `hermes --tui`.
 :::
 
 ```
@@ -193,7 +193,7 @@ Help me set up a clean GitHub PR workflow for this codebase.
 **What success looks like:**
 
 - The banner shows your chosen model/provider
-- Hermes replies without error
+- TeamHermes replies without error
 - It can use a tool if needed (terminal, file read, web search)
 - The conversation continues normally for more than one turn
 
@@ -270,7 +270,7 @@ hermes config set terminal.backend ssh       # Remote server
 ### Voice mode
 
 ```bash
-# From the Hermes install directory (the curl installer placed it at
+# From the TeamHermes install directory (the curl installer placed it at
 # ~/.teamhermes/hermes-agent on Linux/macOS or %LOCALAPPDATA%\hermes\hermes-agent on Windows):
 cd ~/.teamhermes/hermes-agent
 uv pip install -e ".[voice]"
@@ -320,7 +320,7 @@ These are the problems that waste the most time:
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| Hermes opens but gives empty or broken replies | Provider auth or model selection is wrong | Run `hermes model` again and confirm provider, model, and auth |
+| TeamHermes opens but gives empty or broken replies | Provider auth or model selection is wrong | Run `hermes model` again and confirm provider, model, and auth |
 | Custom endpoint "works" but returns garbage | Wrong base URL, model name, or not actually OpenAI-compatible | Verify the endpoint in a separate client first |
 | Gateway starts but nobody can message it | Bot token, allowlist, or platform setup is incomplete | Re-run `hermes gateway setup` and check `hermes gateway status` |
 | `hermes --continue` can't find old session | Switched profiles or session never saved | Check `hermes sessions list` and confirm you're in the right profile |

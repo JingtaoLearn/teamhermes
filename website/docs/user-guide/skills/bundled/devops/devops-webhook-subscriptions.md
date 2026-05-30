@@ -23,12 +23,12 @@ Webhook subscriptions: event-driven agent runs.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that TeamHermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Webhook Subscriptions
 
-Create dynamic webhook subscriptions so external services (GitHub, GitLab, Stripe, CI/CD, IoT sensors, monitoring tools) can trigger Hermes agent runs by POSTing events to a URL.
+Create dynamic webhook subscriptions so external services (GitHub, GitLab, Stripe, CI/CD, IoT sensors, monitoring tools) can trigger TeamHermes agent runs by POSTing events to a URL.
 
 ## Setup (Required First)
 

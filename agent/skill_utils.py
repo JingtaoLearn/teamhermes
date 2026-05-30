@@ -532,7 +532,7 @@ def extract_skill_description(frontmatter: Dict[str, Any]) -> str:
 def iter_skill_index_files(skills_dir: Path, filename: str):
     """Walk skills_dir yielding sorted paths matching *filename*.
 
-    Excludes Hermes metadata, VCS, virtualenv/dependency, and cache
+    Excludes TeamHermes metadata, VCS, virtualenv/dependency, and cache
     directories so dependencies cannot register nested skills.
     """
     matches = []

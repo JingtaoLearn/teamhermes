@@ -2792,7 +2792,7 @@ def _(rid, params: dict) -> dict:
     provider = getattr(agent, "provider", None) or "unknown"
     model = getattr(agent, "model", None) or "(unknown)"
     lines = [
-        "Hermes TUI Status",
+        "TeamHermes TUI Status",
         "",
         f"Session ID: {key}",
         f"Path: {display_hermes_home()}",

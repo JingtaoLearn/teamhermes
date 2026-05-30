@@ -720,7 +720,7 @@ class SlackAdapter(BasePlatformAdapter):
             client = self._get_client(parent_chat_id)
             if client is None:
                 return None
-            seed_text = f":thread: Hermes handoff — *{(name or 'session').strip()[:80]}*"
+            seed_text = f":thread: TeamHermes handoff — *{(name or 'session').strip()[:80]}*"
             result = await client.chat_postMessage(
                 channel=parent_chat_id,
                 text=seed_text,
@@ -948,7 +948,7 @@ class SlackAdapter(BasePlatformAdapter):
         """Whether top-level Slack DMs get per-message session threads.
 
         Defaults to ``True`` so each visible DM reply thread is isolated as its
-        own Hermes session — matching the per-thread behavior channels already
+        own TeamHermes session — matching the per-thread behavior channels already
         have.  Set ``platforms.slack.extra.dm_top_level_threads_as_sessions``
         to ``false`` in config.yaml to revert to the legacy behavior where all
         top-level DMs share one continuous session.

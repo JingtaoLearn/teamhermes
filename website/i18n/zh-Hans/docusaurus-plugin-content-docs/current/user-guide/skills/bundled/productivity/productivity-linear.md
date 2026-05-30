@@ -17,7 +17,7 @@ Linear：通过 GraphQL + curl 管理 issues、项目和团队。
 | 来源 | 内置（默认安装） |
 | 路径 | `skills/productivity/linear` |
 | 版本 | `1.0.0` |
-| 作者 | Hermes Agent |
+| 作者 | TeamHermes Agent |
 | 许可证 | MIT |
 | 平台 | linux, macos, windows |
 | 标签 | `Linear`, `Project Management`, `Issues`, `GraphQL`, `API`, `Productivity` |
@@ -25,7 +25,7 @@ Linear：通过 GraphQL + curl 管理 issues、项目和团队。
 ## 参考：完整 SKILL.md
 
 :::info
-以下是 Hermes 在触发此 skill 时加载的完整 skill 定义。这是 agent 在 skill 激活时所看到的指令内容。
+以下是 TeamHermes 在触发此 skill 时加载的完整 skill 定义。这是 agent 在 skill 激活时所看到的指令内容。
 :::
 
 # Linear — Issue 与项目管理

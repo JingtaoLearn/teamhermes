@@ -23,12 +23,12 @@ Webhook subscriptions：事件驱动的 agent 运行。
 ## 参考：完整 SKILL.md
 
 :::info
-以下是 Hermes 在触发此 skill 时加载的完整 skill 定义。这是 agent 在 skill 激活时所看到的指令内容。
+以下是 TeamHermes 在触发此 skill 时加载的完整 skill 定义。这是 agent 在 skill 激活时所看到的指令内容。
 :::
 
 # Webhook Subscriptions
 
-创建动态 webhook 订阅，使外部服务（GitHub、GitLab、Stripe、CI/CD、IoT 传感器、监控工具）能够通过向 URL 发送 POST 请求来触发 Hermes agent 运行。
+创建动态 webhook 订阅，使外部服务（GitHub、GitLab、Stripe、CI/CD、IoT 传感器、监控工具）能够通过向 URL 发送 POST 请求来触发 TeamHermes agent 运行。
 
 ## 设置（必须先完成）
 

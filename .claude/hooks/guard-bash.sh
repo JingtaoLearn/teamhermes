@@ -10,7 +10,7 @@ DENY_RE='(ANTHROPIC_API_KEY|LITELLM.*KEY|sk-ant-|rm -rf /|rm -rf ~|:(){|git push
 if echo "$CMD" | grep -qE "$DENY_RE"; then
   TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
   echo "{\"ts\":\"$TS\",\"hook\":\"BLOCKED\",\"cmd\":$(echo -n "$CMD" | python3 -c 'import json,sys;print(json.dumps(sys.stdin.read()))')}" >> "$STATE_DIR/events.jsonl"
-  echo "BLOCKED by Hermes guard: dangerous pattern matched" >&2
+  echo "BLOCKED by TeamHermes guard: dangerous pattern matched" >&2
   exit 2
 fi
 exit 0

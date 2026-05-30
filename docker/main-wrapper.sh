@@ -39,5 +39,5 @@ if command -v "$1" >/dev/null 2>&1; then
     exec s6-setuidgid hermes "$@"
 fi
 
-# Hermes subcommand pass-through.
+# TeamHermes subcommand pass-through.
 exec s6-setuidgid hermes hermes "$@"

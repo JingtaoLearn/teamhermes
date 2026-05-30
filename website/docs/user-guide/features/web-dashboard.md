@@ -6,7 +6,7 @@ description: "Browser-based dashboard for managing configuration, API keys, sess
 
 # Web Dashboard
 
-The web dashboard is a browser-based UI for managing your Hermes Agent installation. Instead of editing YAML files or running CLI commands, you can configure settings, manage API keys, and monitor sessions from a clean web interface.
+The web dashboard is a browser-based UI for managing your TeamHermes Agent installation. Instead of editing YAML files or running CLI commands, you can configure settings, manage API keys, and monitor sessions from a clean web interface.
 
 :::tip
 Hosted-mode auth uses Nous Portal OAuth; if you also want the dashboard to talk to a real backend, `hermes setup --portal` wires up the model and tool gateway too. See [Nous Portal](/integrations/nous-portal).
@@ -73,7 +73,7 @@ The status page auto-refreshes every 5 seconds.
 
 ### Chat
 
-The **Chat** tab embeds the full Hermes TUI (the same interface you get from `hermes --tui`) directly in the browser. Everything you can do in the terminal TUI — slash commands, model picker, tool-call cards, markdown streaming, clarify/sudo/approval prompts, skin theming — works identically here, because the dashboard is running the real TUI binary and rendering its ANSI output through [xterm.js](https://xtermjs.org/) with its WebGL renderer for pixel-perfect cell layout.
+The **Chat** tab embeds the full TeamHermes TUI (the same interface you get from `hermes --tui`) directly in the browser. Everything you can do in the terminal TUI — slash commands, model picker, tool-call cards, markdown streaming, clarify/sudo/approval prompts, skin theming — works identically here, because the dashboard is running the real TUI binary and rendering its ANSI output through [xterm.js](https://xtermjs.org/) with its WebGL renderer for pixel-perfect cell layout.
 
 **How it works:**
 
@@ -302,7 +302,7 @@ Returns all toolsets with their label, description, tools list, and active/confi
 
 ## OAuth Authentication (gated mode)
 
-When the dashboard is bound to a public address — anything other than `127.0.0.1` / `localhost` — Hermes Agent engages an OAuth-based auth gate. Every request must carry a verified session cookie or it's bounced through a full OAuth round-trip via the Nous Portal.
+When the dashboard is bound to a public address — anything other than `127.0.0.1` / `localhost` — TeamHermes Agent engages an OAuth-based auth gate. Every request must carry a verified session cookie or it's bounced through a full OAuth round-trip via the Nous Portal.
 
 This is intended for hosted deployments (typically Fly.io) where the dashboard is reachable over the public internet. Operator-owned dashboards bound to loopback are unaffected.
 
@@ -349,7 +349,7 @@ dashboard:
 | `HERMES_DASHBOARD_OAUTH_CLIENT_ID` | `dashboard.oauth.client_id` | `agent:{instance_id}` | Nous Portal at Fly.io provisioning time |
 | `HERMES_DASHBOARD_PORTAL_URL` | `dashboard.oauth.portal_url` | URL (default: `https://portal.nousresearch.com`) | Portal — override only for staging or a custom deployment |
 
-Per the Hermes Agent convention (`~/.teamhermes/.env` is for API keys / secrets only), **`config.yaml` is the recommended place to set these values** for local dev, on-prem, and any deployment you control directly. The environment-variable path exists so Fly.io's platform-secret injection can push per-deploy `client_id`s without anyone having to edit `config.yaml` inside the image — that's its primary purpose.
+Per the TeamHermes Agent convention (`~/.teamhermes/.env` is for API keys / secrets only), **`config.yaml` is the recommended place to set these values** for local dev, on-prem, and any deployment you control directly. The environment-variable path exists so Fly.io's platform-secret injection can push per-deploy `client_id`s without anyone having to edit `config.yaml` inside the image — that's its primary purpose.
 
 Empty environment values are treated as unset, so a provisioned-but-not-populated Fly secret can't accidentally shadow a valid `config.yaml` entry.
 
@@ -363,7 +363,7 @@ Bundled providers reported these issues:
   • nous: HERMES_DASHBOARD_OAUTH_CLIENT_ID is not set (and
     dashboard.oauth.client_id in config.yaml is empty). The Nous Portal
     provisions this env var (shape 'agent:{instance_id}') when it
-    deploys a Hermes Agent instance — set it to your provisioned
+    deploys a TeamHermes Agent instance — set it to your provisioned
     client id (either as an env var or under dashboard.oauth.client_id
     in config.yaml), or pass --insecure to skip the OAuth gate entirely.
 
@@ -518,8 +518,8 @@ Built-in themes:
 
 | Theme | Character |
 |-------|-----------|
-| **Hermes Teal** (`default`) | Dark teal + cream, system fonts, comfortable spacing |
-| **Hermes Teal (Large)** (`default-large`) | Same as default with 18px text and roomier spacing |
+| **TeamHermes Teal** (`default`) | Dark teal + cream, system fonts, comfortable spacing |
+| **TeamHermes Teal (Large)** (`default-large`) | Same as default with 18px text and roomier spacing |
 | **Midnight** (`midnight`) | Deep blue-violet, Inter + JetBrains Mono |
 | **Ember** (`ember`) | Warm crimson + bronze, Spectral serif + IBM Plex Mono |
 | **Mono** (`mono`) | Grayscale, IBM Plex, compact |

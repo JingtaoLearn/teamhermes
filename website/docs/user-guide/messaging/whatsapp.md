@@ -1,12 +1,12 @@
 ---
 sidebar_position: 5
 title: "WhatsApp"
-description: "Set up Hermes Agent as a WhatsApp bot via the built-in Baileys bridge"
+description: "Set up TeamHermes Agent as a WhatsApp bot via the built-in Baileys bridge"
 ---
 
 # WhatsApp Setup
 
-Hermes connects to WhatsApp through a built-in bridge based on **Baileys**. This works by emulating a WhatsApp Web session — **not** through the official WhatsApp Business API. No Meta developer account or Business verification is required.
+TeamHermes connects to WhatsApp through a built-in bridge based on **Baileys**. This works by emulating a WhatsApp Web session — **not** through the official WhatsApp Business API. No Meta developer account or Business verification is required.
 
 > Run `hermes gateway setup` and pick **WhatsApp** for a guided walk-through.
 
@@ -19,8 +19,8 @@ WhatsApp does **not** officially support third-party bots outside the Business A
 
 :::warning WhatsApp Web Protocol Updates
 WhatsApp periodically updates their Web protocol, which can temporarily break compatibility
-with third-party bridges. When this happens, Hermes will update the bridge dependency. If the
-bot stops working after a WhatsApp update, pull the latest Hermes version and re-pair.
+with third-party bridges. When this happens, TeamHermes will update the bridge dependency. If the
+bot stops working after a WhatsApp update, pull the latest TeamHermes version and re-pair.
 :::
 
 ## Two Modes
@@ -88,7 +88,7 @@ After getting the number:
 
 ---
 
-## Step 3: Configure Hermes
+## Step 3: Configure TeamHermes
 
 Add the following to your `~/.teamhermes/.env` file:
 
@@ -161,11 +161,11 @@ with reconnection logic.
 
 ## Voice Messages
 
-Hermes supports voice on WhatsApp:
+TeamHermes supports voice on WhatsApp:
 
 - **Incoming:** Voice messages (`.ogg` opus) are automatically transcribed using the configured STT provider: local `faster-whisper`, Groq Whisper (`GROQ_API_KEY`), or OpenAI Whisper (`VOICE_TOOLS_OPENAI_KEY`)
 - **Outgoing:** TTS responses are sent as MP3 audio file attachments
-- Agent responses are prefixed with "⚕ **Hermes Agent**" by default. You can customize or disable this in `config.yaml`:
+- Agent responses are prefixed with "⚕ **TeamHermes Agent**" by default. You can customize or disable this in `config.yaml`:
 
 ```yaml
 # ~/.teamhermes/config.yaml
@@ -211,8 +211,8 @@ When the agent calls tools (web search, file operations, etc.), WhatsApp display
 | **QR code expires** | QR codes refresh every ~20 seconds. If it times out, restart `hermes whatsapp`. |
 | **Session not persisting** | Check that `~/.teamhermes/platforms/whatsapp/session` exists and is writable. If containerized, mount it as a persistent volume. |
 | **Logged out unexpectedly** | WhatsApp unlinks devices after long inactivity. Keep the phone on and connected to the network, then re-pair with `hermes whatsapp` if needed. |
-| **Bridge crashes or reconnect loops** | Restart the gateway, update Hermes, and re-pair if the session was invalidated by a WhatsApp protocol change. |
-| **Bot stops working after WhatsApp update** | Update Hermes to get the latest bridge version, then re-pair. |
+| **Bridge crashes or reconnect loops** | Restart the gateway, update TeamHermes, and re-pair if the session was invalidated by a WhatsApp protocol change. |
+| **Bot stops working after WhatsApp update** | Update TeamHermes to get the latest bridge version, then re-pair. |
 | **macOS: "Node.js not installed" but node works in terminal** | launchd services don't inherit your shell PATH. Run `hermes gateway install` to re-snapshot your current PATH into the plist, then `hermes gateway start`. See the [Gateway Service docs](./index.md#macos-launchd) for details. |
 | **Messages not being received** | Verify `WHATSAPP_ALLOWED_USERS` includes the sender's number (with country code, no `+` or spaces), or set it to `*` to allow everyone. Set `WHATSAPP_DEBUG=true` in `.env` and restart the gateway to see raw message events in `bridge.log`. |
 | **Bot replies to strangers with a pairing code** | Set `whatsapp.unauthorized_dm_behavior: ignore` in `~/.teamhermes/config.yaml` if you want unauthorized DMs to be silently ignored instead. |

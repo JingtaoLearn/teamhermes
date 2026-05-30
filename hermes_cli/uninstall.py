@@ -1,5 +1,5 @@
 """
-Hermes Agent Uninstaller.
+TeamHermes Agent Uninstaller.
 
 Provides options for:
 - Full uninstall: Remove everything including configs and data
@@ -50,7 +50,7 @@ def find_shell_configs() -> list:
 
 
 def remove_path_from_shell_configs():
-    """Remove Hermes PATH entries from shell configuration files."""
+    """Remove TeamHermes PATH entries from shell configuration files."""
     configs = find_shell_configs()
     removed_from = []
     
@@ -64,8 +64,8 @@ def remove_path_from_shell_configs():
             skip_next = False
             
             for line in content.split('\n'):
-                # Skip the "# Hermes Agent" comment and following line
-                if '# Hermes Agent' in line or '# hermes-agent' in line:
+                # Skip the "# TeamHermes Agent" comment and following line
+                if '# TeamHermes Agent' in line or '# hermes-agent' in line:
                     skip_next = True
                     continue
                 if skip_next and ('hermes' in line.lower() and 'PATH' in line):
@@ -129,9 +129,9 @@ def remove_node_symlinks(hermes_home: Path) -> list:
 
     and prepends ``~/.local/bin`` to PATH, so these shadow an existing Node
     manager such as nvm.  Symmetrically remove them on uninstall, but *only*
-    when the link still resolves into this Hermes home's ``node`` directory.
+    when the link still resolves into this TeamHermes home's ``node`` directory.
     A link the user has since repointed at nvm (or anything else outside
-    Hermes) is left untouched so we never break unrelated tooling.
+    TeamHermes) is left untouched so we never break unrelated tooling.
     """
     node_dir = (hermes_home / "node").resolve()
     removed = []
@@ -304,7 +304,7 @@ def uninstall_gateway_service():
 
 
 def _hermes_path_markers(hermes_home: Path) -> list[str]:
-    """Path-entry substrings that identify Hermes-owned User-PATH entries."""
+    """Path-entry substrings that identify TeamHermes-owned User-PATH entries."""
     root = str(hermes_home).rstrip("\\/")
     # Match on prefix so sub-entries (git\cmd, git\bin, git\usr\bin, node, etc.)
     # all get swept.  Also match the bare hermes-agent install dir.
@@ -317,7 +317,7 @@ def _hermes_path_markers(hermes_home: Path) -> list[str]:
 
 
 def remove_path_from_windows_registry(hermes_home: Path) -> list[str]:
-    """Strip Hermes-owned entries from User-scope PATH in the registry.
+    """Strip TeamHermes-owned entries from User-scope PATH in the registry.
 
     Returns the list of removed path entries.  Operates on HKCU\\Environment,
     same key the installer wrote to via ``[Environment]::SetEnvironmentVariable``.
@@ -495,7 +495,7 @@ def run_uninstall(args):
 
     print()
     print(color("┌─────────────────────────────────────────────────────────┐", Colors.MAGENTA, Colors.BOLD))
-    print(color("│            ⚕ Hermes Agent Uninstaller                  │", Colors.MAGENTA, Colors.BOLD))
+    print(color("│            ⚕ TeamHermes Agent Uninstaller                  │", Colors.MAGENTA, Colors.BOLD))
     print(color("└─────────────────────────────────────────────────────────┘", Colors.MAGENTA, Colors.BOLD))
     print()
     
@@ -565,7 +565,7 @@ def run_uninstall(args):
     # Final confirmation
     print()
     if full_uninstall:
-        print(color("⚠️  WARNING: This will permanently delete ALL Hermes data!", Colors.RED, Colors.BOLD))
+        print(color("⚠️  WARNING: This will permanently delete ALL TeamHermes data!", Colors.RED, Colors.BOLD))
         print(color("   Including: configs, API keys, sessions, scheduled jobs, logs", Colors.RED))
         if remove_profiles:
             print(color(
@@ -574,7 +574,7 @@ def run_uninstall(args):
                 Colors.RED
             ))
     else:
-        print("This will remove the Hermes code but keep your configuration and data.")
+        print("This will remove the TeamHermes code but keep your configuration and data.")
     
     print()
     try:
@@ -619,7 +619,7 @@ def run_uninstall(args):
             for entry in removed_path_entries:
                 log_success(f"Removed from User PATH: {entry}")
         else:
-            log_info("No Hermes-owned PATH entries in User environment")
+            log_info("No TeamHermes-owned PATH entries in User environment")
 
         log_info("Removing HERMES_HOME / HERMES_GIT_BASH_PATH User env vars...")
         removed_env = remove_hermes_env_vars_windows()
@@ -627,7 +627,7 @@ def run_uninstall(args):
             for name in removed_env:
                 log_success(f"Removed User env var: {name}")
         else:
-            log_info("No Hermes-set User env vars to remove")
+            log_info("No TeamHermes-set User env vars to remove")
     
     # 3. Remove wrapper script
     log_info("Removing hermes command...")
@@ -639,15 +639,15 @@ def run_uninstall(args):
         log_info("No wrapper script found")
 
     # 3b. Remove node/npm/npx symlinks the installer left in ~/.local/bin
-    #     (only when they still point into this Hermes home's node dir, so we
+    #     (only when they still point into this TeamHermes home's node dir, so we
     #     never clobber an existing nvm / user-managed Node).
-    log_info("Removing Hermes-managed node/npm/npx symlinks...")
+    log_info("Removing TeamHermes-managed node/npm/npx symlinks...")
     removed_node_links = remove_node_symlinks(hermes_home)
     if removed_node_links:
         for link in removed_node_links:
             log_success(f"Removed {link}")
     else:
-        log_info("No Hermes-managed node/npm/npx symlinks found")
+        log_info("No TeamHermes-managed node/npm/npx symlinks found")
     
     # 4. Remove installation directory (code)
     log_info("Removing installation directory...")
@@ -730,5 +730,5 @@ def run_uninstall(args):
         print(color("Reload your shell to complete the process:", Colors.YELLOW))
         print("  source ~/.bashrc  # or ~/.zshrc")
     print()
-    print("Thank you for using Hermes Agent! ⚕")
+    print("Thank you for using TeamHermes Agent! ⚕")
     print()

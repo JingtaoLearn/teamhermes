@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 title: "Updating & Uninstalling"
-description: "How to update Hermes Agent to the latest version or uninstall it"
+description: "How to update TeamHermes Agent to the latest version or uninstall it"
 ---
 
 # Updating & Uninstalling
@@ -41,12 +41,12 @@ pip install --upgrade hermes-agent    # or: uv pip install --upgrade hermes-agen
 
 When you run `hermes update`, the following steps occur:
 
-1. **Pairing-data snapshot** — a lightweight pre-update state snapshot is saved (covers `~/.teamhermes/pairing/`, Feishu comment rules, and other state files that get modified at runtime). Recoverable via the snapshot restore flow described under [Snapshots and rollback](../user-guide/checkpoints-and-rollback.md), or by extracting the most recent quick-snapshot zip Hermes wrote next to your `~/.teamhermes/` directory.
+1. **Pairing-data snapshot** — a lightweight pre-update state snapshot is saved (covers `~/.teamhermes/pairing/`, Feishu comment rules, and other state files that get modified at runtime). Recoverable via the snapshot restore flow described under [Snapshots and rollback](../user-guide/checkpoints-and-rollback.md), or by extracting the most recent quick-snapshot zip TeamHermes wrote next to your `~/.teamhermes/` directory.
 2. **Git pull** — pulls the latest code from the `main` branch and updates submodules
-3. **Post-pull syntax validation + auto-rollback** — after the pull, Hermes compiles the eight critical files every `hermes` invocation imports at startup. If any fails to parse (e.g. an orphan merge-conflict marker, an accidentally truncated file), Hermes runs `git reset --hard <pre-pull-sha>` to roll the install back so your shell stays bootable. Re-run `hermes update` once the upstream fix lands.
+3. **Post-pull syntax validation + auto-rollback** — after the pull, TeamHermes compiles the eight critical files every `hermes` invocation imports at startup. If any fails to parse (e.g. an orphan merge-conflict marker, an accidentally truncated file), TeamHermes runs `git reset --hard <pre-pull-sha>` to roll the install back so your shell stays bootable. Re-run `hermes update` once the upstream fix lands.
 4. **Dependency install** — runs `uv pip install -e ".[all]"` to pick up new or changed dependencies
 5. **Config migration** — detects new config options added since your version and prompts you to set them
-6. **Gateway auto-restart** — running gateways are refreshed after the update completes so the new code takes effect immediately. Service-managed gateways (systemd on Linux, launchd on macOS) are restarted through the service manager. Manual gateways are relaunched automatically when Hermes can map the running PID back to a profile.
+6. **Gateway auto-restart** — running gateways are refreshed after the update completes so the new code takes effect immediately. Service-managed gateways (systemd on Linux, launchd on macOS) are restarted through the service manager. Manual gateways are relaunched automatically when TeamHermes can map the running PID back to a profile.
 
 ### Updating against a non-default branch: `--branch`
 
@@ -57,7 +57,7 @@ hermes update --branch release-candidate
 hermes update --check --branch experimental   # preview behindness only
 ```
 
-If your local checkout is on a different branch, Hermes auto-stashes any uncommitted work, switches HEAD to the target branch, and then pulls. Branches that don't exist locally are auto-tracked from `origin/<name>` (`git checkout -B <name> origin/<name>`). Branches that don't exist anywhere fail cleanly — your stashed changes are restored before exit so you're never stranded in a weird state. The `main`-only fork-upstream sync logic is automatically skipped on non-`main` branches.
+If your local checkout is on a different branch, TeamHermes auto-stashes any uncommitted work, switches HEAD to the target branch, and then pulls. Branches that don't exist locally are auto-tracked from `origin/<name>` (`git checkout -B <name> origin/<name>`). Branches that don't exist anywhere fail cleanly — your stashed changes are restored before exit so you're never stranded in a weird state. The `main`-only fork-upstream sync logic is automatically skipped on non-`main` branches.
 
 ### Preview-only: `hermes update --check`
 
@@ -83,7 +83,7 @@ updates:
 
 ### Windows: another `hermes.exe` is running
 
-On Windows, `hermes update` will refuse to run if it detects another `hermes.exe` process holding the venv's entry-point executable open — most commonly the Hermes Desktop app's spawned backend, an open `hermes` REPL in another terminal, or a running gateway:
+On Windows, `hermes update` will refuse to run if it detects another `hermes.exe` process holding the venv's entry-point executable open — most commonly the TeamHermes Desktop app's spawned backend, an open `hermes` REPL in another terminal, or a running gateway:
 
 ```
 $ hermes update
@@ -93,7 +93,7 @@ $ hermes update
   Updating now would fail to overwrite ...\venv\Scripts\hermes.exe because
   Windows blocks REPLACE on a running executable.
 
-  Close Hermes Desktop, exit any open `hermes` REPLs, and
+  Close TeamHermes Desktop, exit any open `hermes` REPLs, and
   stop the gateway (`hermes gateway stop`) before retrying.
   Override with `hermes update --force` if you've already
   confirmed those processes will not write to the venv.
@@ -105,7 +105,7 @@ Expected output looks like:
 
 ```
 $ hermes update
-Updating Hermes Agent...
+Updating TeamHermes Agent...
 📥 Pulling latest code...
 Already up to date.  (or: Updating abc1234..def5678)
 📦 Updating dependencies...
@@ -114,7 +114,7 @@ Already up to date.  (or: Updating abc1234..def5678)
 ✅ Config is up to date  (or: Found 2 new options — running migration...)
 🔄 Restarting gateways...
 ✅ Gateway restarted
-✅ Hermes Agent updated successfully!
+✅ TeamHermes Agent updated successfully!
 ```
 
 ### Recommended Post-Update Validation

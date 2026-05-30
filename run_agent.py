@@ -617,7 +617,7 @@ class AIAgent:
 
     def _ensure_lmstudio_runtime_loaded(self, config_context_length: Optional[int] = None) -> None:
         """
-        Preload the LM Studio model with at least Hermes' minimum context.
+        Preload the LM Studio model with at least TeamHermes' minimum context.
         """
         if (self.provider or "").strip().lower() != "lmstudio":
             return

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Append hook event JSON to events.jsonl for Hermes to tail
+# Append hook event JSON to events.jsonl for TeamHermes to tail
 HOOK_TYPE="${1:-unknown}"
 STATE_DIR="${CLAUDE_PROJECT_DIR:-$PWD}/.claude/state"
 mkdir -p "$STATE_DIR"

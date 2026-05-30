@@ -150,11 +150,11 @@ class TestInitialize:
             {
                 "args": ["--setup"],
                 "description": (
-                    "Open Hermes' interactive model/provider setup in a terminal. "
-                    "Use this when Hermes has not been configured on this machine yet."
+                    "Open TeamHermes' interactive model/provider setup in a terminal. "
+                    "Use this when TeamHermes has not been configured on this machine yet."
                 ),
                 "id": TERMINAL_SETUP_AUTH_METHOD_ID,
-                "name": "Configure Hermes provider",
+                "name": "Configure TeamHermes provider",
                 "type": "terminal",
             }
         ]

@@ -1,1 +1,1 @@
-# Hermes plugins package
+# TeamHermes plugins package

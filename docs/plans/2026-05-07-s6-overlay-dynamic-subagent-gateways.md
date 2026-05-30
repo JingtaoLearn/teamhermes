@@ -10,7 +10,7 @@
 > Open Questions are collapsed into a single Decision Log table; full
 > deliberations live in PR review comments.
 
-**Goal:** Replace `tini` with s6-overlay as PID 1 in the Hermes Docker image so
+**Goal:** Replace `tini` with s6-overlay as PID 1 in the TeamHermes Docker image so
 that the main hermes process, the dashboard, and dynamically-created
 per-profile gateways all run as supervised services (auto-restart on crash,
 clean shutdown, signal forwarding, zombie reaping). Preserve every existing
@@ -373,7 +373,7 @@ and `COLUMNS=123` as the probe.
 
 | # | Question | Decision |
 |---|---|---|
-| OQ1 | Gate Phase 2 behind env var? | Ship directly (Hermes is pre-1.0; users can pin the previous image) |
+| OQ1 | Gate Phase 2 behind env var? | Ship directly (TeamHermes is pre-1.0; users can pin the previous image) |
 | OQ2 | s6 root model | Root `/init`, drop per-service via `s6-setuidgid hermes` |
 | OQ3 | Dashboard opt-in mechanism | Always declared as an s6 service; `03-dashboard-toggle` cont-init script writes a `down` marker when `HERMES_DASHBOARD` is unset so `s6-svstat` reports the slot's real state |
 | OQ4 | Podman rootless | Supported, fix reactively |
