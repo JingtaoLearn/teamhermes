@@ -24,7 +24,7 @@ def _parse(argv):
     """Build the top-level parser and return the parsed args for ``argv``."""
     import argparse
 
-    parser = argparse.ArgumentParser(prog="hermes")
+    parser = argparse.ArgumentParser(prog="th")
     subparsers = parser.add_subparsers(dest="command")
     send_cmd.register_send_subparser(subparsers)
     return parser.parse_args(["send", *argv])
