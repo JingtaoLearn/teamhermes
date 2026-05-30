@@ -251,7 +251,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 # We intercept --profile/-p from sys.argv here and set the env var so that
 # every subsequent ``os.getenv("HERMES_HOME", ...)`` resolves correctly.
 # The flag is stripped from sys.argv so argparse never sees it.
-# Falls back to ~/.hermes/active_profile for sticky default.
+# Falls back to ~/.teamhermes/active_profile for sticky default.
 # ---------------------------------------------------------------------------
 def _apply_profile_override() -> None:
     """Pre-parse --profile/-p and set HERMES_HOME before module imports."""
@@ -284,9 +284,9 @@ def _apply_profile_override() -> None:
     # 1.5 If HERMES_HOME is already set and no explicit flag was given, trust it
     # only when it already points to a specific profile directory.  The
     # distinguishing heuristic: a profile path has "profiles" as its immediate
-    # parent directory name (e.g. ~/.hermes/profiles/coder or
+    # parent directory name (e.g. ~/.teamhermes/profiles/coder or
     # /opt/data/profiles/coder).  If HERMES_HOME points to the hermes root
-    # instead (e.g. systemd hardcodes HERMES_HOME=/root/.hermes), we must
+    # instead (e.g. systemd hardcodes HERMES_HOME=/root/.teamhermes), we must
     # still read active_profile — the user may have switched profiles via
     # `hermes profile use` and the gateway should honour that choice.
     # See issue #22502.
@@ -341,7 +341,7 @@ def _apply_profile_override() -> None:
 
 _apply_profile_override()
 
-# Load .env from ~/.hermes/.env first, then project root as dev fallback.
+# Load .env from ~/.teamhermes/.env first, then project root as dev fallback.
 # User-managed env files should override stale shell exports on restart.
 from hermes_cli.config import get_hermes_home
 from hermes_cli.env_loader import load_hermes_dotenv
@@ -1335,7 +1335,7 @@ def _ensure_tui_node() -> None:
     if not helper.is_file():
         return
 
-    hermes_home = os.environ.get("HERMES_HOME") or str(Path.home() / ".hermes")
+    hermes_home = os.environ.get("HERMES_HOME") or str(Path.home() / ".teamhermes")
     try:
         # Helper writes logs to stderr; we ask bash to print `command -v node`
         # on stdout once ensure_node succeeds. Subshell PATH edits don't leak
@@ -1816,7 +1816,7 @@ def cmd_chat(args):
         os.environ["HERMES_YOLO_MODE"] = "1"
 
     # --ignore-user-config: make load_cli_config() / load_config() skip the
-    # user's ~/.hermes/config.yaml and return built-in defaults. Set BEFORE
+    # user's ~/.teamhermes/config.yaml and return built-in defaults. Set BEFORE
     # importing cli (which runs `CLI_CONFIG = load_cli_config()` at module
     # import time). Credentials in .env are still loaded — this flag only
     # ignores behavioral/config settings.
@@ -2575,7 +2575,7 @@ def select_provider_and_model(args=None):
 
     # ── Post-switch cleanup: clear stale OPENAI_BASE_URL ──────────────
     # When the user switches to a named provider (anything except "custom"),
-    # a leftover OPENAI_BASE_URL in ~/.hermes/.env can poison auxiliary
+    # a leftover OPENAI_BASE_URL in ~/.teamhermes/.env can poison auxiliary
     # clients that use provider:auto. Clear it proactively.  (#5161)
     if selected_provider not in {
         "custom",
@@ -2586,7 +2586,7 @@ def select_provider_and_model(args=None):
 
 
 def _clear_stale_openai_base_url():
-    """Remove OPENAI_BASE_URL from ~/.hermes/.env if the active provider is not 'custom'.
+    """Remove OPENAI_BASE_URL from ~/.teamhermes/.env if the active provider is not 'custom'.
 
     After a provider switch, a leftover OPENAI_BASE_URL causes auxiliary
     clients (compression, vision, delegation) with provider:auto to route
@@ -3044,7 +3044,7 @@ def _model_flow_openrouter(config, current_model=""):
     from hermes_cli.config import get_env_value
 
     # Route through _prompt_api_key so users can replace a stale/broken key
-    # in-flow (K/R/C) instead of having to edit ~/.hermes/.env by hand. The
+    # in-flow (K/R/C) instead of having to edit ~/.teamhermes/.env by hand. The
     # previous bypass-when-key-exists branch left no way to recover from a
     # bad paste short of re-running `hermes setup` from scratch. OpenRouter
     # isn't in PROVIDER_REGISTRY so we synthesize a minimal pconfig.
@@ -3601,7 +3601,7 @@ def _model_flow_google_gemini_cli(_config, current_model=""):
       2. If creds missing, run PKCE browser OAuth via agent.google_oauth.
       3. Resolve project context (env -> config -> auto-discover -> free tier).
       4. Prompt user to pick a model.
-      5. Save to ~/.hermes/config.yaml.
+      5. Save to ~/.teamhermes/config.yaml.
     """
     from hermes_cli.auth import (
         DEFAULT_GEMINI_CLOUDCODE_BASE_URL,
@@ -5105,7 +5105,7 @@ def _prompt_api_key(pconfig, existing_key: str, provider_id: str = "") -> tuple:
 
     Handles both first-time entry and the already-configured case.  When a key
     is already present, offers [K]eep / [R]eplace / [C]lear so the user can
-    recover from a malformed paste without editing ``~/.hermes/.env`` by hand.
+    recover from a malformed paste without editing ``~/.teamhermes/.env`` by hand.
 
     Returns ``(resolved_key, abort)``.  ``abort=True`` means the caller should
     ``return`` immediately — the user cancelled entry, declined to replace, or
@@ -8423,7 +8423,7 @@ def _update_node_dependencies() -> None:
         # Chromium fetch on first install) print progress instead of
         # appearing to hang silently for minutes (#18840).  The
         # `_UpdateOutputStream` wrapper installed by the updater mirrors
-        # streamed output to ``~/.hermes/logs/update.log`` so nothing is lost.
+        # streamed output to ``~/.teamhermes/logs/update.log`` so nothing is lost.
         result = _run_npm_install_deterministic(
             npm,
             path,
@@ -8446,7 +8446,7 @@ class _UpdateOutputStream:
     Wraps the process's original stdout/stderr so that:
 
     * Every write is also mirrored to an append-only log file
-      (``~/.hermes/logs/update.log``) that users can inspect after the
+      (``~/.teamhermes/logs/update.log``) that users can inspect after the
       terminal disconnects.
     * Writes to the original stream that fail with ``BrokenPipeError`` /
       ``OSError`` / ``ValueError`` (closed file) no longer cascade into
@@ -8528,7 +8528,7 @@ def _install_hangup_protection(gateway_mode: bool = False):
        across ``exec()``, so pip and git subprocesses also stop dying on
        hangup.
     2. ``sys.stdout`` / ``sys.stderr`` are wrapped to mirror output to
-       ``~/.hermes/logs/update.log`` and to silently absorb
+       ``~/.teamhermes/logs/update.log`` and to silently absorb
        ``BrokenPipeError`` when the terminal vanishes.
 
     ``SIGINT`` (Ctrl-C) and ``SIGTERM`` (systemd shutdown) are
@@ -8923,7 +8923,7 @@ def _run_pre_update_backup(args) -> None:
         size_bytes /= 1024
         size_str = f"{size_bytes:.1f} {unit}"
 
-    # Render path using display_hermes_home so the user sees ~/.hermes/...
+    # Render path using display_hermes_home so the user sees ~/.teamhermes/...
     try:
         from hermes_constants import get_hermes_home, display_hermes_home
 
@@ -10442,7 +10442,7 @@ def cmd_profile(args):
         try:
             set_active_profile(name)
             if name == "default":
-                print(f"Switched to: default (~/.hermes)")
+                print(f"Switched to: default (~/.teamhermes)")
             else:
                 print(f"Switched to: {name}")
         except (ValueError, FileNotFoundError) as e:
@@ -11567,7 +11567,7 @@ def main():
         help="Manage external secret sources (Bitwarden Secrets Manager)",
         description=(
             "Pull API keys from an external secret manager at process startup "
-            "instead of storing them in ~/.hermes/.env.  Currently supports "
+            "instead of storing them in ~/.teamhermes/.env.  Currently supports "
             "Bitwarden Secrets Manager.  See: "
             "https://hermes-agent.nousresearch.com/docs/user-guide/secrets/bitwarden"
         ),
@@ -12216,7 +12216,7 @@ def main():
     cron_create.add_argument(
         "--script",
         help=(
-            "Path to a script under ~/.hermes/scripts/. Default mode: "
+            "Path to a script under ~/.teamhermes/scripts/. Default mode: "
             "script stdout is injected into the agent's prompt each run. "
             "With --no-agent: the script IS the job and its stdout is "
             "delivered verbatim. .sh/.bash files run via bash, everything "
@@ -12279,7 +12279,7 @@ def main():
     cron_edit.add_argument(
         "--script",
         help=(
-            "Path to a script under ~/.hermes/scripts/. Pass empty string to clear. "
+            "Path to a script under ~/.teamhermes/scripts/. Pass empty string to clear. "
             "With --no-agent the script IS the job; otherwise its stdout is "
             "injected into the agent's prompt each run."
         ),
@@ -12423,9 +12423,9 @@ def main():
         "hooks",
         help="Inspect and manage shell-script hooks",
         description=(
-            "Inspect shell-script hooks declared in ~/.hermes/config.yaml, "
+            "Inspect shell-script hooks declared in ~/.teamhermes/config.yaml, "
             "test them against synthetic payloads, and manage the first-use "
-            "consent allowlist at ~/.hermes/shell-hooks-allowlist.json."
+            "consent allowlist at ~/.teamhermes/shell-hooks-allowlist.json."
         ),
     )
     hooks_subparsers = hooks_parser.add_subparsers(dest="hooks_action")
@@ -12515,7 +12515,7 @@ def main():
         description=(
             "On-demand vulnerability scan against OSV.dev. Covers the Hermes "
             "venv (installed PyPI dists), Python deps declared by plugins under "
-            "~/.hermes/plugins/, and pinned npx/uvx MCP servers in config.yaml. "
+            "~/.teamhermes/plugins/, and pinned npx/uvx MCP servers in config.yaml. "
             "Does NOT scan globally-installed packages or editor/browser extensions."
         ),
     )
@@ -12669,7 +12669,7 @@ Examples:
     # =========================================================================
     checkpoints_parser = subparsers.add_parser(
         "checkpoints",
-        help="Inspect / prune / clear ~/.hermes/checkpoints/",
+        help="Inspect / prune / clear ~/.teamhermes/checkpoints/",
         description="Manage the filesystem checkpoint store — the shadow git "
         "repo hermes uses to snapshot working directories before "
         "write_file/patch/terminal calls. Lets you see how much "
@@ -12903,7 +12903,7 @@ Examples:
         "reset",
         help="Reset a bundled skill — clears 'user-modified' tracking so updates work again",
         description=(
-            "Clear a bundled skill's entry from the sync manifest (~/.hermes/skills/.bundled_manifest) "
+            "Clear a bundled skill's entry from the sync manifest (~/.teamhermes/skills/.bundled_manifest) "
             "so future 'hermes update' runs stop marking it as user-modified. Pass --restore to also "
             "replace the current copy with the bundled version."
         ),
@@ -13879,8 +13879,8 @@ Examples:
     claw_migrate.add_argument(
         "--no-backup",
         action="store_true",
-        help="Skip the pre-migration zip snapshot of ~/.hermes/ (by default a "
-        "single restore-point archive is written to ~/.hermes/backups/ "
+        help="Skip the pre-migration zip snapshot of ~/.teamhermes/ (by default a "
+        "single restore-point archive is written to ~/.teamhermes/backups/ "
         "before apply; restorable with 'hermes import').",
     )
     claw_migrate.add_argument(
@@ -14032,7 +14032,7 @@ Examples:
     acp_parser.add_argument(
         "--setup-browser",
         action="store_true",
-        help="Install agent-browser + Playwright Chromium into ~/.hermes/node/ "
+        help="Install agent-browser + Playwright Chromium into ~/.teamhermes/node/ "
              "for browser tool support (idempotent).",
     )
     acp_parser.add_argument(

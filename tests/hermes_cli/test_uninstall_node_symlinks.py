@@ -36,7 +36,7 @@ def _make_hermes_node(hermes_home: Path) -> Path:
 
 
 def test_removes_symlinks_pointing_into_hermes_node(fake_home):
-    hermes_home = fake_home / ".hermes"
+    hermes_home = fake_home / ".teamhermes"
     node_bin = _make_hermes_node(hermes_home)
     local_bin = fake_home / ".local" / "bin"
 
@@ -53,7 +53,7 @@ def test_removes_symlinks_pointing_into_hermes_node(fake_home):
 
 def test_leaves_unrelated_symlinks_untouched(fake_home):
     """A node symlink the user repointed at nvm must survive uninstall."""
-    hermes_home = fake_home / ".hermes"
+    hermes_home = fake_home / ".teamhermes"
     _make_hermes_node(hermes_home)
     local_bin = fake_home / ".local" / "bin"
 
@@ -72,7 +72,7 @@ def test_leaves_unrelated_symlinks_untouched(fake_home):
 
 def test_leaves_real_binaries_untouched(fake_home):
     """A real (non-symlink) binary in ~/.local/bin is never deleted."""
-    hermes_home = fake_home / ".hermes"
+    hermes_home = fake_home / ".teamhermes"
     _make_hermes_node(hermes_home)
     local_bin = fake_home / ".local" / "bin"
 
@@ -89,7 +89,7 @@ def test_leaves_real_binaries_untouched(fake_home):
 
 def test_handles_missing_local_bin(fake_home):
     """No symlinks present -> no-op, no error."""
-    hermes_home = fake_home / ".hermes"
+    hermes_home = fake_home / ".teamhermes"
     _make_hermes_node(hermes_home)
 
     assert uninstall.remove_node_symlinks(hermes_home) == []
@@ -98,7 +98,7 @@ def test_handles_missing_local_bin(fake_home):
 def test_removes_dangling_symlink_into_hermes_node(fake_home):
     """A link into the Hermes node dir is removed even if the target file is
     already gone (dangling) \u2014 the link still shadows PATH."""
-    hermes_home = fake_home / ".hermes"
+    hermes_home = fake_home / ".teamhermes"
     node_bin = hermes_home / "node" / "bin"
     node_bin.mkdir(parents=True)
     local_bin = fake_home / ".local" / "bin"
@@ -115,7 +115,7 @@ def test_removes_dangling_symlink_into_hermes_node(fake_home):
 
 def test_only_some_links_present(fake_home):
     """Removes the Hermes links that exist; ignores the ones that don't."""
-    hermes_home = fake_home / ".hermes"
+    hermes_home = fake_home / ".teamhermes"
     node_bin = _make_hermes_node(hermes_home)
     local_bin = fake_home / ".local" / "bin"
 

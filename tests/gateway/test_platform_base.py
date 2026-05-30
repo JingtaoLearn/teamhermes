@@ -21,7 +21,7 @@ class TestSecretCaptureGuidance:
     def test_gateway_secret_capture_message_points_to_local_setup(self):
         message = GATEWAY_SECRET_CAPTURE_UNSUPPORTED_MESSAGE
         assert "local cli" in message.lower()
-        assert "~/.hermes/.env" in message
+        assert "~/.teamhermes/.env" in message
 
 
 class TestSafeUrlForLog:
@@ -560,7 +560,7 @@ class TestMediaDeliveryPathValidation:
         """The motivating case: agent produces a PDF in a project directory.
 
         Reproduces the Discord-PDF-not-delivered bug. Before recency trust,
-        files outside ~/.hermes/cache/* were silently dropped, leaving the
+        files outside ~/.teamhermes/cache/* were silently dropped, leaving the
         user with a raw filepath in chat instead of an attachment.
         """
         self._patch_roots(monkeypatch)
@@ -670,14 +670,14 @@ class TestMediaDeliveryDefaultMode:
         assert BasePlatformAdapter.validate_media_delivery_path(str(secret)) is None
 
     def test_denylist_blocks_hermes_credentials(self, tmp_path, monkeypatch):
-        """~/.hermes/.env and ~/.hermes/auth.json stay blocked even in
+        """~/.teamhermes/.env and ~/.teamhermes/auth.json stay blocked even in
         default mode. They live under $HOME (not the system prefix list)
         so this exercises the home-relative denied paths.
         """
         self._patch_roots(monkeypatch)
 
         fake_home = tmp_path / "home"
-        hermes_dir = fake_home / ".hermes"
+        hermes_dir = fake_home / ".teamhermes"
         hermes_dir.mkdir(parents=True)
         env_file = hermes_dir / ".env"
         env_file.write_text("OPENAI_API_KEY=sk-...")

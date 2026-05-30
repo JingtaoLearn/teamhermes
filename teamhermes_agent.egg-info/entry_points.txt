@@ -1,0 +1,4 @@
+[console_scripts]
+th = hermes_cli.main:main
+th-acp = acp_adapter.entry:main
+th-agent = run_agent:main

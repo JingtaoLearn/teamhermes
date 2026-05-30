@@ -84,7 +84,7 @@ from agent.skill_utils import EXCLUDED_SKILL_DIRS as _EXCLUDED_SKILL_DIRS
 logger = logging.getLogger(__name__)
 
 
-# All skills live in ~/.hermes/skills/ (seeded from bundled skills/ on install).
+# All skills live in ~/.teamhermes/skills/ (seeded from bundled skills/ on install).
 # This is the single source of truth -- agent edits, hub installs, and bundled
 # skills all coexist here without polluting the git repo.
 HERMES_HOME = get_hermes_home()
@@ -448,7 +448,7 @@ def _get_category_from_path(skill_path: Path) -> Optional[str]:
     """
     Extract category from skill path based on directory structure.
 
-    For paths like: ~/.hermes/skills/mlops/axolotl/SKILL.md -> "mlops"
+    For paths like: ~/.teamhermes/skills/mlops/axolotl/SKILL.md -> "mlops"
     Also works for external skill dirs configured via skills.external_dirs.
     """
     # Try the module-level SKILLS_DIR first (respects monkeypatching in tests),
@@ -548,7 +548,7 @@ def _is_skill_disabled(name: str, platform: str = None) -> bool:
 
 
 def _find_all_skills(*, skip_disabled: bool = False) -> List[Dict[str, Any]]:
-    """Recursively find all skills in ~/.hermes/skills/ and external dirs.
+    """Recursively find all skills in ~/.teamhermes/skills/ and external dirs.
 
     Args:
         skip_disabled: If True, return ALL skills regardless of disabled
@@ -1040,7 +1040,7 @@ def skill_view(
         if _outside_skills_dir or _injection_detected:
             _warnings = []
             if _outside_skills_dir:
-                _warnings.append(f"skill file is outside the trusted skills directory (~/.hermes/skills/): {skill_md}")
+                _warnings.append(f"skill file is outside the trusted skills directory (~/.teamhermes/skills/): {skill_md}")
             if _injection_detected:
                 _warnings.append("skill content contains patterns that may indicate prompt injection")
             logging.getLogger(__name__).warning("Skill security warning for '%s': %s", name, "; ".join(_warnings))
@@ -1225,7 +1225,7 @@ def skill_view(
                     )
 
         # Read tags/related_skills with backward compat:
-        # Check metadata.hermes.* first (agentskills.io convention), fall back to top-level
+        # Check metadata.teamhermes.* first (agentskills.io convention), fall back to top-level
         hermes_meta = {}
         metadata = frontmatter.get("metadata")
         if isinstance(metadata, dict):

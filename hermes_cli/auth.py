@@ -3,7 +3,7 @@ Multi-provider authentication system for Hermes Agent.
 
 Supports OAuth device code flows (Nous Portal, future: OpenAI Codex) and
 traditional API key providers (OpenRouter, custom endpoints). Auth state
-is persisted in ~/.hermes/auth.json with cross-process file locking.
+is persisted in ~/.teamhermes/auth.json with cross-process file locking.
 
 Architecture:
 - ProviderConfig registry defines known OAuth providers
@@ -579,7 +579,7 @@ def _resolve_api_key_provider_secret(
 
     from hermes_cli.config import get_env_value
     for env_var in pconfig.api_key_env_vars:
-        # Check both os.environ and ~/.hermes/.env file
+        # Check both os.environ and ~/.teamhermes/.env file
         val = (get_env_value(env_var) or "").strip()
         if has_usable_secret(val):
             return val, env_var
@@ -849,7 +849,7 @@ def _oauth_trace(event: str, *, sequence_id: Optional[str] = None, **fields: Any
 
 
 # =============================================================================
-# Auth Store — persistence layer for ~/.hermes/auth.json
+# Auth Store — persistence layer for ~/.teamhermes/auth.json
 # =============================================================================
 
 def _auth_file_path() -> Path:
@@ -860,7 +860,7 @@ def _auth_file_path() -> Path:
     # hermetic conftest, or sandbox escapes via threads/subprocesses. In
     # production (no PYTEST_CURRENT_TEST) this is a single dict lookup.
     if os.environ.get("PYTEST_CURRENT_TEST"):
-        real_home_auth = (Path.home() / ".hermes" / "auth.json").resolve(strict=False)
+        real_home_auth = (Path.home() / ".teamhermes" / "auth.json").resolve(strict=False)
         try:
             resolved = path.resolve(strict=False)
         except Exception:
@@ -912,7 +912,7 @@ def _load_global_auth_store() -> Dict[str, Any]:
     or the global auth.json is absent). Never raises on missing file.
 
     Seat belt: under pytest, refuses to read the real user's
-    ``~/.hermes/auth.json`` even when HERMES_HOME is set to a profile
+    ``~/.teamhermes/auth.json`` even when HERMES_HOME is set to a profile
     path. The hermetic conftest does not redirect ``HOME``, so
     ``get_default_hermes_root()`` for a profile-shaped HERMES_HOME can
     still resolve to the real user's home on a dev machine. That would
@@ -927,7 +927,7 @@ def _load_global_auth_store() -> Dict[str, Any]:
     if os.environ.get("PYTEST_CURRENT_TEST"):
         real_home_env = os.environ.get("HOME", "")
         if real_home_env:
-            real_root = Path(real_home_env) / ".hermes" / "auth.json"
+            real_root = Path(real_home_env) / ".teamhermes" / "auth.json"
             try:
                 if global_path.resolve(strict=False) == real_root.resolve(strict=False):
                     return {}
@@ -1589,7 +1589,7 @@ def resolve_provider(
     raise AuthError(
         "No inference provider configured. Run 'hermes model' to choose a "
         "provider and model, or set an API key (OPENROUTER_API_KEY, "
-        "OPENAI_API_KEY, etc.) in ~/.hermes/.env.",
+        "OPENAI_API_KEY, etc.) in ~/.teamhermes/.env.",
         code="no_provider_configured",
     )
 
@@ -2094,7 +2094,7 @@ def get_qwen_auth_status() -> Dict[str, Any]:
 # =============================================================================
 # Google Gemini OAuth (google-gemini-cli) — PKCE flow + Cloud Code Assist.
 #
-# Tokens live in ~/.hermes/auth/google_oauth.json (managed by agent.google_oauth).
+# Tokens live in ~/.teamhermes/auth/google_oauth.json (managed by agent.google_oauth).
 # The `base_url` here is the marker "cloudcode-pa://google" that run_agent.py
 # uses to construct a GeminiCloudCodeClient instead of the default OpenAI SDK.
 # Actual HTTP traffic goes to https://cloudcode-pa.googleapis.com/v1internal:*.
@@ -2165,7 +2165,7 @@ def get_gemini_oauth_auth_status() -> Dict[str, Any]:
         "email": creds.email,
         "project_id": creds.project_id,
     }
-# Spotify auth — PKCE tokens stored in ~/.hermes/auth.json
+# Spotify auth — PKCE tokens stored in ~/.teamhermes/auth.json
 # =============================================================================
 
 
@@ -2481,7 +2481,7 @@ def _make_xai_callback_handler(expected_path: str) -> tuple[type[BaseHTTPRequest
             # actionable evidence without a code change.  Logged values are
             # fingerprints / booleans only; no actual code/state strings leak
             # into the log file.  Run with ``HERMES_LOG_LEVEL=INFO`` (or check
-            # ``~/.hermes/logs/agent.log`` which captures INFO+ unconditionally).
+            # ``~/.teamhermes/logs/agent.log`` which captures INFO+ unconditionally).
             try:
                 logger.info(
                     "xAI loopback callback received: path=%s has_code=%s has_state=%s has_error=%s "
@@ -2840,7 +2840,7 @@ def get_spotify_auth_status() -> Dict[str, Any]:
 
 def _spotify_interactive_setup(redirect_uri_hint: str) -> str:
     """Walk the user through creating a Spotify developer app, persist the
-    resulting client_id to ~/.hermes/.env, and return it.
+    resulting client_id to ~/.teamhermes/.env, and return it.
 
     Raises SystemExit if the user aborts or submits an empty value.
     """
@@ -2894,7 +2894,7 @@ def _spotify_interactive_setup(redirect_uri_hint: str) -> str:
         save_env_value("HERMES_SPOTIFY_REDIRECT_URI", redirect_uri_hint)
 
     print()
-    print("Saved HERMES_SPOTIFY_CLIENT_ID to ~/.hermes/.env")
+    print("Saved HERMES_SPOTIFY_CLIENT_ID to ~/.teamhermes/.env")
     print()
     return raw
 
@@ -3243,7 +3243,7 @@ def _print_loopback_ssh_hint(redirect_uri: str, *, docs_url: str | None = None) 
 
 
 # =============================================================================
-# OpenAI Codex auth — tokens stored in ~/.hermes/auth.json (not ~/.codex/)
+# OpenAI Codex auth — tokens stored in ~/.teamhermes/auth.json (not ~/.codex/)
 #
 # Hermes maintains its own Codex OAuth session separate from the Codex CLI
 # and VS Code extension. This prevents refresh token rotation conflicts
@@ -3251,7 +3251,7 @@ def _print_loopback_ssh_hint(redirect_uri: str, *, docs_url: str | None = None) 
 # =============================================================================
 
 def _read_codex_tokens(*, _lock: bool = True) -> Dict[str, Any]:
-    """Read Codex OAuth tokens from Hermes auth store (~/.hermes/auth.json).
+    """Read Codex OAuth tokens from Hermes auth store (~/.teamhermes/auth.json).
     
     Returns dict with 'tokens' (access_token, refresh_token) and 'last_refresh'.
     Raises AuthError if no Codex tokens are stored.
@@ -3371,7 +3371,7 @@ def _sync_codex_pool_entries(
 
 
 def _save_codex_tokens(tokens: Dict[str, str], last_refresh: str = None) -> None:
-    """Save Codex OAuth tokens to Hermes auth store (~/.hermes/auth.json)."""
+    """Save Codex OAuth tokens to Hermes auth store (~/.teamhermes/auth.json)."""
     if last_refresh is None:
         last_refresh = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     with _auth_store_lock():
@@ -3682,7 +3682,7 @@ def _pool_codex_access_token() -> str:
 
 
 # =============================================================================
-# xAI Grok OAuth — tokens stored in ~/.hermes/auth.json
+# xAI Grok OAuth — tokens stored in ~/.teamhermes/auth.json
 # =============================================================================
 
 def _read_xai_oauth_tokens(*, _lock: bool = True) -> Dict[str, Any]:
@@ -3776,7 +3776,7 @@ def _xai_validate_oauth_endpoint(url: str, *, field: str) -> str:
     """Refuse any OIDC discovery endpoint that isn't HTTPS on the xAI origin.
 
     The OIDC discovery response is a long-lived, low-frequency request whose
-    output is cached in ``~/.hermes/auth.json``. A single MITM during initial
+    output is cached in ``~/.teamhermes/auth.json``. A single MITM during initial
     login could substitute a malicious ``token_endpoint``; that URL would
     then receive the refresh_token on every subsequent refresh — a permanent
     credential leak from a one-time MITM. Validating scheme + host pins the
@@ -4277,7 +4277,7 @@ def _poll_for_token(
 #
 # File lives at ${HERMES_SHARED_AUTH_DIR}/nous_auth.json, defaulting to
 # ``<hermes-root>/shared/nous_auth.json`` where ``<hermes-root>`` is what
-# ``get_default_hermes_root()`` returns — ``~/.hermes`` on Linux/macOS,
+# ``get_default_hermes_root()`` returns — ``~/.teamhermes`` on Linux/macOS,
 # ``%LOCALAPPDATA%\hermes`` on native Windows, or the Docker/custom root.
 # It is OUTSIDE any named profile's HERMES_HOME so named profiles (which
 # typically live under ``<hermes-root>/profiles/<name>/``) all see the
@@ -4300,7 +4300,7 @@ def _nous_shared_auth_dir() -> Path:
     path without touching the real user's home. Defaults to
     ``<hermes-root>/shared/``, where ``<hermes-root>`` is what
     :func:`hermes_constants.get_default_hermes_root` returns — so
-    Linux/macOS classic installs land at ``~/.hermes/shared/``, native
+    Linux/macOS classic installs land at ``~/.teamhermes/shared/``, native
     Windows installs at ``%LOCALAPPDATA%\\hermes\\shared\\``, and
     Docker / custom ``HERMES_HOME`` deployments at
     ``<HERMES_HOME>/shared/``. Sits outside any named profile so all
@@ -4745,7 +4745,7 @@ def _refresh_access_token(
             "Nous Portal detected refresh-token reuse and revoked this session.\n"
             "This usually means an external process (monitoring script, "
             "custom self-heal hook, or another Hermes install sharing "
-            "~/.hermes/auth.json) called POST /api/oauth/token with Hermes's "
+            "~/.teamhermes/auth.json) called POST /api/oauth/token with Hermes's "
             "refresh token without persisting the rotated token back.\n"
             "Nous refresh tokens are single-use — only Hermes may call the "
             "refresh endpoint. For health checks, use `hermes auth status` "
@@ -6251,7 +6251,7 @@ def _login_openai_codex(
     *,
     force_new_login: bool = False,
 ) -> None:
-    """OpenAI Codex login via device code flow. Tokens stored in ~/.hermes/auth.json."""
+    """OpenAI Codex login via device code flow. Tokens stored in ~/.teamhermes/auth.json."""
 
     del args, pconfig  # kept for parity with other provider login helpers
 
@@ -7002,7 +7002,7 @@ def _minimax_poll_token(
 
 
 def _minimax_save_auth_state(auth_state: Dict[str, Any]) -> None:
-    """Persist MiniMax OAuth state to Hermes auth store (~/.hermes/auth.json)."""
+    """Persist MiniMax OAuth state to Hermes auth store (~/.teamhermes/auth.json)."""
     with _auth_store_lock():
         auth_store = _load_auth_store()
         _save_provider_state(auth_store, "minimax-oauth", auth_state)

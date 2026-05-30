@@ -87,7 +87,7 @@ def test_banner_warns_on_pip_install(tmp_path):
     from rich.console import Console
     from hermes_cli import banner
 
-    hh = tmp_path / ".hermes"
+    hh = tmp_path / ".teamhermes"
     hh.mkdir()
     (hh / ".install_method").write_text("pip\n")
 
@@ -113,7 +113,7 @@ def test_banner_no_pip_warning_on_git_install(tmp_path):
     from rich.console import Console
     from hermes_cli import banner
 
-    hh = tmp_path / ".hermes"
+    hh = tmp_path / ".teamhermes"
     hh.mkdir()
     (hh / ".install_method").write_text("git\n")
 

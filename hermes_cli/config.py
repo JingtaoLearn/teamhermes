@@ -1,9 +1,9 @@
 """
 Configuration management for Hermes Agent.
 
-Config files are stored in ~/.hermes/ for easy access:
-- ~/.hermes/config.yaml  - All settings (model, toolsets, terminal, etc.)
-- ~/.hermes/.env         - API keys and secrets
+Config files are stored in ~/.teamhermes/ for easy access:
+- ~/.teamhermes/config.yaml  - All settings (model, toolsets, terminal, etc.)
+- ~/.teamhermes/.env         - API keys and secrets
 
 This module provides:
 - hermes config          - Show current configuration
@@ -39,7 +39,7 @@ _CONFIG_PARSE_WARNED: set = set()
 def _warn_config_parse_failure(config_path: Path, exc: Exception) -> None:
     """Surface a config.yaml parse failure to user, log, and stderr.
 
-    A YAML parse error in ``~/.hermes/config.yaml`` causes ``load_config()``
+    A YAML parse error in ``~/.teamhermes/config.yaml`` causes ``load_config()``
     to silently fall back to ``DEFAULT_CONFIG``, which means every user
     override (auxiliary providers, fallback chain, model overrides, etc.)
     is dropped. Before this helper that was a one-line ``print(...)`` that
@@ -147,7 +147,7 @@ def _reject_denylisted_env_var(key: str) -> None:
             "PYTHONPATH, PATH, EDITOR, ...) or Hermes runtime location "
             "(HERMES_HOME, HERMES_PROFILE, ...) cannot be persisted via "
             "the env writer. If you really need this, edit "
-            "~/.hermes/.env directly."
+            "~/.teamhermes/.env directly."
         )
 
 _LAST_EXPANDED_CONFIG_BY_PATH: Dict[str, Any] = {}
@@ -283,7 +283,7 @@ def detect_install_method(project_root: Optional[Path] = None) -> str:
     """Detect how Hermes was installed: 'docker', 'nixos', 'homebrew', 'git', or 'pip'.
 
     Resolution order:
-    1. Stamped ``~/.hermes/.install_method`` file (written by installers)
+    1. Stamped ``~/.teamhermes/.install_method`` file (written by installers)
     2. HERMES_MANAGED env / .managed marker (NixOS, Homebrew)
     3. .git directory presence -> 'git'
     4. Fallback -> 'pip'
@@ -320,7 +320,7 @@ def detect_install_method(project_root: Optional[Path] = None) -> str:
 
 
 def stamp_install_method(method: str) -> None:
-    """Write the install method to ~/.hermes/.install_method."""
+    """Write the install method to ~/.teamhermes/.install_method."""
     stamp = get_hermes_home() / ".install_method"
     try:
         stamp.parent.mkdir(parents=True, exist_ok=True)
@@ -446,7 +446,7 @@ def format_managed_message(action: str = "modify this Hermes installation") -> s
         return (
             f"Cannot {action}: this Hermes installation is managed by NixOS "
             f"(HERMES_MANAGED={env_hint}).\n"
-            "Edit services.hermes-agent.settings in your configuration.nix and run:\n"
+            "Edit services.teamhermes-agent.settings in your configuration.nix and run:\n"
             "  sudo nixos-rebuild switch"
         )
 
@@ -617,7 +617,7 @@ def _ensure_default_soul_md(home: Path) -> None:
 
 
 def ensure_hermes_home():
-    """Ensure ~/.hermes directory structure exists with secure permissions.
+    """Ensure ~/.teamhermes directory structure exists with secure permissions.
 
     In managed mode (NixOS), dirs are created by the activation script with
     setgid + group-writable (2770). We skip mkdir and set umask(0o007) so
@@ -833,7 +833,7 @@ DEFAULT_CONFIG = {
         # Each entry is "host_path:container_path" (standard Docker -v syntax).
         # Example:
         # ["/home/user/projects:/workspace/projects",
-        #  "/home/user/.hermes/cache/documents:/output"]
+        #  "/home/user/.teamhermes/cache/documents:/output"]
         # For gateway MEDIA delivery, write inside Docker to /output/... and emit
         # the host-visible path in MEDIA:, not the container path.
         "docker_volumes": [],
@@ -920,7 +920,7 @@ DEFAULT_CONFIG = {
         # limited the `/rollback` listing; v2 actually rewrites the ref and
         # garbage-collects older commits.
         "max_snapshots": 20,
-        # Hard ceiling on total ``~/.hermes/checkpoints/`` size (MB).  When
+        # Hard ceiling on total ``~/.teamhermes/checkpoints/`` size (MB).  When
         # exceeded, the oldest checkpoint per project is dropped in a
         # round-robin pass until total size falls under the cap.
         # 0 disables the size cap.
@@ -1395,7 +1395,7 @@ DEFAULT_CONFIG = {
             # use, OR an absolute path to a pre-downloaded .onnx file.
             # Full voice list: https://github.com/OHF-Voice/piper1-gpl/blob/main/docs/VOICES.md
             "voice": "en_US-lessac-medium",
-            # "voices_dir": "",        # Override voice cache dir; default = ~/.hermes/cache/piper-voices/
+            # "voices_dir": "",        # Override voice cache dir; default = ~/.teamhermes/cache/piper-voices/
             # "use_cuda": False,       # Requires onnxruntime-gpu
             # "length_scale": 1.0,     # 2.0 = twice as slow
             # "noise_scale": 0.667,
@@ -1440,7 +1440,7 @@ DEFAULT_CONFIG = {
     # "compressor" = built-in lossy summarization (default).
     # Set to a plugin name to activate an alternative engine (e.g. "lcm"
     # for Lossless Context Management).  The engine must be installed as
-    # a plugin in plugins/context_engine/<name>/ or ~/.hermes/plugins/.
+    # a plugin in plugins/context_engine/<name>/ or ~/.teamhermes/plugins/.
     "context": {
         "engine": "compressor",
     },
@@ -1525,7 +1525,7 @@ DEFAULT_CONFIG = {
 
     # Skills — external skill directories for sharing skills across tools/agents.
     # Each path is expanded (~, ${VAR}) and resolved.  Read-only — skill creation
-    # always goes to ~/.hermes/skills/.
+    # always goes to ~/.teamhermes/skills/.
     "skills": {
         "external_dirs": [],   # e.g. ["~/.agents/skills", "/shared/team-skills"]
         # Substitute ${HERMES_SKILL_DIR} and ${HERMES_SESSION_ID} in SKILL.md
@@ -1577,8 +1577,8 @@ DEFAULT_CONFIG = {
         # without use. Archived skills are recoverable — no auto-deletion.
         "archive_after_days": 90,
         # Pre-run backup: before every real curator pass (dry-run is
-        # skipped), snapshot ~/.hermes/skills/ into
-        # ~/.hermes/skills/.curator_backups/<utc-iso>/skills.tar.gz so the
+        # skipped), snapshot ~/.teamhermes/skills/ into
+        # ~/.teamhermes/skills/.curator_backups/<utc-iso>/skills.tar.gz so the
         # user can roll back with `hermes curator rollback`.
         "backup": {
             "enabled": True,
@@ -1713,7 +1713,7 @@ DEFAULT_CONFIG = {
     # subagent_stop, etc.).  Each entry maps an event name to a list of
     # {matcher, command, timeout} dicts.  First registration of a new
     # command prompts the user for consent; subsequent runs reuse the
-    # stored approval from ~/.hermes/shell-hooks-allowlist.json.
+    # stored approval from ~/.teamhermes/shell-hooks-allowlist.json.
     # See `website/docs/user-guide/features/hooks.md` for schema + examples.
     "hooks": {},
 
@@ -1875,7 +1875,7 @@ DEFAULT_CONFIG = {
         },
     },
 
-    # Logging — controls file logging to ~/.hermes/logs/.
+    # Logging — controls file logging to ~/.teamhermes/logs/.
     # agent.log captures INFO+ (all agent activity); errors.log captures WARNING+.
     "logging": {
         "level": "INFO",       # Minimum level for agent.log: DEBUG, INFO, WARNING
@@ -1926,7 +1926,7 @@ DEFAULT_CONFIG = {
     "gateway": {
         # When false (default), any file path the agent emits is delivered
         # as a native attachment as long as it isn't under the credential /
-        # system-path denylist (/etc, /proc, ~/.ssh, ~/.aws, ~/.hermes/.env,
+        # system-path denylist (/etc, /proc, ~/.ssh, ~/.aws, ~/.teamhermes/.env,
         # auth.json, etc.). This matches the symmetry of inbound delivery
         # — we accept any document type the user uploads, and the agent
         # can hand back any file that isn't a credential.
@@ -1941,7 +1941,7 @@ DEFAULT_CONFIG = {
         "strict": False,
         # Extra directories from which model-emitted bare file paths may be
         # uploaded as native gateway attachments. Files inside the Hermes
-        # cache (~/.hermes/cache/{documents,images,audio,video,screenshots})
+        # cache (~/.teamhermes/cache/{documents,images,audio,video,screenshots})
         # are always trusted; this list adds operator-controlled roots
         # (project dirs, scratch dirs, mounted shares). Accepts a list of
         # absolute paths or a single os.pathsep-separated string. Bridged
@@ -1963,7 +1963,7 @@ DEFAULT_CONFIG = {
         "trust_recent_files_seconds": 600,
     },
 
-    # Session storage — controls automatic cleanup of ~/.hermes/state.db.
+    # Session storage — controls automatic cleanup of ~/.teamhermes/state.db.
     # state.db accumulates every session, message, tool call, and FTS5 index
     # entry forever.  Without auto-pruning, a heavy user (gateway + cron)
     # reports 384MB+ databases with 68K+ messages, which slows down FTS5
@@ -1990,7 +1990,7 @@ DEFAULT_CONFIG = {
         # state.db itself, so it's shared across all processes.
         "min_interval_hours": 24,
         # Legacy per-session JSON snapshot writer.  When true, the agent
-        # rewrites ``~/.hermes/sessions/session_{sid}.json`` on every turn
+        # rewrites ``~/.teamhermes/sessions/session_{sid}.json`` on every turn
         # boundary with the full message list.  state.db is canonical and
         # has every field the snapshot stored (plus per-message timestamps
         # and token counts), so this is off by default — the snapshots had
@@ -2093,7 +2093,7 @@ DEFAULT_CONFIG = {
     # External secret sources
     # =========================================================================
     # Pull credentials from external secret managers at process startup
-    # rather than storing them in ~/.hermes/.env.
+    # rather than storing them in ~/.teamhermes/.env.
     "secrets": {
         "bitwarden": {
             # Master switch.  When false, BSM is never contacted and the
@@ -2102,7 +2102,7 @@ DEFAULT_CONFIG = {
             "enabled": False,
             # Name of the env var that holds the Bitwarden machine-account
             # access token.  This is the one bootstrap secret; it lives
-            # in ~/.hermes/.env (or your shell) and never in config.yaml.
+            # in ~/.teamhermes/.env (or your shell) and never in config.yaml.
             "access_token_env": "BWS_ACCESS_TOKEN",
             # UUID of the BSM project to sync from.
             "project_id": "",
@@ -2114,7 +2114,7 @@ DEFAULT_CONFIG = {
             # take effect until you also cleared the matching .env line.
             "override_existing": True,
             # When True, the bws binary is auto-downloaded into
-            # ~/.hermes/bin/ on first use.  When False you must install
+            # ~/.teamhermes/bin/ on first use.  When False you must install
             # bws yourself and have it on PATH.
             "auto_install": True,
             # Bitwarden region / self-hosted endpoint.  Empty string
@@ -3354,7 +3354,7 @@ def get_missing_config_fields() -> List[Dict[str, Any]]:
 def get_missing_skill_config_vars() -> List[Dict[str, Any]]:
     """Return skill-declared config vars that are missing or empty in config.yaml.
 
-    Scans all enabled skills for ``metadata.hermes.config`` entries, then checks
+    Scans all enabled skills for ``metadata.teamhermes.config`` entries, then checks
     which ones are absent or empty under ``skills.config.<key>`` in the user's
     config.yaml.  Returns a list of dicts suitable for prompting.
     """
@@ -3905,7 +3905,7 @@ def warn_deprecated_cwd_env_vars(config: Optional[Dict[str, Any]] = None) -> Non
             f"this is deprecated."
         )
     if lines:
-        hint_path = os.environ.get("HERMES_HOME", "~/.hermes")
+        hint_path = os.environ.get("HERMES_HOME", "~/.teamhermes")
         lines.insert(0, "\033[33m⚠ Deprecated .env settings detected:\033[0m")
         lines.append(
             f"  \033[2mMove to config.yaml instead:  "
@@ -4276,7 +4276,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
     #   2. Writes the `auxiliary.curator` aux-task slot (provider, model,
     #      base_url, api_key, timeout, extra_body) — canonical slot for
     #      routing the curator fork to a cheaper aux model.
-    #   3. Creates `~/.hermes/logs/curator/` if missing (belt-and-suspenders
+    #   3. Creates `~/.teamhermes/logs/curator/` if missing (belt-and-suspenders
     #      on top of ensure_hermes_home() — old profiles that predate this
     #      migration still benefit).
     if current_ver < 23:
@@ -4452,7 +4452,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
 
     # ── Skill-declared config vars ──────────────────────────────────────
     # Skills can declare config.yaml settings they need via
-    # metadata.hermes.config in their SKILL.md frontmatter.
+    # metadata.teamhermes.config in their SKILL.md frontmatter.
     # Prompt for any that are missing/empty.
     missing_skill_config = get_missing_skill_config_vars()
     if missing_skill_config and interactive and not quiet:
@@ -4709,7 +4709,7 @@ def cfg_get(cfg: Optional[Dict[str, Any]], *keys: str, default: Any = None) -> A
 
 
 def read_raw_config() -> Dict[str, Any]:
-    """Read ~/.hermes/config.yaml as-is, without merging defaults or migrating.
+    """Read ~/.teamhermes/config.yaml as-is, without merging defaults or migrating.
 
     Returns the raw YAML dict, or ``{}`` if the file doesn't exist or can't
     be parsed.  Use this for lightweight config reads where you just need a
@@ -4747,7 +4747,7 @@ def read_raw_config() -> Dict[str, Any]:
 
 
 def load_config() -> Dict[str, Any]:
-    """Load configuration from ~/.hermes/config.yaml.
+    """Load configuration from ~/.teamhermes/config.yaml.
 
     Cached on the config file's (mtime_ns, size). Returns a deepcopy of
     the cached value when unchanged, since most call sites mutate the
@@ -4921,7 +4921,7 @@ _COMMENTED_SECTIONS = """
 
 
 def save_config(config: Dict[str, Any]):
-    """Save configuration to ~/.hermes/config.yaml."""
+    """Save configuration to ~/.teamhermes/config.yaml."""
     with _CONFIG_LOCK:
         if is_managed():
             managed_error("save configuration")
@@ -4965,7 +4965,7 @@ def save_config(config: Dict[str, Any]):
 
 
 def load_env() -> Dict[str, str]:
-    """Load environment variables from ~/.hermes/.env.
+    """Load environment variables from ~/.teamhermes/.env.
 
     Sanitizes lines before parsing so that corrupted files (e.g.
     concatenated KEY=VALUE pairs on a single line) are handled
@@ -5102,7 +5102,7 @@ def _sanitize_env_lines(lines: list) -> list:
 
 
 def sanitize_env_file() -> int:
-    """Read, sanitize, and rewrite ~/.hermes/.env in place.
+    """Read, sanitize, and rewrite ~/.teamhermes/.env in place.
 
     Returns the number of lines that were fixed (concatenation splits +
     placeholder removals).  Returns 0 when no changes are needed.
@@ -5188,7 +5188,7 @@ def _check_non_ascii_credential(key: str, value: str) -> str:
 
 
 def save_env_value(key: str, value: str):
-    """Save or update a value in ~/.hermes/.env."""
+    """Save or update a value in ~/.teamhermes/.env."""
     if is_managed():
         managed_error(f"set {key}")
         return
@@ -5260,7 +5260,7 @@ def save_env_value(key: str, value: str):
 
 
 def remove_env_value(key: str) -> bool:
-    """Remove a key from ~/.hermes/.env and os.environ.
+    """Remove a key from ~/.teamhermes/.env and os.environ.
 
     Returns True if the key was found and removed, False otherwise.
     """
@@ -5348,7 +5348,7 @@ def save_env_value_secure(key: str, value: str) -> Dict[str, Any]:
 
 
 def reload_env() -> int:
-    """Re-read ~/.hermes/.env into os.environ. Returns count of vars updated.
+    """Re-read ~/.teamhermes/.env into os.environ. Returns count of vars updated.
 
     Adds/updates vars that changed and removes vars that were deleted from
     the .env file (but only vars known to Hermes — OPTIONAL_ENV_VARS and
@@ -5370,7 +5370,7 @@ def reload_env() -> int:
 
 
 def get_env_value(key: str) -> Optional[str]:
-    """Get a value from ~/.hermes/.env or environment."""
+    """Get a value from ~/.teamhermes/.env or environment."""
     # Check environment first
     if key in os.environ:
         return os.environ[key]

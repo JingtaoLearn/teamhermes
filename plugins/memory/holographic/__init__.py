@@ -129,7 +129,7 @@ class HolographicMemoryProvider(MemoryProvider):
         return True  # SQLite is always available, numpy is optional
 
     def save_config(self, values, hermes_home):
-        """Write config to config.yaml under plugins.hermes-memory-store."""
+        """Write config to config.yaml under plugins.teamhermes-memory-store."""
         from pathlib import Path
         config_path = Path(hermes_home) / "config.yaml"
         try:
@@ -161,7 +161,7 @@ class HolographicMemoryProvider(MemoryProvider):
         _default_db = _hermes_home + "/memory_store.db"
         db_path = self._config.get("db_path", _default_db)
         # Expand $HERMES_HOME in user-supplied paths so config values like
-        # "$HERMES_HOME/memory_store.db" or "~/.hermes/memory_store.db" both
+        # "$HERMES_HOME/memory_store.db" or "~/.teamhermes/memory_store.db" both
         # resolve to the active profile's directory.
         if isinstance(db_path, str):
             db_path = db_path.replace("$HERMES_HOME", _hermes_home)

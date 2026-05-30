@@ -25,7 +25,7 @@ import pytest
 @pytest.fixture
 def isolated_home(tmp_path, monkeypatch):
     home = tmp_path / "home"
-    hermes = home / ".hermes"
+    hermes = home / ".teamhermes"
     hermes.mkdir(parents=True)
     monkeypatch.setattr(Path, "home", lambda: home)
     monkeypatch.setenv("HERMES_HOME", str(hermes))

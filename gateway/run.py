@@ -749,7 +749,7 @@ from hermes_constants import get_hermes_home
 from utils import atomic_json_write, atomic_yaml_write, base_url_host_matches, is_truthy_value
 _hermes_home = get_hermes_home()
 
-# Load environment variables from ~/.hermes/.env first.
+# Load environment variables from ~/.teamhermes/.env first.
 # User-managed env files should override stale shell exports on restart.
 from dotenv import load_dotenv  # noqa: F401  # backward-compat for tests that monkeypatch this symbol
 from hermes_cli.env_loader import load_hermes_dotenv
@@ -760,7 +760,7 @@ load_hermes_dotenv(hermes_home=_hermes_home, project_env=Path(__file__).resolve(
 def _reload_runtime_env_preserving_config_authority() -> None:
     """Reload .env for fresh credentials without letting stale .env override config.
 
-    Gateway processes are long-lived, so per-turn code reloads ~/.hermes/.env to
+    Gateway processes are long-lived, so per-turn code reloads ~/.teamhermes/.env to
     pick up rotated API keys. config.yaml remains authoritative for agent budget
     settings such as agent.max_turns; otherwise a stale HERMES_MAX_ITERATIONS in
     .env can replace the startup bridge on later turns.
@@ -1411,7 +1411,7 @@ def _teams_pipeline_plugin_enabled() -> bool:
 
 
 def _load_gateway_config() -> dict:
-    """Load and parse ~/.hermes/config.yaml, returning {} on any error.
+    """Load and parse ~/.teamhermes/config.yaml, returning {} on any error.
 
     Uses the module-level ``_hermes_home`` (so tests that monkeypatch it
     still see their fixture) and shares the mtime-keyed raw-yaml cache
@@ -1870,7 +1870,7 @@ class GatewayRunner:
                 logger.debug("state.db auto-maintenance skipped: %s", exc)
 
         # Opportunistic shadow-repo cleanup — deletes orphan/stale
-        # checkpoint repos under ~/.hermes/checkpoints/.  Opt-in via
+        # checkpoint repos under ~/.teamhermes/checkpoints/.  Opt-in via
         # checkpoints.auto_prune, idempotent via .last_prune marker.
         try:
             from hermes_cli.config import load_config as _load_full_config
@@ -1978,7 +1978,7 @@ class GatewayRunner:
 
         logger.warning(
             "Docker backend is enabled for the messaging gateway but no explicit host-visible "
-            "output mount (for example '/home/user/.hermes/cache/documents:/output') is configured. "
+            "output mount (for example '/home/user/.teamhermes/cache/documents:/output') is configured. "
             "This is fine if the model already emits host-visible paths, but MEDIA file delivery can fail "
             "for container-local paths like '/workspace/...' or '/output/...'."
         )
@@ -2847,8 +2847,8 @@ class GatewayRunner:
         """Load ephemeral prefill messages from config or env var.
         
         Checks HERMES_PREFILL_MESSAGES_FILE env var first, then falls back to
-        the prefill_messages_file key in ~/.hermes/config.yaml.
-        Relative paths are resolved from ~/.hermes/.
+        the prefill_messages_file key in ~/.teamhermes/config.yaml.
+        Relative paths are resolved from ~/.teamhermes/.
         """
         file_path = os.getenv("HERMES_PREFILL_MESSAGES_FILE", "")
         if not file_path:
@@ -2878,7 +2878,7 @@ class GatewayRunner:
         """Load ephemeral system prompt from config or env var.
         
         Checks HERMES_EPHEMERAL_SYSTEM_PROMPT env var first, then falls back to
-        agent.system_prompt in ~/.hermes/config.yaml.
+        agent.system_prompt in ~/.teamhermes/config.yaml.
         """
         prompt = os.getenv("HERMES_EPHEMERAL_SYSTEM_PROMPT", "")
         if prompt:
@@ -4096,7 +4096,7 @@ class GatewayRunner:
         if not _any_allowlist and not _allow_all:
             logger.warning(
                 "No user allowlists configured. All unauthorized users will be denied. "
-                "Set GATEWAY_ALLOW_ALL_USERS=true in ~/.hermes/.env to allow open access, "
+                "Set GATEWAY_ALLOW_ALL_USERS=true in ~/.teamhermes/.env to allow open access, "
                 "or configure platform allowlists (e.g., TELEGRAM_ALLOWED_USERS=your_id)."
             )
         
@@ -8227,7 +8227,7 @@ class GatewayRunner:
 
                 # Translate host cache path to in-container path if running under Docker backend.
                 # This ensures the agent receives a path it can open inside its sandbox, as the
-                # cache directories are auto-mounted at /root/.hermes/cache/* by get_cache_directory_mounts().
+                # cache directories are auto-mounted at /root/.teamhermes/cache/* by get_cache_directory_mounts().
                 agent_path = to_agent_visible_cache_path(path)
 
                 if mtype.startswith("text/"):

@@ -489,7 +489,7 @@ from hermes_constants import get_hermes_dir, get_hermes_home
 
 GATEWAY_SECRET_CAPTURE_UNSUPPORTED_MESSAGE = (
     "Secure secret entry is not supported over messaging. "
-    "Load this skill in the local CLI to be prompted, or add the key to ~/.hermes/.env manually."
+    "Load this skill in the local CLI to be prompted, or add the key to ~/.teamhermes/.env manually."
 )
 
 
@@ -1056,8 +1056,8 @@ def validate_media_delivery_path(path: str) -> Optional[str]:
             return str(resolved)
 
     # Non-strict mode (default): accept anything not on the denylist.
-    # The denylist still blocks /etc, /proc, ~/.ssh, ~/.aws, ~/.hermes/.env,
-    # ~/.hermes/auth.json, etc. — so the obvious prompt-injection sites
+    # The denylist still blocks /etc, /proc, ~/.ssh, ~/.aws, ~/.teamhermes/.env,
+    # ~/.teamhermes/auth.json, etc. — so the obvious prompt-injection sites
     # (``MEDIA:/etc/passwd``, ``MEDIA:~/.ssh/id_rsa``) remain rejected.
     if not _media_delivery_strict_mode():
         if _path_under_denied_prefix(resolved):

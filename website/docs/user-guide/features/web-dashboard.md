@@ -178,7 +178,7 @@ Create and manage scheduled cron jobs that run agent prompts on a recurring sche
 
 ### Skills
 
-Browse, search, and toggle skills and toolsets. Skills are loaded from `~/.hermes/skills/` and grouped by category.
+Browse, search, and toggle skills and toolsets. Skills are loaded from `~/.teamhermes/skills/` and grouped by category.
 
 - **Search** — filter skills and toolsets by name, description, or category
 - **Category filter** — click category pills to narrow the list (e.g. MLOps, MCP, Red Teaming, AI)
@@ -198,7 +198,7 @@ You → /reload
   Reloaded .env (3 var(s) updated)
 ```
 
-This re-reads `~/.hermes/.env` into the running process's environment. Useful when you've added a new provider key via the dashboard and want to use it immediately.
+This re-reads `~/.teamhermes/.env` into the running process's environment. Useful when you've added a new provider key via the dashboard and want to use it immediately.
 
 ## REST API
 
@@ -349,7 +349,7 @@ dashboard:
 | `HERMES_DASHBOARD_OAUTH_CLIENT_ID` | `dashboard.oauth.client_id` | `agent:{instance_id}` | Nous Portal at Fly.io provisioning time |
 | `HERMES_DASHBOARD_PORTAL_URL` | `dashboard.oauth.portal_url` | URL (default: `https://portal.nousresearch.com`) | Portal — override only for staging or a custom deployment |
 
-Per the Hermes Agent convention (`~/.hermes/.env` is for API keys / secrets only), **`config.yaml` is the recommended place to set these values** for local dev, on-prem, and any deployment you control directly. The environment-variable path exists so Fly.io's platform-secret injection can push per-deploy `client_id`s without anyone having to edit `config.yaml` inside the image — that's its primary purpose.
+Per the Hermes Agent convention (`~/.teamhermes/.env` is for API keys / secrets only), **`config.yaml` is the recommended place to set these values** for local dev, on-prem, and any deployment you control directly. The environment-variable path exists so Fly.io's platform-secret injection can push per-deploy `client_id`s without anyone having to edit `config.yaml` inside the image — that's its primary purpose.
 
 Empty environment values are treated as unset, so a provisioned-but-not-populated Fly secret can't accidentally shadow a valid `config.yaml` entry.
 
@@ -432,7 +432,7 @@ Every login start, success, failure, and session-verify failure is written as a 
 To plug a non-Nous OAuth provider (e.g. Google, GitHub, custom OIDC), create a plugin that registers a `DashboardAuthProvider`:
 
 ```python
-# ~/.hermes/plugins/dashboard-auth-myidp/__init__.py
+# ~/.teamhermes/plugins/dashboard-auth-myidp/__init__.py
 from hermes_cli.dashboard_auth import DashboardAuthProvider, Session, LoginStart
 
 class MyIdPProvider(DashboardAuthProvider):

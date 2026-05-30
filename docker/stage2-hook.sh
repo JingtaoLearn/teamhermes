@@ -25,7 +25,7 @@ INSTALL_DIR="/opt/hermes"
 # privileges so the chown checks below see real metadata and the later
 # `s6-setuidgid hermes mkdir -p` block doesn't EACCES on root-owned
 # ancestors. Without this, custom HERMES_HOME paths whose parents only
-# root can create (e.g. `HERMES_HOME=/home/hermes/.hermes` in a Compose
+# root can create (e.g. `HERMES_HOME=/home/hermes/.teamhermes` in a Compose
 # file, or any path under a fresh / not pre-populated by the image)
 # fail on first boot with `mkdir: cannot create directory '/...': Permission
 # denied` and the cont-init hook exits non-zero. Idempotent — `mkdir -p`

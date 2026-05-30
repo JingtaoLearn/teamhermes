@@ -7,8 +7,8 @@ Discovers, loads, and manages plugins from four sources:
 1. **Bundled plugins** – ``<repo>/plugins/<name>/`` (shipped with hermes-agent;
    ``memory/`` and ``context_engine/`` subdirs are excluded — they have their
    own discovery paths)
-2. **User plugins**   – ``~/.hermes/plugins/<name>/``
-3. **Project plugins** – ``./.hermes/plugins/<name>/`` (opt-in via
+2. **User plugins**   – ``~/.teamhermes/plugins/<name>/``
+3. **Project plugins** – ``./.teamhermes/plugins/<name>/`` (opt-in via
    ``HERMES_ENABLE_PROJECT_PLUGINS``)
 4. **Pip plugins**     – packages that expose the ``hermes_agent.plugins``
    entry-point group.
@@ -76,7 +76,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 #
 # Set ``HERMES_PLUGINS_DEBUG=1`` to surface verbose plugin-discovery logs to
-# stderr in addition to ~/.hermes/logs/agent.log. Aimed at plugin authors
+# stderr in addition to ~/.teamhermes/logs/agent.log. Aimed at plugin authors
 # trying to figure out why their plugin isn't showing up: which directories
 # were scanned, which manifests parsed, which plugins were skipped (and why),
 # what each ``register(ctx)`` call registered, and full tracebacks on load
@@ -255,7 +255,7 @@ class PluginManifest:
     # ``platform``: gateway messaging platform adapter (e.g. IRC). Bundled
     #              platform plugins auto-load so every shipped platform is
     #              available out of the box; user-installed platform plugins
-    #              in ~/.hermes/plugins/ still gated by ``plugins.enabled``
+    #              in ~/.teamhermes/plugins/ still gated by ``plugins.enabled``
     #              (untrusted code).
     kind: str = "standalone"
     # Registry key — path-derived, used by ``plugins.enabled``/``disabled``
@@ -961,7 +961,7 @@ class PluginContext:
 
         The skill becomes resolvable as ``'<plugin_name>:<name>'`` via
         ``skill_view()``.  It does **not** enter the flat
-        ``~/.hermes/skills/`` tree and is **not** listed in the system
+        ``~/.teamhermes/skills/`` tree and is **not** listed in the system
         prompt's ``<available_skills>`` index — plugin skills are
         opt-in explicit loads only.
 
@@ -1074,16 +1074,16 @@ class PluginManager:
         logger.debug("  bundled/platforms: %d manifest(s)", len(bundled_platforms))
         manifests.extend(bundled_platforms)
 
-        # 2. User plugins (~/.hermes/plugins/)
+        # 2. User plugins (~/.teamhermes/plugins/)
         user_dir = get_hermes_home() / "plugins"
         logger.debug("Scanning user plugins: %s", user_dir)
         user_manifests = self._scan_directory(user_dir, source="user")
         logger.debug("  user: %d manifest(s)", len(user_manifests))
         manifests.extend(user_manifests)
 
-        # 3. Project plugins (./.hermes/plugins/)
+        # 3. Project plugins (./.teamhermes/plugins/)
         if _env_enabled("HERMES_ENABLE_PROJECT_PLUGINS"):
-            project_dir = Path.cwd() / ".hermes" / "plugins"
+            project_dir = Path.cwd() / ".teamhermes" / "plugins"
             logger.debug("Scanning project plugins: %s", project_dir)
             project_manifests = self._scan_directory(project_dir, source="project")
             logger.debug("  project: %d manifest(s)", len(project_manifests))

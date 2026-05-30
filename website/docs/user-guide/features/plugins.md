@@ -18,10 +18,10 @@ core tools that live in `tools/` and `toolsets.py`.
 
 ## Quick overview
 
-Drop a directory into `~/.hermes/plugins/` with a `plugin.yaml` and Python code:
+Drop a directory into `~/.teamhermes/plugins/` with a `plugin.yaml` and Python code:
 
 ```
-~/.hermes/plugins/my-plugin/
+~/.teamhermes/plugins/my-plugin/
 ├── plugin.yaml      # manifest
 ├── __init__.py      # register() — wires schemas to handlers
 ├── schemas.py       # tool schemas (what the LLM sees)
@@ -34,7 +34,7 @@ Start Hermes — your tools appear alongside built-in tools. The model can call 
 
 Here is a complete plugin that adds a `hello_world` tool and logs every tool call via a hook.
 
-**`~/.hermes/plugins/hello-world/plugin.yaml`**
+**`~/.teamhermes/plugins/hello-world/plugin.yaml`**
 
 ```yaml
 name: hello-world
@@ -42,7 +42,7 @@ version: "1.0"
 description: A minimal example plugin
 ```
 
-**`~/.hermes/plugins/hello-world/__init__.py`**
+**`~/.teamhermes/plugins/hello-world/__init__.py`**
 
 ```python
 """Minimal Hermes plugin — registers a tool and a hook."""
@@ -87,9 +87,9 @@ def register(ctx):
     ctx.register_hook("post_tool_call", on_tool_call)
 ```
 
-Drop both files into `~/.hermes/plugins/hello-world/`, restart Hermes, and the model can immediately call `hello_world`. The hook prints a log line after every tool invocation.
+Drop both files into `~/.teamhermes/plugins/hello-world/`, restart Hermes, and the model can immediately call `hello_world`. The hook prints a log line after every tool invocation.
 
-Project-local plugins under `./.hermes/plugins/` are disabled by default. Enable them only for trusted repositories by setting `HERMES_ENABLE_PROJECT_PLUGINS=true` before starting Hermes.
+Project-local plugins under `./.teamhermes/plugins/` are disabled by default. Enable them only for trusted repositories by setting `HERMES_ENABLE_PROJECT_PLUGINS=true` before starting Hermes.
 
 ## What plugins can do
 
@@ -120,10 +120,10 @@ Every `ctx.*` API below is available inside a plugin's `register(ctx)` function.
 | Source | Path | Use case |
 |--------|------|----------|
 | Bundled | `<repo>/plugins/` | Ships with Hermes — see [Built-in Plugins](/user-guide/features/built-in-plugins) |
-| User | `~/.hermes/plugins/` | Personal plugins |
-| Project | `.hermes/plugins/` | Project-specific plugins (requires `HERMES_ENABLE_PROJECT_PLUGINS=true`) |
+| User | `~/.teamhermes/plugins/` | Personal plugins |
+| Project | `.teamhermes/plugins/` | Project-specific plugins (requires `HERMES_ENABLE_PROJECT_PLUGINS=true`) |
 | pip | `hermes_agent.plugins` entry_points | Distributed packages |
-| Nix | `services.hermes-agent.extraPlugins` / `extraPythonPackages` | NixOS declarative installs — see [Nix Setup](/getting-started/nix-setup#plugins) |
+| Nix | `services.teamhermes-agent.extraPlugins` / `extraPythonPackages` | NixOS declarative installs — see [Nix Setup](/getting-started/nix-setup#plugins) |
 
 Later sources override earlier ones on name collision, so a user plugin with the same name as a bundled plugin replaces it.
 
@@ -140,13 +140,13 @@ Within each source, Hermes also recognizes sub-category directories that route p
 | `plugins/context_engine/<name>/` | Context-compression engines (`ctx.register_context_engine()`) | **Own loader** in `plugins/context_engine/__init__.py` (one active at a time) |
 | `plugins/model-providers/<name>/` | LLM provider profiles (`register_provider(ProviderProfile(...))`) | **Own loader** in `providers/__init__.py` (lazily scanned on first `get_provider_profile()` call) |
 
-User plugins at `~/.hermes/plugins/model-providers/<name>/` and `~/.hermes/plugins/memory/<name>/` override bundled plugins of the same name — last-writer-wins in `register_provider()` / `register_memory_provider()`. Drop a directory in, and it replaces the built-in without any repo edits.
+User plugins at `~/.teamhermes/plugins/model-providers/<name>/` and `~/.teamhermes/plugins/memory/<name>/` override bundled plugins of the same name — last-writer-wins in `register_provider()` / `register_memory_provider()`. Drop a directory in, and it replaces the built-in without any repo edits.
 
 Sub-category plugins surface in `hermes plugins list` and the interactive `hermes plugins` UI under their **path-derived key** — e.g. `observability/langfuse`, `image_gen/openai`, `platforms/teams`. That key (not the bare manifest `name:`) is the value you pass to `hermes plugins enable …` / `disable …` and the string to add under `plugins.enabled` in `config.yaml`.
 
 ## Plugins are opt-in (with a few exceptions)
 
-**General plugins and user-installed backends are disabled by default** — discovery finds them (so they show up in `hermes plugins` and `/plugins`), but nothing with hooks or tools loads until you add the plugin's name to `plugins.enabled` in `~/.hermes/config.yaml`. This stops third-party code from running without your explicit consent.
+**General plugins and user-installed backends are disabled by default** — discovery finds them (so they show up in `hermes plugins` and `/plugins`), but nothing with hooks or tools loads until you add the plugin's name to `plugins.enabled` in `~/.teamhermes/config.yaml`. This stops third-party code from running without your explicit consent.
 
 ```yaml
 plugins:
@@ -179,13 +179,13 @@ Several categories of plugin bypass `plugins.enabled` — they're part of Hermes
 | **Context engines** (`plugins/context_engine/`) | All discovered; one is active, chosen by `context.engine` in `config.yaml`. |
 | **Model providers** (`plugins/model-providers/`) | All bundled providers under `plugins/model-providers/` discover and register at the first `get_provider_profile()` call. The user picks one at a time via `--provider` or `config.yaml`. |
 | **Pip-installed `backend` plugins** | Opt-in via `plugins.enabled` (same as general plugins). |
-| **User-installed platforms** (under `~/.hermes/plugins/platforms/`) | Opt-in via `plugins.enabled` — third-party gateway adapters need explicit consent. |
+| **User-installed platforms** (under `~/.teamhermes/plugins/platforms/`) | Opt-in via `plugins.enabled` — third-party gateway adapters need explicit consent. |
 
-In short: **bundled "always-works" infrastructure loads automatically; third-party general plugins are opt-in.** The `plugins.enabled` allow-list is the gate specifically for arbitrary code a user drops into `~/.hermes/plugins/`.
+In short: **bundled "always-works" infrastructure loads automatically; third-party general plugins are opt-in.** The `plugins.enabled` allow-list is the gate specifically for arbitrary code a user drops into `~/.teamhermes/plugins/`.
 
 ### Migration for existing users
 
-When you upgrade to a version of Hermes that has opt-in plugins (config schema v21+), any user plugins already installed under `~/.hermes/plugins/` that weren't already in `plugins.disabled` are **automatically grandfathered** into `plugins.enabled`. Your existing setup keeps working. Bundled standalone plugins are NOT grandfathered — even existing users have to opt in explicitly. (Bundled platform/backend plugins never needed grandfathering because they were never gated.)
+When you upgrade to a version of Hermes that has opt-in plugins (config schema v21+), any user plugins already installed under `~/.teamhermes/plugins/` that weren't already in `plugins.disabled` are **automatically grandfathered** into `plugins.enabled`. Your existing setup keeps working. Bundled standalone plugins are NOT grandfathered — even existing users have to opt in explicitly. (Bundled platform/backend plugins never needed grandfathering because they were never gated.)
 
 ## Available hooks
 
@@ -210,7 +210,7 @@ Hermes has four kinds of plugins:
 
 | Type | What it does | Selection | Location |
 |------|-------------|-----------|----------|
-| **General plugins** | Add tools, hooks, slash commands, CLI commands | Multi-select (enable/disable) | `~/.hermes/plugins/` |
+| **General plugins** | Add tools, hooks, slash commands, CLI commands | Multi-select (enable/disable) | `~/.teamhermes/plugins/` |
 | **Memory providers** | Replace or augment built-in memory | Single-select (one active) | `plugins/memory/` |
 | **Context engines** | Replace the built-in context compressor | Single-select (one active) | `plugins/context_engine/` |
 | **Model providers** | Declare an inference backend (OpenRouter, Anthropic, …) | Multi-register, picked by `--provider` / `config.yaml` | `plugins/model-providers/` |
@@ -238,7 +238,7 @@ The table above shows the four plugin categories, but within "General plugins" t
 | An **STT backend** (any CLI — whisper.cpp, custom whisper binary, local ASR CLI) | Config-driven (recommended) — declare under `stt.providers.<name>` with `type: command` in `config.yaml`, or set `HERMES_LOCAL_STT_COMMAND` for the legacy single-command escape hatch. OR Python backend plugin — `ctx.register_transcription_provider()` for Python-SDK engines (OpenRouter, SenseAudio, Gemini-STT, etc.). | [STT Setup](/user-guide/features/tts#stt-custom-command-providers) · [Python plugin guide](/user-guide/features/tts#python-plugin-providers-stt) |
 | **External tools via MCP** (filesystem, GitHub, Linear, Notion, any MCP server) | Config-driven — declare `mcp_servers.<name>` with `command:` / `url:` in `config.yaml`. Hermes auto-discovers the server's tools and registers them alongside built-ins. | [MCP](/user-guide/features/mcp) |
 | **Additional skill sources** (custom GitHub repos, private skill indexes) | CLI — `hermes skills tap add <repo>` | [Skills Hub](/user-guide/features/skills#skills-hub) · [Publishing a custom tap](/user-guide/features/skills#publishing-a-custom-skill-tap) |
-| **Gateway event hooks** (fire on `gateway:startup`, `session:start`, `agent:end`, `command:*`) | Drop `HOOK.yaml` + `handler.py` into `~/.hermes/hooks/<name>/` | [Event Hooks](/user-guide/features/hooks#gateway-event-hooks) |
+| **Gateway event hooks** (fire on `gateway:startup`, `session:start`, `agent:end`, `command:*`) | Drop `HOOK.yaml` + `handler.py` into `~/.teamhermes/hooks/<name>/` | [Event Hooks](/user-guide/features/hooks#gateway-event-hooks) |
 | **Shell hooks** (run a shell command on events — notifications, audit logs, desktop alerts) | Config-driven — declare under `hooks:` in `config.yaml` | [Shell Hooks](/user-guide/features/hooks#shell-hooks) |
 
 :::note
@@ -250,7 +250,7 @@ Not everything is a Python plugin. Some extension surfaces intentionally use **c
 On NixOS, plugins can be installed declaratively via the module options — no `hermes plugins install` needed. See the **[Nix Setup guide](/getting-started/nix-setup#plugins)** for full details.
 
 ```nix
-services.hermes-agent = {
+services.teamhermes-agent = {
   # Directory plugin (source tree with plugin.yaml)
   extraPlugins = [ (pkgs.fetchFromGitHub { ... }) ];
   # Entry-point plugin (pip package)

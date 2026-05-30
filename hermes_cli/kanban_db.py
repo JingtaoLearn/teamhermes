@@ -36,8 +36,8 @@ Board resolution order (highest precedence first, all optional):
   the "currently selected" board. Written by ``hermes kanban boards
   switch <slug>``. When absent, the active board is ``default``.
 
-In standard installs ``<root>`` is ``~/.hermes``. In Docker / custom
-deployments where ``HERMES_HOME`` points outside ``~/.hermes`` (e.g.
+In standard installs ``<root>`` is ``~/.teamhermes``. In Docker / custom
+deployments where ``HERMES_HOME`` points outside ``~/.teamhermes`` (e.g.
 ``/opt/hermes``), ``<root>`` is ``HERMES_HOME``. Legacy env-var
 overrides still work:
 
@@ -6125,8 +6125,8 @@ def _kanban_worker_skill_available(hermes_home: Optional[str]) -> bool:
     from pathlib import Path as _Path
 
     # An unset HERMES_HOME means the worker falls back to the default root
-    # home (``~/.hermes``), which ships the bundled skill.
-    base = _Path(hermes_home) if hermes_home else (_Path.home() / ".hermes")
+    # home (``~/.teamhermes``), which ships the bundled skill.
+    base = _Path(hermes_home) if hermes_home else (_Path.home() / ".teamhermes")
     skills_root = base / "skills"
     if not skills_root.is_dir():
         return False
@@ -6208,7 +6208,7 @@ def _default_spawn(
     # env, and when the child process starts `hermes -p <name>` the
     # _apply_profile_override() runs *before* hermes_constants is imported.
     # If HERMES_HOME is absent from the child's env, get_hermes_home() falls
-    # back to Path.home() / ".hermes" (the DEFAULT profile root), ignoring the
+    # back to Path.home() / ".teamhermes" (the DEFAULT profile root), ignoring the
     # profile-specific config entirely.  Fixes profile-scoped fallback_providers
     # being invisible to kanban workers.
     from hermes_cli.profiles import resolve_profile_env

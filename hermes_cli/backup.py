@@ -1,7 +1,7 @@
 """
 Backup and import commands for hermes CLI.
 
-`hermes backup` creates a zip archive of the entire ~/.hermes/ directory
+`hermes backup` creates a zip archive of the entire ~/.teamhermes/ directory
 (excluding the hermes-agent repo and transient files).
 
 `hermes import` restores from a backup zip, overlaying onto the current
@@ -292,7 +292,7 @@ def _validate_backup_zip(zf: zipfile.ZipFile) -> tuple[bool, str]:
 def _detect_prefix(zf: zipfile.ZipFile) -> str:
     """Detect if the zip has a common directory prefix wrapping all entries.
 
-    Some tools zip as `.hermes/config.yaml` instead of `config.yaml`.
+    Some tools zip as `.teamhermes/config.yaml` instead of `config.yaml`.
     Returns the prefix to strip (empty string if none).
     """
     names = [n for n in zf.namelist() if not n.endswith("/")]
@@ -307,7 +307,7 @@ def _detect_prefix(zf: zipfile.ZipFile) -> str:
     if len(first_parts) == 1:
         prefix = first_parts.pop()
         # Only strip if it looks like a hermes dir name
-        if prefix in {".hermes", "hermes"}:
+        if prefix in {".teamhermes", "hermes"}:
             return prefix + "/"
 
     return ""

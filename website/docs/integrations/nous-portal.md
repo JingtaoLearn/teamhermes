@@ -66,7 +66,7 @@ Your Portal account also covers [chat.nousresearch.com](https://chat.nousresearc
 
 ### No credentials in your dotfiles
 
-Because everything routes through one OAuth-authenticated Portal session, you don't accumulate a `.env` file with a dozen long-lived API keys. The refresh token at `~/.hermes/auth.json` is the only credential on disk, and Hermes mints short-lived JWTs from it per request — see [Token handling](#token-handling) below.
+Because everything routes through one OAuth-authenticated Portal session, you don't accumulate a `.env` file with a dozen long-lived API keys. The refresh token at `~/.teamhermes/auth.json` is the only credential on disk, and Hermes mints short-lived JWTs from it per request — see [Token handling](#token-handling) below.
 
 ### Cross-platform parity
 
@@ -98,8 +98,8 @@ hermes setup --portal
 This runs the full setup in one shot:
 
 1. Opens your browser to portal.nousresearch.com for OAuth login
-2. Stores the refresh token at `~/.hermes/auth.json`
-3. Sets Nous as your inference provider in `~/.hermes/config.yaml`
+2. Stores the refresh token at `~/.teamhermes/auth.json`
+3. Sets Nous as your inference provider in `~/.teamhermes/config.yaml`
 4. Turns on the Tool Gateway (web, image, TTS, browser routing)
 5. Returns you to your terminal ready to `hermes chat`
 
@@ -199,7 +199,7 @@ Manage your plan, view usage, or upgrade/cancel at any time:
 
 ## Configuration reference
 
-After `hermes setup --portal`, `~/.hermes/config.yaml` will look like:
+After `hermes setup --portal`, `~/.teamhermes/config.yaml` will look like:
 
 ```yaml
 model:
@@ -224,7 +224,7 @@ browser:
   backend: nous
 ```
 
-The OAuth refresh token is stored separately at `~/.hermes/auth.json` (not in `config.yaml` — credentials and configuration are kept separate by design).
+The OAuth refresh token is stored separately at `~/.teamhermes/auth.json` (not in `config.yaml` — credentials and configuration are kept separate by design).
 
 ## Token handling
 

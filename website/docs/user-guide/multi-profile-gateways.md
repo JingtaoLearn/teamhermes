@@ -25,7 +25,7 @@ be online at the same time. Common reasons:
   memory and skills
 
 Every profile already gets its own per-platform LaunchAgent
-(`ai.hermes.gateway-<name>.plist`) or systemd user service
+(`ai.teamhermes.gateway-<name>.plist`) or systemd user service
 (`hermes-gateway-<name>.service`). This guide adds the patterns for managing
 them collectively.
 
@@ -141,10 +141,10 @@ never clash:
 
 | Platform | Path                                                              |
 | -------- | ----------------------------------------------------------------- |
-| macOS    | `~/Library/LaunchAgents/ai.hermes.gateway-<profile>.plist`        |
+| macOS    | `~/Library/LaunchAgents/ai.teamhermes.gateway-<profile>.plist`        |
 | Linux    | `~/.config/systemd/user/hermes-gateway-<profile>.service`         |
 
-The default profile keeps the historical names: `ai.hermes.gateway.plist` /
+The default profile keeps the historical names: `ai.teamhermes.gateway.plist` /
 `hermes-gateway.service`.
 
 ## Viewing logs
@@ -153,18 +153,18 @@ Each profile writes to its own log files:
 
 ```bash
 # Default profile
-tail -f ~/.hermes/logs/gateway.log
-tail -f ~/.hermes/logs/gateway.error.log
+tail -f ~/.teamhermes/logs/gateway.log
+tail -f ~/.teamhermes/logs/gateway.error.log
 
 # Named profile
-tail -f ~/.hermes/profiles/<name>/logs/gateway.log
-tail -f ~/.hermes/profiles/<name>/logs/gateway.error.log
+tail -f ~/.teamhermes/profiles/<name>/logs/gateway.log
+tail -f ~/.teamhermes/profiles/<name>/logs/gateway.error.log
 ```
 
 Stream every profile's log simultaneously:
 
 ```bash
-tail -f ~/.hermes/logs/gateway.log ~/.hermes/profiles/*/logs/gateway.log
+tail -f ~/.teamhermes/logs/gateway.log ~/.teamhermes/profiles/*/logs/gateway.log
 ```
 
 The CLI also has a structured log viewer:
@@ -189,13 +189,13 @@ systemctl --user list-units 'hermes-gateway-*'   # Linux — units
 Every profile keeps its config inside its own directory:
 
 ```
-~/.hermes/profiles/<name>/
+~/.teamhermes/profiles/<name>/
 ├── .env              # API keys, bot tokens (chmod 600)
 ├── config.yaml       # model, provider, toolsets, gateway settings
 └── SOUL.md           # personality / system prompt
 ```
 
-The default profile uses `~/.hermes/` directly with the same three files.
+The default profile uses `~/.teamhermes/` directly with the same three files.
 
 Edit them with any editor or via the CLI:
 
@@ -224,7 +224,7 @@ to sleep when idle. Two patterns:
 ```bash
 caffeinate -dis                    # block display, idle, and system sleep
 caffeinate -dis -t 28800           # same, auto-exit after 8 hours
-caffeinate -i -w $(cat ~/.hermes/gateway.pid) &   # awake while default gateway runs
+caffeinate -i -w $(cat ~/.teamhermes/gateway.pid) &   # awake while default gateway runs
 
 # Persistent: run in background and forget
 nohup caffeinate -dis >/dev/null 2>&1 &
@@ -276,7 +276,7 @@ To audit:
 
 ```bash
 grep -H 'TELEGRAM_BOT_TOKEN\|DISCORD_BOT_TOKEN' \
-     ~/.hermes/.env ~/.hermes/profiles/*/.env
+     ~/.teamhermes/.env ~/.teamhermes/profiles/*/.env
 ```
 
 ## Updating the code
@@ -307,7 +307,7 @@ If a profile's gateway shows `not running` but a process is still alive:
 
 ```bash
 ps -ef | grep "hermes_cli.*-p <profile>"
-cat ~/.hermes/profiles/<profile>/gateway.pid
+cat ~/.teamhermes/profiles/<profile>/gateway.pid
 kill -TERM <pid>          # graceful
 kill -KILL <pid>          # if that fails after a few seconds
 <profile> gateway start
@@ -317,8 +317,8 @@ kill -KILL <pid>          # if that fails after a few seconds
 
 ```bash
 # macOS
-launchctl unload ~/Library/LaunchAgents/ai.hermes.gateway-<profile>.plist
-launchctl load   ~/Library/LaunchAgents/ai.hermes.gateway-<profile>.plist
+launchctl unload ~/Library/LaunchAgents/ai.teamhermes.gateway-<profile>.plist
+launchctl load   ~/Library/LaunchAgents/ai.teamhermes.gateway-<profile>.plist
 
 # Linux
 systemctl --user restart hermes-gateway-<profile>.service

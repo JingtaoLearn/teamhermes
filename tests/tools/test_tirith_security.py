@@ -1157,7 +1157,7 @@ class TestDiskFailureMarker:
 
 class TestHermesHomeIsolation:
     def test_hermes_bin_dir_respects_hermes_home(self):
-        """_hermes_bin_dir must use HERMES_HOME, not hardcoded ~/.hermes."""
+        """_hermes_bin_dir must use HERMES_HOME, not hardcoded ~/.teamhermes."""
         from tools.tirith_security import _hermes_bin_dir
         import tempfile
         tmpdir = tempfile.mkdtemp()
@@ -1167,7 +1167,7 @@ class TestHermesHomeIsolation:
         assert os.path.isdir(result)
 
     def test_failure_marker_respects_hermes_home(self):
-        """_failure_marker_path must use HERMES_HOME, not hardcoded ~/.hermes."""
+        """_failure_marker_path must use HERMES_HOME, not hardcoded ~/.teamhermes."""
         from tools.tirith_security import _failure_marker_path
         with patch.dict(os.environ, {"HERMES_HOME": "/custom/hermes"}):
             result = _failure_marker_path()
@@ -1187,7 +1187,7 @@ class TestHermesHomeIsolation:
             # falls back to the account database; compute expected under the
             # same environment instead of after patch.dict restores HOME.
             os.environ.pop("HERMES_HOME", None)
-            expected = os.path.join(os.path.expanduser("~"), ".hermes")
+            expected = os.path.join(os.path.expanduser("~"), ".teamhermes")
             result = _get_hermes_home()
         assert result == expected
 

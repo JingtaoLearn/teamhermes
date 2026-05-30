@@ -298,7 +298,7 @@ class TestCmdUpdatePipInstallLayouts:
 
         mock_run.return_value = subprocess.CompletedProcess([], 0, stdout="", stderr="")
         monkeypatch.delenv("VIRTUAL_ENV", raising=False)
-        monkeypatch.setattr(hm.sys, "prefix", "/home/u/.hermes/hermes-agent/venv")
+        monkeypatch.setattr(hm.sys, "prefix", "/home/u/.teamhermes/hermes-agent/venv")
         monkeypatch.setattr(hm.sys, "base_prefix", "/usr")
 
         with patch("shutil.which", return_value="/usr/bin/uv"), \
@@ -308,4 +308,4 @@ class TestCmdUpdatePipInstallLayouts:
         cmd = mock_run.call_args[0][0]
         assert "--system" not in cmd
         assert cmd == ["/usr/bin/uv", "pip", "install", "--upgrade", "hermes-agent"]
-        assert mock_run.call_args.kwargs["env"]["VIRTUAL_ENV"] == "/home/u/.hermes/hermes-agent/venv"
+        assert mock_run.call_args.kwargs["env"]["VIRTUAL_ENV"] == "/home/u/.teamhermes/hermes-agent/venv"

@@ -299,9 +299,9 @@ class TestCmdUpdateProfileSkillSync:
             branch="main", verify_ok=True, commit_count="1"
         )
 
-        default_p = SimpleNamespace(name="default", path=Path("/fake/.hermes"))
-        active_p = SimpleNamespace(name="bit", path=Path("/fake/.hermes/profiles/bit"))
-        other_p = SimpleNamespace(name="work", path=Path("/fake/.hermes/profiles/work"))
+        default_p = SimpleNamespace(name="default", path=Path("/fake/.teamhermes"))
+        active_p = SimpleNamespace(name="bit", path=Path("/fake/.teamhermes/profiles/bit"))
+        other_p = SimpleNamespace(name="work", path=Path("/fake/.teamhermes/profiles/work"))
         all_profiles = [default_p, active_p, other_p]
 
         synced_paths = []
@@ -337,7 +337,7 @@ class TestCmdUpdateProfileSkillSync:
             branch="main", verify_ok=True, commit_count="1"
         )
 
-        default_p = SimpleNamespace(name="default", path=Path("/fake/.hermes"))
+        default_p = SimpleNamespace(name="default", path=Path("/fake/.teamhermes"))
         synced_paths = []
 
         def fake_seed(path, quiet=False):

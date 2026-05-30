@@ -33,7 +33,7 @@ hermes auth add nous
 ```
 
 This opens your browser for the Nous Portal OAuth flow. Hermes stores
-the refresh token in `~/.hermes/auth.json` — the same place all Hermes
+the refresh token in `~/.teamhermes/auth.json` — the same place all Hermes
 provider logins live.
 
 ### 2. Start the proxy

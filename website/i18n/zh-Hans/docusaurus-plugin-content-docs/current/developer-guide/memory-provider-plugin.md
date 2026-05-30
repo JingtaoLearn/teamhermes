@@ -169,7 +169,7 @@ def sync_turn(self, user_content, assistant_content):
 
 ## Profile 隔离
 
-所有存储路径**必须**使用 `initialize()` 中的 `hermes_home` kwarg，而不是硬编码的 `~/.hermes`：
+所有存储路径**必须**使用 `initialize()` 中的 `hermes_home` kwarg，而不是硬编码的 `~/.teamhermes`：
 
 ```python
 # 正确 — 按 profile 隔离
@@ -177,7 +177,7 @@ from hermes_constants import get_hermes_home
 data_dir = get_hermes_home() / "my-provider"
 
 # 错误 — 所有 profile 共享
-data_dir = Path("~/.hermes/my-provider").expanduser()
+data_dir = Path("~/.teamhermes/my-provider").expanduser()
 ```
 
 ## 测试

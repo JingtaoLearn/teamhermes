@@ -1647,7 +1647,7 @@ class TestNormaliseThemeDefinition:
 
 
 class TestDiscoverUserThemes:
-    """Tests for _discover_user_themes() — scans ~/.hermes/dashboard-themes/."""
+    """Tests for _discover_user_themes() — scans ~/.teamhermes/dashboard-themes/."""
 
     def test_returns_empty_when_dir_missing(self, tmp_path, monkeypatch):
         monkeypatch.setenv("HERMES_HOME", str(tmp_path))

@@ -166,7 +166,7 @@ TUI frontend (ui-tui/src/app/slash/)        <- 本地处理器 + fallthrough
 
 4. 执行命令并确认：
    - 预期行为已触发
-   - 所有持久化配置正确更新（`read_file ~/.hermes/config.yaml`）
+   - 所有持久化配置正确更新（`read_file ~/.teamhermes/config.yaml`）
    - 实时 UI 状态立即反映变更（而非重启后才生效）
 
 5. 如果命令也支持 gateway，至少在一个消息平台上测试（或运行 gateway 测试：`scripts/run_tests.sh tests/gateway/`）。

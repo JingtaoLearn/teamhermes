@@ -96,7 +96,7 @@ hermes gateway setup
 
 ### 手动配置
 
-在 `~/.hermes/.env` 中添加：
+在 `~/.teamhermes/.env` 中添加：
 
 ```bash
 # 必填

@@ -706,7 +706,7 @@ def _sync_hermes_home_from_systemd_unit(system: bool) -> None:
     """When acting on a system-scope unit, adopt its ``HERMES_HOME``.
 
     Under ``sudo``, ``HERMES_HOME`` is stripped and ``HOME=/root``, so
-    :func:`get_hermes_home` falls back to ``/root/.hermes`` — the wrong
+    :func:`get_hermes_home` falls back to ``/root/.teamhermes`` — the wrong
     profile. The unit file pins ``HERMES_HOME`` for the actual gateway
     process, so we mirror that into our own environment to make
     ``read_runtime_status`` / ``get_running_pid`` read the correct files.
@@ -1310,7 +1310,7 @@ def _profile_suffix() -> str:
 def _profile_arg(hermes_home: str | None = None) -> str:
     """Return ``--profile <name>`` only when HERMES_HOME is a named profile.
 
-    For ``~/.hermes/profiles/<name>``, returns ``"--profile <name>"``.
+    For ``~/.teamhermes/profiles/<name>``, returns ``"--profile <name>"``.
     For the default profile or hash-based custom paths, returns the empty string.
 
     Args:
@@ -1338,8 +1338,8 @@ def _profile_arg(hermes_home: str | None = None) -> str:
 def get_service_name() -> str:
     """Derive a systemd service name scoped to this HERMES_HOME.
 
-    Default ``~/.hermes`` returns ``hermes-gateway`` (backward compatible).
-    Profile ``~/.hermes/profiles/coder`` returns ``hermes-gateway-coder``.
+    Default ``~/.teamhermes`` returns ``hermes-gateway`` (backward compatible).
+    Profile ``~/.teamhermes/profiles/coder`` returns ``hermes-gateway-coder``.
     Any other HERMES_HOME appends a short hash for uniqueness.
     """
     suffix = _profile_suffix()
@@ -1968,11 +1968,11 @@ def _launchd_user_home() -> Path:
 def get_launchd_plist_path() -> Path:
     """Return the launchd plist path, scoped per profile.
 
-    Default ``~/.hermes`` → ``ai.hermes.gateway.plist`` (backward compatible).
-    Profile ``~/.hermes/profiles/coder`` → ``ai.hermes.gateway-coder.plist``.
+    Default ``~/.teamhermes`` → ``ai.teamhermes.gateway.plist`` (backward compatible).
+    Profile ``~/.teamhermes/profiles/coder`` → ``ai.teamhermes.gateway-coder.plist``.
     """
     suffix = _profile_suffix()
-    name = f"ai.hermes.gateway-{suffix}" if suffix else "ai.hermes.gateway"
+    name = f"ai.teamhermes.gateway-{suffix}" if suffix else "ai.teamhermes.gateway"
     return _launchd_user_home() / "Library" / "LaunchAgents" / f"{name}.plist"
 
 def _detect_venv_dir() -> Path | None:
@@ -2081,7 +2081,7 @@ def _remap_path_for_user(path: str, target_home_dir: str) -> str:
     If *path* lives under ``Path.home()`` the corresponding prefix is swapped
     to *target_home_dir*; otherwise the path is returned unchanged.
 
-      /root/.hermes/hermes-agent  -> /home/alice/.hermes/hermes-agent
+      /root/.teamhermes/hermes-agent  -> /home/alice/.teamhermes/hermes-agent
       /opt/hermes                 -> /opt/hermes  (kept as-is)
 
     Note: this function intentionally does NOT resolve symlinks. A venv's
@@ -2106,24 +2106,24 @@ def _hermes_home_for_target_user(target_home_dir: str) -> str:
 
     When installing a system service via sudo, get_hermes_home() resolves to
     root's home.  This translates it to the target user's equivalent path:
-      /root/.hermes                    → /home/alice/.hermes
-      /root/.hermes/profiles/coder     → /home/alice/.hermes/profiles/coder
+      /root/.teamhermes                    → /home/alice/.teamhermes
+      /root/.teamhermes/profiles/coder     → /home/alice/.teamhermes/profiles/coder
       /opt/custom-hermes               → /opt/custom-hermes  (kept as-is)
     """
     current_hermes = get_hermes_home().resolve()
-    current_default = (Path.home() / ".hermes").resolve()
-    target_default = Path(target_home_dir) / ".hermes"
+    current_default = (Path.home() / ".teamhermes").resolve()
+    target_default = Path(target_home_dir) / ".teamhermes"
 
-    # Default ~/.hermes → remap to target user's default
+    # Default ~/.teamhermes → remap to target user's default
     if current_hermes == current_default:
         return str(target_default)
 
-    # Profile or subdir of ~/.hermes → preserve the relative structure
+    # Profile or subdir of ~/.teamhermes → preserve the relative structure
     try:
         relative = current_hermes.relative_to(current_default)
         return str(target_default / relative)
     except ValueError:
-        # Completely custom path (not under ~/.hermes) — keep as-is
+        # Completely custom path (not under ~/.teamhermes) — keep as-is
         return str(current_hermes)
 
 
@@ -2826,7 +2826,7 @@ def systemd_status(deep: bool = False, system: bool = False, full: bool = False)
 def get_launchd_label() -> str:
     """Return the launchd service label, scoped per profile."""
     suffix = _profile_suffix()
-    return f"ai.hermes.gateway-{suffix}" if suffix else "ai.hermes.gateway"
+    return f"ai.teamhermes.gateway-{suffix}" if suffix else "ai.teamhermes.gateway"
 
 
 def _launchd_domain() -> str:
@@ -3740,7 +3740,7 @@ def _all_platforms() -> list[dict]:
     # Populate the registry so plugin platforms are visible. Idempotent.
     # Bundled platform plugins (``kind: platform``) auto-load unconditionally,
     # so every shipped messaging channel appears in the setup menu by default.
-    # User-installed platform plugins under ~/.hermes/plugins/ still require
+    # User-installed platform plugins under ~/.teamhermes/plugins/ still require
     # opt-in via ``plugins.enabled`` (untrusted code).
     try:
         from hermes_cli.plugins import discover_plugins
@@ -4233,7 +4233,7 @@ def _setup_weixin():
     print()
     print_info("  1. Hermes will open Tencent iLink QR login in this terminal.")
     print_info("  2. Use WeChat to scan and confirm the QR code.")
-    print_info("  3. Hermes will store the returned account_id/token in ~/.hermes/.env.")
+    print_info("  3. Hermes will store the returned account_id/token in ~/.teamhermes/.env.")
     print_info("  4. This adapter supports native text, image, video, and document delivery.")
 
     existing_account = get_env_value("WEIXIN_ACCOUNT_ID")
@@ -4789,7 +4789,7 @@ def _configure_platform(platform: dict) -> None:
       4. Env-var hint fallback for plugins that offer no setup helper.
 
     Bundled platform plugins (e.g. IRC) auto-load, so no plugin enable step
-    is needed here. User-installed platform plugins under ~/.hermes/plugins/
+    is needed here. User-installed platform plugins under ~/.teamhermes/plugins/
     must already be in ``plugins.enabled`` before they appear in this menu.
     """
     entry = platform.get("_registry_entry")
@@ -4814,7 +4814,7 @@ def _configure_platform(platform: dict) -> None:
     print(color(f"  ─── {emoji} {label} Setup ───", Colors.CYAN))
     required = entry.required_env if entry else []
     if required:
-        print_info(f"  Set these env vars in ~/.hermes/.env: {', '.join(required)}")
+        print_info(f"  Set these env vars in ~/.teamhermes/.env: {', '.join(required)}")
     else:
         print_info(f"  Configure {label} in config.yaml under gateway.platforms.{platform['key']}")
     if platform.get("install_hint"):
@@ -5298,7 +5298,7 @@ def _gateway_command_inner(args):
             print()
             print("  hermes gateway run                              # direct foreground")
             print("  tmux new -s hermes 'hermes gateway run'         # persistent via tmux")
-            print("  nohup hermes gateway run > ~/.hermes/logs/gateway.log 2>&1 &  # background")
+            print("  nohup hermes gateway run > ~/.teamhermes/logs/gateway.log 2>&1 &  # background")
             sys.exit(1)
         elif is_container():
             # Phase 4: inside a container with s6 the gateway service is
@@ -5399,7 +5399,7 @@ def _gateway_command_inner(args):
             print()
             print("  hermes gateway run                              # direct foreground")
             print("  tmux new -s hermes 'hermes gateway run'         # persistent via tmux")
-            print("  nohup hermes gateway run > ~/.hermes/logs/gateway.log 2>&1 &  # background")
+            print("  nohup hermes gateway run > ~/.teamhermes/logs/gateway.log 2>&1 &  # background")
             print()
             print("To enable systemd: add systemd=true to /etc/wsl.conf and run 'wsl --shutdown' from PowerShell.")
             sys.exit(1)
@@ -5685,10 +5685,10 @@ def _gateway_command_inner(args):
                 print("To start:")
                 print("  hermes gateway run      # Run in foreground")
                 if is_termux():
-                    print("  nohup hermes gateway run > ~/.hermes/logs/gateway.log 2>&1 &  # Best-effort background start")
+                    print("  nohup hermes gateway run > ~/.teamhermes/logs/gateway.log 2>&1 &  # Best-effort background start")
                 elif is_wsl():
                     print("  tmux new -s hermes 'hermes gateway run'         # persistent via tmux")
-                    print("  nohup hermes gateway run > ~/.hermes/logs/gateway.log 2>&1 &  # background")
+                    print("  nohup hermes gateway run > ~/.teamhermes/logs/gateway.log 2>&1 &  # background")
                 elif is_windows():
                     print("  hermes gateway install  # Install as Windows Scheduled Task (auto-start on login)")
                 else:

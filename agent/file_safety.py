@@ -13,7 +13,7 @@ def _hermes_home_path() -> Path:
         from hermes_constants import get_hermes_home  # local import to avoid cycles
         return get_hermes_home()
     except Exception:
-        return Path(os.path.expanduser("~/.hermes"))
+        return Path(os.path.expanduser("~/.teamhermes"))
 
 
 def _hermes_root_path() -> Path:
@@ -22,7 +22,7 @@ def _hermes_root_path() -> Path:
         from hermes_constants import get_default_hermes_root  # local import to avoid cycles
         return get_default_hermes_root()
     except Exception:
-        return Path(os.path.expanduser("~/.hermes"))
+        return Path(os.path.expanduser("~/.teamhermes"))
 
 
 def build_write_denied_paths(home: str) -> set[str]:
@@ -187,7 +187,7 @@ def get_read_block_error(path: str) -> Optional[str]:
 
     **This is NOT a security boundary.** The terminal tool runs as the
     same OS user with shell access; the agent can still ``cat auth.json``
-    or ``cat ~/.hermes/.env`` and exfiltrate the file. The read-deny exists
+    or ``cat ~/.teamhermes/.env`` and exfiltrate the file. The read-deny exists
     as defense-in-depth that:
 
       * Returns a clear error to models that respect tool denials, which
@@ -325,8 +325,8 @@ def get_read_block_error(path: str) -> Optional[str]:
 # exists, and explicit user direction is required to cross it.
 #
 # Reference: May 2026 incident where a hermes-security profile session
-# edited skills under both ``~/.hermes/profiles/hermes-security/skills/``
-# AND ``~/.hermes/skills/`` (the default profile's skills) without realizing
+# edited skills under both ``~/.teamhermes/profiles/hermes-security/skills/``
+# AND ``~/.teamhermes/skills/`` (the default profile's skills) without realizing
 # the second path belonged to a different profile.
 # ---------------------------------------------------------------------------
 
@@ -339,8 +339,8 @@ PROFILE_SCOPED_AREAS = ("skills", "plugins", "cron", "memories")
 def _resolve_active_profile_name() -> str:
     """Return the active profile name derived from HERMES_HOME.
 
-    ``~/.hermes``              -> ``"default"``
-    ``~/.hermes/profiles/X``  -> ``"X"``
+    ``~/.teamhermes``              -> ``"default"``
+    ``~/.teamhermes/profiles/X``  -> ``"X"``
 
     Falls back to ``"default"`` on any resolution failure so the guard
     never raises into the tool path.

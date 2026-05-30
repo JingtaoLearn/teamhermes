@@ -81,7 +81,7 @@ def resolve_config_path() -> Path:
 
     Resolution order:
       1. $HERMES_HOME/honcho.json      (profile-local, if it exists)
-      2. ~/.hermes/honcho.json          (default profile — shared host blocks live here)
+      2. ~/.teamhermes/honcho.json          (default profile — shared host blocks live here)
       3. ~/.honcho/config.json          (global, cross-app interop)
 
     Returns the global path if none exist (for first-time setup writes).
@@ -373,7 +373,7 @@ class HonchoClientConfig:
     sessions: dict[str, str] = field(default_factory=dict)
     # Raw global config for anything else consumers need
     raw: dict[str, Any] = field(default_factory=dict)
-    # True when Honcho was explicitly configured for this host (hosts.hermes
+    # True when Honcho was explicitly configured for this host (hosts.teamhermes
     # block exists or enabled was set explicitly), vs auto-enabled from a
     # stray HONCHO_API_KEY env var.
     explicitly_configured: bool = False
@@ -424,7 +424,7 @@ class HonchoClientConfig:
             return cls.from_env(host=resolved_host)
 
         host_block = _host_block(raw, resolved_host)
-        # A hosts.hermes block or explicit enabled flag means the user
+        # A hosts.teamhermes block or explicit enabled flag means the user
         # intentionally configured Honcho for this host.
         _explicitly_configured = bool(host_block) or raw.get("enabled") is True
 
