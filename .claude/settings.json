@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env)", "Read(**/.env)", "Read(**/*secret*)",
+      "Read(**/credentials*)", "Read(~/.ssh/**)",
+      "Bash(rm -rf*)", "Bash(git push*)", "Bash(curl*)",
+      "Bash(wget*)", "Bash(scp*)",
+      "Edit(LICENSE)", "Edit(NOTICE)", "Edit(.git/**)"
+    ],
+    "ask": [
+      "Bash(pip install*)", "Bash(uv pip install*)"
+    ]
+  },
+  "hooks": {
+    "Stop": [{"hooks":[{"type":"command","command":"$CLAUDE_PROJECT_DIR/.claude/hooks/notify.sh stop"}]}],
+    "Notification": [{"hooks":[{"type":"command","command":"$CLAUDE_PROJECT_DIR/.claude/hooks/notify.sh notify"}]}],
+    "PreToolUse": [{"matcher":"Bash","hooks":[{"type":"command","command":"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-bash.sh"}]}],
+    "PostToolUse": [{"matcher":"Edit|Write","hooks":[{"type":"command","command":"$CLAUDE_PROJECT_DIR/.claude/hooks/notify.sh edit"}]}]
+  }
+}
+
