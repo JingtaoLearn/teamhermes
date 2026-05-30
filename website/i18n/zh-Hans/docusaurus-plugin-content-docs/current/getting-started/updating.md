@@ -13,7 +13,7 @@ description: "如何将 TeamHermes Agent 更新至最新版本或将其卸载"
 使用单条命令更新至最新版本：
 
 ```bash
-hermes update
+th update
 ```
 
 此命令会从 `main` 拉取最新代码、更新依赖项，并提示你配置自上次更新以来新增的选项。
@@ -23,8 +23,8 @@ hermes update
 PyPI 发布版本跟踪**带标签的版本**（主版本和次版本发布），而非 `main` 上的每次提交。检查更新并升级：
 
 ```bash
-hermes update --check    # 查看 PyPI 上是否有更新的版本
-hermes update            # 执行 pip install --upgrade hermes-agent
+th update --check    # 查看 PyPI 上是否有更新的版本
+th update            # 执行 pip install --upgrade hermes-agent
 ```
 
 或手动执行：
@@ -34,12 +34,12 @@ pip install --upgrade hermes-agent    # 或：uv pip install --upgrade hermes-ag
 ```
 
 :::tip
-`hermes update` 会自动检测新的配置选项并提示你添加。如果跳过了该提示，可手动运行 `hermes config check` 查看缺失的选项，再运行 `hermes config migrate` 以交互方式添加。
+`th update` 会自动检测新的配置选项并提示你添加。如果跳过了该提示，可手动运行 `th config check` 查看缺失的选项，再运行 `th config migrate` 以交互方式添加。
 :::
 
 ### 更新过程（Git 安装方式）
 
-运行 `hermes update` 时，将依次执行以下步骤：
+运行 `th update` 时，将依次执行以下步骤：
 
 1. **配对数据快照** — 保存一份轻量级的更新前状态快照（涵盖 `~/.teamhermes/pairing/`、飞书评论规则及其他运行时修改的状态文件）。可通过 [快照与回滚](../user-guide/checkpoints-and-rollback.md) 中描述的快照恢复流程进行恢复，或从 TeamHermes 写入 `~/.teamhermes/` 目录旁的最新快速快照 zip 文件中提取。
 2. **Git pull** — 从 `main` 分支拉取最新代码并更新子模块
@@ -47,16 +47,16 @@ pip install --upgrade hermes-agent    # 或：uv pip install --upgrade hermes-ag
 4. **配置迁移** — 检测自当前版本以来新增的配置选项并提示设置
 5. **Gateway 自动重启** — 更新完成后刷新正在运行的 gateway，使新代码立即生效。由服务管理的 gateway（Linux 上的 systemd、macOS 上的 launchd）通过服务管理器重启；手动启动的 gateway 在 TeamHermes 能将运行中的 PID 映射回某个 profile 时会自动重新启动。
 
-### 仅预览：`hermes update --check`
+### 仅预览：`th update --check`
 
-想在拉取前确认是否有更新？运行 `hermes update --check` — 对于 Git 安装方式，它会获取并与 `origin/main` 比较提交；对于 pip 安装方式，它会查询 PyPI 上的最新版本。不修改任何文件，不重启 gateway。适合在以"是否有更新"为条件的脚本和 cron 任务中使用。
+想在拉取前确认是否有更新？运行 `th update --check` — 对于 Git 安装方式，它会获取并与 `origin/main` 比较提交；对于 pip 安装方式，它会查询 PyPI 上的最新版本。不修改任何文件，不重启 gateway。适合在以"是否有更新"为条件的脚本和 cron 任务中使用。
 
 ### 完整更新前备份：`--backup`
 
 对于高价值 profile（生产环境 gateway、团队共享安装），可选择在拉取前对 `HERMES_HOME`（配置、认证、会话、技能、配对数据）进行完整备份：
 
 ```bash
-hermes update --backup
+th update --backup
 ```
 
 或将其设为每次运行的默认行为：
@@ -71,19 +71,19 @@ updates:
 
 ### Windows：另一个 `hermes.exe` 正在运行
 
-在 Windows 上，如果 `hermes update` 检测到另一个 `hermes.exe` 进程持有 venv 入口点可执行文件的句柄，它将拒绝运行 — 最常见的情况是 TeamHermes Desktop 应用启动的后端进程、另一个终端中打开的 `hermes` REPL，或正在运行的 gateway：
+在 Windows 上，如果 `th update` 检测到另一个 `hermes.exe` 进程持有 venv 入口点可执行文件的句柄，它将拒绝运行 — 最常见的情况是 TeamHermes Desktop 应用启动的后端进程、另一个终端中打开的 `th` REPL，或正在运行的 gateway：
 
 ```
-$ hermes update
+$ th update
 ✗ Another hermes.exe is running:
     PID 12345  hermes.exe
 
   Updating now would fail to overwrite ...\venv\Scripts\hermes.exe because
   Windows blocks REPLACE on a running executable.
 
-  Close TeamHermes Desktop, exit any open `hermes` REPLs, and
-  stop the gateway (`hermes gateway stop`) before retrying.
-  Override with `hermes update --force` if you've already
+  Close TeamHermes Desktop, exit any open `th` REPLs, and
+  stop the gateway (`th gateway stop`) before retrying.
+  Override with `th update --force` if you've already
   confirmed those processes will not write to the venv.
 ```
 
@@ -92,7 +92,7 @@ $ hermes update
 预期输出如下：
 
 ```
-$ hermes update
+$ th update
 Updating TeamHermes Agent...
 📥 Pulling latest code...
 Already up to date.  (or: Updating abc1234..def5678)
@@ -107,21 +107,21 @@ Already up to date.  (or: Updating abc1234..def5678)
 
 ### 更新后建议的验证步骤
 
-`hermes update` 处理主要的更新流程，但快速验证可确认一切正常落地：
+`th update` 处理主要的更新流程，但快速验证可确认一切正常落地：
 
 1. `git status --short` — 若工作树出现意外的脏状态，请在继续前检查
-2. `hermes doctor` — 检查配置、依赖项和服务健康状态
-3. `hermes --version` — 确认版本已按预期更新
-4. 如果使用 gateway：`hermes gateway status`
+2. `th doctor` — 检查配置、依赖项和服务健康状态
+3. `th --version` — 确认版本已按预期更新
+4. 如果使用 gateway：`th gateway status`
 5. 如果 `doctor` 报告 npm audit 问题：在标记的目录中运行 `npm audit fix`
 
 :::warning 更新后工作树出现脏状态
-如果 `hermes update` 后 `git status --short` 显示意外变更，请在继续前停下来检查。这通常意味着本地修改被重新应用到了更新后的代码之上，或依赖步骤刷新了锁文件。
+如果 `th update` 后 `git status --short` 显示意外变更，请在继续前停下来检查。这通常意味着本地修改被重新应用到了更新后的代码之上，或依赖步骤刷新了锁文件。
 :::
 
 ### 终端在更新中途断开连接
 
-`hermes update` 针对意外终端断开进行了保护：
+`th update` 针对意外终端断开进行了保护：
 
 - 更新会忽略 `SIGHUP`，因此关闭 SSH 会话或终端窗口不再会在安装中途终止它。`pip` 和 `git` 子进程继承此保护，因此 Python 环境不会因连接断开而处于半安装状态。
 - 更新运行期间，所有输出会同步镜像到 `~/.teamhermes/logs/update.log`。如果终端消失，重新连接后检查日志，确认更新是否完成以及 gateway 重启是否成功：
@@ -132,12 +132,12 @@ tail -f ~/.teamhermes/logs/update.log
 
 - `Ctrl-C`（SIGINT）和系统关机（SIGTERM）仍会被响应 — 这些是主动取消操作，而非意外中断。
 
-你不再需要将 `hermes update` 包裹在 `screen` 或 `tmux` 中来应对终端断开。
+你不再需要将 `th update` 包裹在 `screen` 或 `tmux` 中来应对终端断开。
 
 ### 查看当前版本
 
 ```bash
-hermes version
+th version
 ```
 
 与 [GitHub releases 页面](https://github.com/NousResearch/hermes-agent/releases) 上的最新版本进行比较。
@@ -167,8 +167,8 @@ git pull origin main
 uv pip install -e ".[all]"
 
 # Check for new config options
-hermes config check
-hermes config migrate   # Interactively add any missing options
+th config check
+th config migrate   # Interactively add any missing options
 ```
 
 ### 回滚说明
@@ -187,7 +187,7 @@ git submodule update --init --recursive
 uv pip install -e ".[all]"
 
 # Restart the gateway if running
-hermes gateway restart
+th gateway restart
 ```
 
 回滚到特定发布标签：
@@ -199,7 +199,7 @@ uv pip install -e ".[all]"
 ```
 
 :::warning
-如果新增了配置选项，回滚可能导致配置不兼容。回滚后运行 `hermes config check`，如果遇到错误，请从 `config.yaml` 中删除无法识别的选项。
+如果新增了配置选项，回滚可能导致配置不兼容。回滚后运行 `th config check`，如果遇到错误，请从 `config.yaml` 中删除无法识别的选项。
 :::
 
 ### Nix 用户注意事项
@@ -229,7 +229,7 @@ nix profile rollback
 ### Git 安装方式
 
 ```bash
-hermes uninstall
+th uninstall
 ```
 
 卸载程序会提供选项，让你保留配置文件（`~/.teamhermes/`）以便将来重新安装。
@@ -244,7 +244,7 @@ rm -rf ~/.teamhermes            # 可选 — 如计划重新安装则保留
 ### 手动卸载
 
 ```bash
-rm -f ~/.local/bin/hermes
+rm -f ~/.local/bin/th
 rm -rf /path/to/hermes-agent
 rm -rf ~/.teamhermes            # 可选 — 如计划重新安装则保留
 ```
@@ -252,7 +252,7 @@ rm -rf ~/.teamhermes            # 可选 — 如计划重新安装则保留
 :::info
 如果你将 gateway 安装为系统服务，请先停止并禁用它：
 ```bash
-hermes gateway stop
+th gateway stop
 # Linux: systemctl --user disable hermes-gateway
 # macOS: launchctl remove ai.teamhermes.gateway
 ```

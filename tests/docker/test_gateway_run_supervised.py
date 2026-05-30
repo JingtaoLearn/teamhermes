@@ -15,7 +15,7 @@ These tests verify the three load-bearing properties of that redirect:
   3. The supervised process itself does NOT recurse — the
      ``HERMES_S6_SUPERVISED_CHILD`` sentinel breaks the loop.
 
-Every ``docker exec`` runs as ``hermes`` per the conftest module
+Every ``docker exec`` runs as ``th`` per the conftest module
 docstring; see ``tests/docker/conftest.py`` for rationale.
 """
 from __future__ import annotations
@@ -134,7 +134,7 @@ def test_gateway_run_no_supervise_flag_preserves_legacy_behavior(
 
     Three positive assertions confirm we took the pre-s6 path:
 
-      * The CMD process is a python ``hermes gateway run`` invocation
+      * The CMD process is a python ``th gateway run`` invocation
         (not ``sleep infinity``).
       * The ``gateway-default`` s6 service slot is NOT created.
       * No supervision-redirect breadcrumb appears in docker logs.
@@ -247,11 +247,11 @@ def test_supervised_gateway_does_not_recurse(
     built_image: str, container_name: str,
 ) -> None:
     """The HERMES_S6_SUPERVISED_CHILD sentinel must prevent the
-    supervised ``hermes gateway run`` from re-entering the redirect.
+    supervised ``th gateway run`` from re-entering the redirect.
 
     If recursion happened, every supervised gateway start would itself
     re-dispatch to s6 and exec ``sleep infinity`` — so the supervised
-    gateway slot would never actually run a python ``hermes gateway
+    gateway slot would never actually run a python ``th gateway
     run`` process. The slot would oscillate or settle into a state
     with no python in the supervise tree at all.
 
@@ -267,7 +267,7 @@ def test_supervised_gateway_does_not_recurse(
     )
     time.sleep(6)
 
-    # Count python processes running `hermes gateway run`. If the
+    # Count python processes running `th gateway run`. If the
     # recursion guard fails, s6 would respawn fresh `gateway run`
     # processes on every cycle, leaving multiple Python-process
     # descendants under the gateway-default supervise tree.
@@ -275,7 +275,7 @@ def test_supervised_gateway_does_not_recurse(
     assert r.returncode == 0
     n = int(r.stdout.strip() or 0)
     assert n <= 1, (
-        f"expected at most one supervised python `hermes gateway run` "
+        f"expected at most one supervised python `th gateway run` "
         f"process (the legitimately-supervised gateway); found {n}. "
         f"Recursion guard may have failed. "
         f"ps:\n{_sh(container_name, 'ps -eo pid,ppid,cmd').stdout}"

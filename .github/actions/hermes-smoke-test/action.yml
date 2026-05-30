@@ -18,7 +18,7 @@ runs:
       shell: bash
       run: |
         # The image runs as the hermes user (UID 10000).  GitHub Actions
-        # creates /tmp/hermes-test root-owned by default, which hermes
+        # creates /tmp/hermes-test root-owned by default, which th
         # can't write to — chown it to match the in-container UID before
         # bind-mounting.  Real users doing `docker run -v ~/.teamhermes:...`
         # with their own UID hit the same issue and have their own
@@ -26,7 +26,7 @@ runs:
         mkdir -p /tmp/hermes-test
         sudo chown -R 10000:10000 /tmp/hermes-test
 
-    - name: hermes --help
+    - name: th --help
       shell: bash
       run: |
         # Use the image's real ENTRYPOINT (/init + main-wrapper.sh) so
@@ -38,7 +38,7 @@ runs:
           -v /tmp/hermes-test:/opt/data \
           "${{ inputs.image }}" --help
 
-    - name: hermes dashboard --help
+    - name: th dashboard --help
       shell: bash
       run: |
         # Regression guard for #9153: dashboard was present in source but

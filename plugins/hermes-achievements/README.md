@@ -2,7 +2,7 @@
 
 > **Bundled with TeamHermes Agent.** Originally authored by [@PCinkusz](https://github.com/PCinkusz) at https://github.com/PCinkusz/hermes-achievements — vendored into `plugins/hermes-achievements/` so it ships with the dashboard out-of-the-box and stays in lockstep with TeamHermes feature changes. Upstream repo remains the staging ground for new badges and UI iteration.
 >
-> When TeamHermes is installed via `pip install hermes-agent` or cloned from source, this plugin auto-registers as a dashboard tab on first `hermes dashboard` launch. No separate install step. See [Built-in Plugins → hermes-achievements](../../website/docs/user-guide/features/built-in-plugins.md) in the main docs.
+> When TeamHermes is installed via `pip install hermes-agent` or cloned from source, this plugin auto-registers as a dashboard tab on first `th dashboard` launch. No separate install step. See [Built-in Plugins → hermes-achievements](../../website/docs/user-guide/features/built-in-plugins.md) in the main docs.
 
 Achievement system for the TeamHermes Dashboard: collectible, tiered badges generated from real local TeamHermes session history.
 
@@ -77,7 +77,7 @@ Then rescan dashboard plugins:
 curl http://127.0.0.1:9119/api/dashboard/plugins/rescan
 ```
 
-If backend API routes 404, restart `hermes dashboard`; plugin APIs are mounted at dashboard startup.
+If backend API routes 404, restart `th dashboard`; plugin APIs are mounted at dashboard startup.
 
 ## Updating
 
@@ -89,7 +89,7 @@ git pull --ff-only
 curl http://127.0.0.1:9119/api/dashboard/plugins/rescan
 ```
 
-If the update changes backend routes or `plugin_api.py`, restart `hermes dashboard` after pulling.
+If the update changes backend routes or `plugin_api.py`, restart `th dashboard` after pulling.
 
 As of 2026-04-29, updating is strongly recommended because scan performance changed significantly:
 - removed duplicate `/overview` scan path

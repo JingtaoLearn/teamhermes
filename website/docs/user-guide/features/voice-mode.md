@@ -15,15 +15,15 @@ If you want a practical setup walkthrough with recommended configurations and re
 Before using voice features, make sure you have:
 
 1. **TeamHermes Agent installed** — `pip install hermes-agent` (see [Installation](/getting-started/installation))
-2. **An LLM provider configured** — run `hermes model` or set your preferred provider credentials in `~/.teamhermes/.env`
-3. **A working base setup** — run `hermes` to verify the agent responds to text before enabling voice
+2. **An LLM provider configured** — run `th model` or set your preferred provider credentials in `~/.teamhermes/.env`
+3. **A working base setup** — run `th` to verify the agent responds to text before enabling voice
 
 :::tip
-The `~/.teamhermes/` directory and default `config.yaml` are created automatically the first time you run `hermes`. You only need to create `~/.teamhermes/.env` manually for API keys.
+The `~/.teamhermes/` directory and default `config.yaml` are created automatically the first time you run `th`. You only need to create `~/.teamhermes/.env` manually for API keys.
 :::
 
 :::tip Nous Portal covers both
-A paid [Nous Portal](/user-guide/features/tool-gateway) subscription supplies the LLM (step 2) **and** OpenAI TTS via the Tool Gateway — no separate OpenAI key needed. On a fresh install, `hermes setup --portal` wires both up at once.
+A paid [Nous Portal](/user-guide/features/tool-gateway) subscription supplies the LLM (step 2) **and** OpenAI TTS via the Tool Gateway — no separate OpenAI key needed. On a fresh install, `th setup --portal` wires both up at once.
 :::
 
 ## Overview
@@ -109,7 +109,7 @@ If `faster-whisper` is installed, voice mode works with **zero API keys** for ST
 
 ## CLI Voice Mode
 
-Voice mode is available in both the **classic CLI** (`hermes chat`) and the **TUI** (`hermes --tui`). Behavior is identical across both — same slash commands, same VAD silence detection, same streaming TTS, same hallucination filter. The TUI additionally forwards crash-forensic logs to `~/.teamhermes/logs/` so push-to-talk failures on exotic audio backends can be reported with a full stack trace rather than disappearing silently.
+Voice mode is available in both the **classic CLI** (`th chat`) and the **TUI** (`th --tui`). Behavior is identical across both — same slash commands, same VAD silence detection, same streaming TTS, same hallucination filter. The TUI additionally forwards crash-forensic logs to `~/.teamhermes/logs/` so push-to-talk failures on exotic audio backends can be reported with a full stack trace rather than disappearing silently.
 
 ### Quick Start
 
@@ -131,7 +131,7 @@ Then use these commands inside the CLI:
 
 ### How It Works
 
-1. Start the CLI with `hermes` and enable voice mode with `/voice on`
+1. Start the CLI with `th` and enable voice mode with `/voice on`
 2. **Press Ctrl+B** — a beep plays (880Hz), recording starts
 3. **Speak** — a live audio level bar shows your input: `● [▁▂▃▅▇▇▅▂] ❯`
 4. **Stop speaking** — after 3 seconds of silence, recording auto-stops
@@ -180,8 +180,8 @@ If you haven't set up your messaging bots yet, see the platform-specific guides:
 Start the gateway to connect to your messaging platforms:
 
 ```bash
-hermes gateway        # Start the gateway (connects to configured platforms)
-hermes gateway setup  # Interactive setup wizard for first-time configuration
+th gateway        # Start the gateway (connects to configured platforms)
+th gateway setup  # Interactive setup wizard for first-time configuration
 ```
 
 ### Discord: Channels vs DMs
@@ -326,7 +326,7 @@ DISCORD_ALLOWED_USERS=your-user-id
 ### Start the Gateway
 
 ```bash
-hermes gateway        # Start with existing configuration
+th gateway        # Start with existing configuration
 ```
 
 The bot should come online in Discord within a few seconds.

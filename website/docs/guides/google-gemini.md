@@ -27,13 +27,13 @@ Set `GOOGLE_API_KEY` or `GEMINI_API_KEY`. TeamHermes checks both names for the `
 echo "GOOGLE_API_KEY=..." >> ~/.teamhermes/.env
 
 # Select Gemini as your provider
-hermes model
+th model
 # → Choose "More providers..." → "Google AI Studio"
 # → TeamHermes checks your key tier and shows Gemini models
 # → Select a model
 
 # Start chatting
-hermes chat
+th chat
 ```
 
 If you prefer direct config editing, use the native Gemini API base URL:
@@ -47,7 +47,7 @@ model:
 
 ## Configuration
 
-After running `hermes model`, your `~/.teamhermes/config.yaml` will contain:
+After running `th model`, your `~/.teamhermes/config.yaml` will contain:
 
 ```yaml
 model:
@@ -105,7 +105,7 @@ GEMINI_BASE_URL=https://generativelanguage.googleapis.com/v1beta
 TeamHermes also has a `google-gemini-cli` provider:
 
 ```bash
-hermes model
+th model
 # → Choose "Google Gemini (OAuth)"
 ```
 
@@ -113,7 +113,7 @@ This uses browser PKCE login and the Cloud Code Assist backend. It can be useful
 
 ## Available Models
 
-The `hermes model` picker shows Gemini models maintained in TeamHermes' provider registry. Common choices include:
+The `th model` picker shows Gemini models maintained in TeamHermes' provider registry. Common choices include:
 
 | Model | ID | Notes |
 |-------|----|-------|
@@ -122,7 +122,7 @@ The `hermes model` picker shows Gemini models maintained in TeamHermes' provider
 | Gemini 3 Flash Preview | `gemini-3-flash-preview` | Recommended default balance of speed and capability |
 | Gemini 3.1 Flash Lite Preview | `gemini-3.1-flash-lite-preview` | Fastest / lowest-cost option when available |
 
-Model availability changes over time. If a model disappears or is not enabled for your key, run `hermes model` again and pick one from the current list.
+Model availability changes over time. If a model disappears or is not enabled for your key, run `th model` again and pick one from the current list.
 
 :::info Model IDs
 Use Gemini's native model IDs such as `gemini-3-flash-preview`, not OpenRouter-style IDs like `google/gemini-3-flash-preview`, when `provider: gemini`.
@@ -181,12 +181,12 @@ Use the `/model` command during a conversation:
 /model gemini-3.1-flash-lite-preview
 ```
 
-If you have not configured Gemini yet, exit the session and run `hermes model` first. `/model` switches among already-configured providers and models; it does not collect new API keys.
+If you have not configured Gemini yet, exit the session and run `th model` first. `/model` switches among already-configured providers and models; it does not collect new API keys.
 
 ## Diagnostics
 
 ```bash
-hermes doctor
+th doctor
 ```
 
 The doctor checks:
@@ -208,8 +208,8 @@ For OAuth quota usage, run this inside a TeamHermes session:
 Gemini works with all TeamHermes gateway platforms (Telegram, Discord, Slack, WhatsApp, LINE, Feishu, etc.). Configure Gemini as your provider, then start the gateway normally:
 
 ```bash
-hermes gateway setup
-hermes gateway start
+th gateway setup
+th gateway start
 ```
 
 The gateway reads `config.yaml` and uses the same Gemini provider configuration.
@@ -226,7 +226,7 @@ GOOGLE_API_KEY=...
 GEMINI_API_KEY=...
 ```
 
-Then run `hermes model` again.
+Then run `th model` again.
 
 ### "This Google API key is on the free tier"
 
@@ -235,14 +235,14 @@ TeamHermes probes Gemini API keys during setup. Free-tier quotas can be exhauste
 Enable billing on the Google Cloud project attached to your key, regenerate the key if needed, then run:
 
 ```bash
-hermes model
+th model
 ```
 
 ### "404 model not found"
 
-The selected model is not available for your account, region, or key. Run `hermes model` again and pick another Gemini model from the current list.
+The selected model is not available for your account, region, or key. Run `th model` again and pick another Gemini model from the current list.
 
-### Gemma model is not shown in `hermes model`
+### Gemma model is not shown in `th model`
 
 TeamHermes may hide low-throughput Gemma models from the picker by default. If you intentionally want to evaluate one, set the model ID directly in `~/.teamhermes/config.yaml`.
 
@@ -270,7 +270,7 @@ The `google-gemini-cli` provider uses a Gemini CLI / Cloud Code Assist OAuth flo
 
 ### Tool calling fails with schema errors
 
-Upgrade TeamHermes and rerun `hermes model`. The native Gemini adapter sanitizes tool schemas for Gemini's stricter function-declaration format; older builds or custom endpoints may not.
+Upgrade TeamHermes and rerun `th model`. The native Gemini adapter sanitizes tool schemas for Gemini's stricter function-declaration format; older builds or custom endpoints may not.
 
 ## Related
 

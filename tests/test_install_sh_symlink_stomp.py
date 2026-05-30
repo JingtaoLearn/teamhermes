@@ -2,10 +2,10 @@
 
 Older versions of ``install.sh`` created ``$command_link_dir/hermes`` as a
 symlink to the pip-generated entry point at ``$HERMES_BIN`` (i.e.
-``venv/bin/hermes``). When ``setup_path()`` later switched to writing a bash
+``venv/bin/th``). When ``setup_path()`` later switched to writing a bash
 shim with ``cat > "$command_link_dir/hermes" <<EOF``, the redirect followed
 the existing symlink and overwrote the pip entry point with the shim. The
-shim's ``exec "$HERMES_BIN" "$@"`` then self-recursed and ``hermes`` hung on
+shim's ``exec "$HERMES_BIN" "$@"`` then self-recursed and ``th`` hung on
 every invocation.
 
 These tests pin the fix: ``setup_path()`` must remove ``$command_link_dir/hermes``
@@ -63,15 +63,15 @@ def test_re_running_setup_path_block_preserves_pip_entry_point(tmp_path: Path) -
     Layout mirrors a real install:
 
         tmp/
-          venv/bin/hermes        <- pip entry point (the one we must preserve)
-          local_bin/hermes       <- symlink → ../venv/bin/hermes  (old install)
+          venv/bin/th        <- pip entry point (the one we must preserve)
+          local_bin/th       <- symlink → ../venv/bin/th  (old install)
 
     Then we run the exact shim-write block from setup_path() with
     ``HERMES_BIN`` and ``command_link_dir`` pointed at this fixture. The fix
     requires that, after the run:
 
-      * ``venv/bin/hermes`` still contains its original pip-script body
-      * ``local_bin/hermes`` is a regular file (not a symlink) holding the shim
+      * ``venv/bin/th`` still contains its original pip-script body
+      * ``local_bin/th`` is a regular file (not a symlink) holding the shim
     """
     venv_bin = tmp_path / "venv" / "bin"
     venv_bin.mkdir(parents=True)
@@ -104,7 +104,7 @@ def test_re_running_setup_path_block_preserves_pip_entry_point(tmp_path: Path) -
     # The pip entry point must still be the original pip script — not a
     # re-written self-recursing bash shim.
     assert pip_entry.read_text() == pip_marker, (
-        "venv/bin/hermes was overwritten by setup_path() — symlink-stomp "
+        "venv/bin/th was overwritten by setup_path() — symlink-stomp "
         "regression (#21454)."
     )
 

@@ -1,4 +1,4 @@
-"""``hermes portal`` — small CLI surface for Nous Portal users.
+"""``th portal`` — small CLI surface for Nous Portal users.
 
 Subcommands:
   status   Show Portal auth state + which Tool Gateway tools are routed.
@@ -6,7 +6,7 @@ Subcommands:
   tools    List Tool Gateway tools and which are active in the current config.
 
 This command is intentionally minimal — it does not duplicate functionality
-already in ``hermes auth`` or ``hermes tools``. It's a discovery + status
+already in ``th auth`` or ``th tools``. It's a discovery + status
 surface for the Portal subscription itself.
 """
 from __future__ import annotations
@@ -49,7 +49,7 @@ def _cmd_status(args) -> int:
     else:
         print(f"  Auth:    {color('not logged in', Colors.YELLOW)}")
         print(f"  Sign up: {SUBSCRIPTION_URL}")
-        print(f"  Login:   hermes auth add nous --type oauth")
+        print(f"  Login:   th auth add nous --type oauth")
 
     # Provider selection (independent of auth)
     model_cfg = config.get("model") if isinstance(config.get("model"), dict) else {}
@@ -57,7 +57,7 @@ def _cmd_status(args) -> int:
     if provider == "nous":
         print(f"  Model:   {color('✓ using Nous as inference provider', Colors.GREEN)}")
     elif provider:
-        print(f"  Model:   currently {provider} (switch with `hermes model`)")
+        print(f"  Model:   currently {provider} (switch with `th model`)")
 
     # Tool Gateway routing
     print()
@@ -134,7 +134,7 @@ def _cmd_tools(args) -> int:
     print(color("  ────────────────────", Colors.MAGENTA))
 
     if not features.nous_auth_present:
-        print(color("  Not logged into Nous Portal — sign in with `hermes auth add nous --type oauth`.", Colors.YELLOW))
+        print(color("  Not logged into Nous Portal — sign in with `th auth add nous --type oauth`.", Colors.YELLOW))
         print()
 
     label_width = max(len(label) for _, label, _ in catalog)
@@ -159,7 +159,7 @@ def _cmd_tools(args) -> int:
 
 
 def portal_command(args) -> int:
-    """Top-level dispatch for `hermes portal <subcommand>`."""
+    """Top-level dispatch for `th portal <subcommand>`."""
     sub = getattr(args, "portal_command", None)
     if sub in {None, ""}:
         # Default to status — matches gh / kubectl conventions where the
@@ -172,12 +172,12 @@ def portal_command(args) -> int:
     if sub == "tools":
         return _cmd_tools(args)
     print(f"Unknown portal subcommand: {sub}", file=sys.stderr)
-    print("Run `hermes portal -h` for usage.", file=sys.stderr)
+    print("Run `th portal -h` for usage.", file=sys.stderr)
     return 1
 
 
 def add_parser(subparsers) -> None:
-    """Register `hermes portal` on the given argparse subparsers object."""
+    """Register `th portal` on the given argparse subparsers object."""
     portal_parser = subparsers.add_parser(
         "portal",
         help="Nous Portal status, subscription, and Tool Gateway routing",

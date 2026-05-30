@@ -2,10 +2,10 @@
 Unified self-relaunch for TeamHermes CLI.
 
 Preserves critical flags (--tui, --dev, --profile, --model, etc.) across
-process replacement so that ``hermes sessions browse`` or post-setup relaunch
+process replacement so that ``th sessions browse`` or post-setup relaunch
 doesn't silently drop the user's UI mode or other preferences.
 
-Also works when ``hermes`` is not on PATH (e.g. ``nix run`` or ``python -m``).
+Also works when ``th`` is not on PATH (e.g. ``nix run`` or ``python -m``).
 """
 
 import os
@@ -22,7 +22,7 @@ from hermes_cli._parser import (
 def _build_inherited_flag_table() -> list[tuple[str, bool]]:
     """Build the ``(option_string, takes_value)`` table of flags that must
     survive a self-relaunch, by introspecting the real parser used by
-    ``hermes`` itself.
+    ``th`` itself.
 
     A flag participates if its argparse Action carries
     ``inherit_on_relaunch = True`` — set by ``_parser._inherited_flag``.
@@ -82,7 +82,7 @@ def resolve_hermes_bin() -> Optional[str]:
 
     Priority:
       1. ``sys.argv[0]`` if it resolves to a real executable.
-      2. ``shutil.which("hermes")`` on PATH.
+      2. ``shutil.which("th")`` on PATH.
       3. ``None`` → caller should fall back to ``python -m hermes_cli.main``.
 
     Windows note: ``os.access(path, os.X_OK)`` returns True for ``.py`` and
@@ -114,7 +114,7 @@ def resolve_hermes_bin() -> Optional[str]:
                 return abs_path
 
     # PATH lookup
-    path_bin = shutil.which("hermes")
+    path_bin = shutil.which("th")
     if path_bin:
         return path_bin
 
@@ -192,7 +192,7 @@ def relaunch(
         except OSError as exc:
             # Surface a helpful error rather than the raw OSError — the
             # caller used to see ``[Errno 8] Exec format error`` which is
-            # cryptic.  Common causes: ``hermes`` not on PATH yet (install
+            # cryptic.  Common causes: ``th`` not on PATH yet (install
             # hasn't propagated User PATH into this shell) or a stale shim.
             print(
                 f"\nHermes relaunch failed: {exc}\n"

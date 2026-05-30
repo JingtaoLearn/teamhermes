@@ -20,7 +20,7 @@ This page shows how to combine worktrees with TeamHermes so each session has a c
 
 TeamHermes treats the **current working directory** as the project root:
 
-- CLI: the directory where you run `hermes` or `hermes chat`
+- CLI: the directory where you run `th` or `th chat`
 - Messaging gateways: the directory set by `terminal.cwd` in `~/.teamhermes/config.yaml`
 
 If you run multiple agents in the **same checkout**, their changes can interfere with each other:
@@ -137,13 +137,13 @@ Notes:
 - **Avoid running TeamHermes from the bare repo root when using worktrees**
   - Prefer the worktree directories instead, so each agent has a clear scope.
 
-## Using `hermes -w` (Automatic Worktree Mode)
+## Using `th -w` (Automatic Worktree Mode)
 
 TeamHermes has a built‑in `-w` flag that **automatically creates a disposable git worktree** with its own branch. You don't need to set up worktrees manually — just `cd` into your repo and run:
 
 ```bash
 cd /path/to/your/repo
-hermes -w
+th -w
 ```
 
 TeamHermes will:
@@ -155,10 +155,10 @@ TeamHermes will:
 This is the easiest way to get worktree isolation. You can also combine it with a single query:
 
 ```bash
-hermes -w -q "Fix issue #123"
+th -w -q "Fix issue #123"
 ```
 
-For parallel agents, open multiple terminals and run `hermes -w` in each — every invocation gets its own worktree and branch automatically.
+For parallel agents, open multiple terminals and run `th -w` in each — every invocation gets its own worktree and branch automatically.
 
 ## Putting It All Together
 

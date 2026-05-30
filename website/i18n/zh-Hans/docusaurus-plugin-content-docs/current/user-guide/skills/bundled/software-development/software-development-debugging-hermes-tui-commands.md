@@ -159,7 +159,7 @@ TUI frontend (ui-tui/src/app/slash/)        <- 本地处理器 + fallthrough
 
 2. 运行 TUI 并测试命令：
    ```bash
-   hermes --tui
+   th --tui
    ```
 
 3. 输入 `/` 并验证命令出现在自动补全建议中，且显示预期的描述和参数提示。

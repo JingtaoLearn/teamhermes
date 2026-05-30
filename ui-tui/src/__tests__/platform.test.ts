@@ -438,7 +438,7 @@ describe('isVoiceToggleKey honours configured record key (#18994)', () => {
 
   // Regressions from Copilot review on #19835: the previous implementation
   // accepted ``isActionMod(key)`` in the ``ctrl`` branch for every
-  // configured key, so bare Esc (which hermes-ink reports with
+  // configured key, so bare Esc (which th-ink reports with
   // ``key.meta`` on some macOS terminals) fired ``ctrl+escape``, and
   // Alt+Space / Alt+Tab fired ``ctrl+space`` / ``ctrl+tab``. The fallback
   // is now gated to the documented default (``ctrl+b``) only.

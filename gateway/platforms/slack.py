@@ -634,12 +634,12 @@ class SlackAdapter(BasePlatformAdapter):
             #
             # Every gateway command from COMMAND_REGISTRY is a native Slack
             # slash, matching Discord and Telegram's model (e.g. /btw, /stop,
-            # /model work directly without /hermes prefix). A single regex
+            # /model work directly without /th prefix). A single regex
             # matcher dispatches all of them to one handler so we don't need
             # N identical @app.command() decorators.
             #
             # The slash commands must ALSO be declared in the Slack app
-            # manifest (see `hermes slack manifest`). In Socket Mode, Slack
+            # manifest (see `th slack manifest`). In Socket Mode, Slack
             # routes the command event through the socket regardless of the
             # manifest's request URL, but it will not deliver an event for
             # a slash command the manifest doesn't declare.

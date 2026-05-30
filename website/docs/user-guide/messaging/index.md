@@ -111,7 +111,7 @@ Each platform adapter receives messages, routes them through a per-chat session 
 The easiest way to configure messaging platforms is the interactive wizard:
 
 ```bash
-hermes gateway setup        # Interactive setup for all messaging platforms
+th gateway setup        # Interactive setup for all messaging platforms
 ```
 
 This walks you through configuring each platform with arrow-key selection, shows which platforms are already configured, and offers to start/restart the gateway when done.
@@ -119,14 +119,14 @@ This walks you through configuring each platform with arrow-key selection, shows
 ## Gateway Commands
 
 ```bash
-hermes gateway              # Run in foreground
-hermes gateway setup        # Configure messaging platforms interactively
-hermes gateway install      # Install as a user service (Linux) / launchd service (macOS)
-sudo hermes gateway install --system   # Linux only: install a boot-time system service
-hermes gateway start        # Start the default service
-hermes gateway stop         # Stop the default service
-hermes gateway status       # Check default service status
-hermes gateway status --system         # Linux only: inspect the system service explicitly
+th gateway              # Run in foreground
+th gateway setup        # Configure messaging platforms interactively
+th gateway install      # Install as a user service (Linux) / launchd service (macOS)
+sudo th gateway install --system   # Linux only: install a boot-time system service
+th gateway start        # Start the default service
+th gateway stop         # Stop the default service
+th gateway status       # Check default service status
+th gateway status --system         # Linux only: inspect the system service explicitly
 ```
 
 ## Chat Commands (Inside Messaging)
@@ -218,11 +218,11 @@ Instead of manually configuring user IDs, unknown users receive a one-time pairi
 ```bash
 # The user sees: "Pairing code: XKGH5N7P"
 # You approve them with:
-hermes pairing approve telegram XKGH5N7P
+th pairing approve telegram XKGH5N7P
 
 # Other pairing commands:
-hermes pairing list          # View pending + approved users
-hermes pairing revoke telegram 123456789  # Remove access
+th pairing list          # View pending + approved users
+th pairing revoke telegram 123456789  # Remove access
 ```
 
 Pairing codes expire after 1 hour, are rate-limited, and use cryptographic randomness.
@@ -370,19 +370,19 @@ Background tasks on messaging platforms are fire-and-forget — you don't need t
 ### Linux (systemd)
 
 ```bash
-hermes gateway install               # Install as user service
-hermes gateway start                 # Start the service
-hermes gateway stop                  # Stop the service
-hermes gateway status                # Check status
+th gateway install               # Install as user service
+th gateway start                 # Start the service
+th gateway stop                  # Stop the service
+th gateway status                # Check status
 journalctl --user -u hermes-gateway -f  # View logs
 
 # Enable lingering (keeps running after logout)
 sudo loginctl enable-linger $USER
 
 # Or install a boot-time system service that still runs as your user
-sudo hermes gateway install --system
-sudo hermes gateway start --system
-sudo hermes gateway status --system
+sudo th gateway install --system
+sudo th gateway start --system
+sudo th gateway status --system
 journalctl -u hermes-gateway -f
 ```
 
@@ -391,16 +391,16 @@ Use the user service on laptops and dev boxes. Use the system service on VPS or 
 Avoid keeping both the user and system gateway units installed at once unless you really mean to. TeamHermes will warn if it detects both because start/stop/status behavior gets ambiguous.
 
 :::info Multiple installations
-If you run multiple TeamHermes installations on the same machine (with different `HERMES_HOME` directories), each gets its own systemd service name. The default `~/.teamhermes` uses `hermes-gateway`; other installations use `hermes-gateway-<hash>`. The `hermes gateway` commands automatically target the correct service for your current `HERMES_HOME`.
+If you run multiple TeamHermes installations on the same machine (with different `HERMES_HOME` directories), each gets its own systemd service name. The default `~/.teamhermes` uses `hermes-gateway`; other installations use `hermes-gateway-<hash>`. The `th gateway` commands automatically target the correct service for your current `HERMES_HOME`.
 :::
 
 ### macOS (launchd)
 
 ```bash
-hermes gateway install               # Install as launchd agent
-hermes gateway start                 # Start the service
-hermes gateway stop                  # Stop the service
-hermes gateway status                # Check status
+th gateway install               # Install as launchd agent
+th gateway start                 # Start the service
+th gateway stop                  # Stop the service
+th gateway status                # Check status
 tail -f ~/.teamhermes/logs/gateway.log   # View logs
 ```
 
@@ -411,7 +411,7 @@ The generated plist lives at `~/Library/LaunchAgents/ai.teamhermes.gateway.plist
 - **HERMES_HOME** — scopes the gateway to your TeamHermes installation.
 
 :::tip PATH changes after install
-launchd plists are static — if you install new tools (e.g. a new Node.js version via nvm, or ffmpeg via Homebrew) after setting up the gateway, run `hermes gateway install` again to capture the updated PATH. The gateway will detect the stale plist and reload automatically.
+launchd plists are static — if you install new tools (e.g. a new Node.js version via nvm, or ffmpeg via Homebrew) after setting up the gateway, run `th gateway install` again to capture the updated PATH. The gateway will detect the stale plist and reload automatically.
 :::
 
 :::info Multiple installations

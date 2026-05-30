@@ -8,7 +8,7 @@ description: "Set up TeamHermes Agent as a WhatsApp bot via the built-in Baileys
 
 TeamHermes connects to WhatsApp through a built-in bridge based on **Baileys**. This works by emulating a WhatsApp Web session — **not** through the official WhatsApp Business API. No Meta developer account or Business verification is required.
 
-> Run `hermes gateway setup` and pick **WhatsApp** for a guided walk-through.
+> Run `th gateway setup` and pick **WhatsApp** for a guided walk-through.
 
 :::warning Unofficial API — Ban Risk
 WhatsApp does **not** officially support third-party bots outside the Business API. Using a third-party bridge carries a small risk of account restrictions. To minimize risk:
@@ -44,7 +44,7 @@ Unlike older browser-driven bridges, the current Baileys-based bridge does **not
 ## Step 1: Run the Setup Wizard
 
 ```bash
-hermes whatsapp
+th whatsapp
 ```
 
 The wizard will:
@@ -84,7 +84,7 @@ After getting the number:
 
 1. Install WhatsApp on a phone (or use WhatsApp Business app with dual-SIM)
 2. Register the new number with WhatsApp
-3. Run `hermes whatsapp` and scan the QR code from that WhatsApp account
+3. Run `th whatsapp` and scan the QR code from that WhatsApp account
 
 ---
 
@@ -125,9 +125,9 @@ whatsapp:
 Then start the gateway:
 
 ```bash
-hermes gateway              # Foreground
-hermes gateway install      # Install as a user service
-sudo hermes gateway install --system   # Linux only: boot-time system service
+th gateway              # Foreground
+th gateway install      # Install as a user service
+sudo th gateway install --system   # Linux only: boot-time system service
 ```
 
 The gateway starts the WhatsApp bridge automatically using the saved session.
@@ -150,7 +150,7 @@ If the session breaks (phone reset, WhatsApp update, manually unlinked), you'll 
 errors in the gateway logs. To fix it:
 
 ```bash
-hermes whatsapp
+th whatsapp
 ```
 
 This generates a fresh QR code. Scan it again and the session is re-established. The gateway
@@ -208,12 +208,12 @@ When the agent calls tools (web search, file operations, etc.), WhatsApp display
 | Problem | Solution |
 |---------|----------|
 | **QR code not scanning** | Ensure terminal is wide enough (60+ columns). Try a different terminal. Make sure you're scanning from the correct WhatsApp account (bot number, not personal). |
-| **QR code expires** | QR codes refresh every ~20 seconds. If it times out, restart `hermes whatsapp`. |
+| **QR code expires** | QR codes refresh every ~20 seconds. If it times out, restart `th whatsapp`. |
 | **Session not persisting** | Check that `~/.teamhermes/platforms/whatsapp/session` exists and is writable. If containerized, mount it as a persistent volume. |
-| **Logged out unexpectedly** | WhatsApp unlinks devices after long inactivity. Keep the phone on and connected to the network, then re-pair with `hermes whatsapp` if needed. |
+| **Logged out unexpectedly** | WhatsApp unlinks devices after long inactivity. Keep the phone on and connected to the network, then re-pair with `th whatsapp` if needed. |
 | **Bridge crashes or reconnect loops** | Restart the gateway, update TeamHermes, and re-pair if the session was invalidated by a WhatsApp protocol change. |
 | **Bot stops working after WhatsApp update** | Update TeamHermes to get the latest bridge version, then re-pair. |
-| **macOS: "Node.js not installed" but node works in terminal** | launchd services don't inherit your shell PATH. Run `hermes gateway install` to re-snapshot your current PATH into the plist, then `hermes gateway start`. See the [Gateway Service docs](./index.md#macos-launchd) for details. |
+| **macOS: "Node.js not installed" but node works in terminal** | launchd services don't inherit your shell PATH. Run `th gateway install` to re-snapshot your current PATH into the plist, then `th gateway start`. See the [Gateway Service docs](./index.md#macos-launchd) for details. |
 | **Messages not being received** | Verify `WHATSAPP_ALLOWED_USERS` includes the sender's number (with country code, no `+` or spaces), or set it to `*` to allow everyone. Set `WHATSAPP_DEBUG=true` in `.env` and restart the gateway to see raw message events in `bridge.log`. |
 | **Bot replies to strangers with a pairing code** | Set `whatsapp.unauthorized_dm_behavior: ignore` in `~/.teamhermes/config.yaml` if you want unauthorized DMs to be silently ignored instead. |
 

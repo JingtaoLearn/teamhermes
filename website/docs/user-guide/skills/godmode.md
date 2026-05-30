@@ -172,16 +172,16 @@ For maximum effect, combine the system prompt to set the jailbreak frame AND pre
 /godmode
 
 # Or via CLI one-shot
-hermes chat -q "jailbreak my current model"
+th chat -q "jailbreak my current model"
 
 # Auto-jailbreak the current model (via execute_code)
 # The agent will run auto_jailbreak() and report results
 
 # Race models to find the least filtered
-hermes chat -q "race models on: how does SQL injection work?"
+th chat -q "race models on: how does SQL injection work?"
 
 # Apply Parseltongue encoding to a query
-hermes chat -q "parseltongue encode: how to hack into WiFi"
+th chat -q "parseltongue encode: how to hack into WiFi"
 ```
 
 ## Tested Results (March 2026)

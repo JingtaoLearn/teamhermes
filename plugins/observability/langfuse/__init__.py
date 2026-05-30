@@ -3,9 +3,9 @@
 Traces TeamHermes conversations, LLM calls, and tool usage to Langfuse.
 
 Activation is handled by the TeamHermes plugin system — standalone plugins only
-load when listed in ``plugins.enabled`` (via ``hermes plugins enable
+load when listed in ``plugins.enabled`` (via ``th plugins enable
 observability/langfuse``, or by checking the box in the interactive
-``hermes plugins`` UI). At runtime the plugin also requires the
+``th plugins`` UI). At runtime the plugin also requires the
 ``langfuse`` SDK and credentials; if either is missing the hooks are inert.
 
 Required env vars (set in ~/.teamhermes/.env):

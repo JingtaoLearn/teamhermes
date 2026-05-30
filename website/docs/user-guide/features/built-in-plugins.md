@@ -22,14 +22,14 @@ The `PluginManager` scans four sources, in order:
 
 On name collision, later sources win — a user plugin named `disk-cleanup` would replace the bundled one.
 
-`plugins/memory/` and `plugins/context_engine/` are deliberately excluded from bundled scanning. Those directories use their own discovery paths because memory providers and context engines are single-select providers configured through `hermes memory setup` / `context.engine` in config.
+`plugins/memory/` and `plugins/context_engine/` are deliberately excluded from bundled scanning. Those directories use their own discovery paths because memory providers and context engines are single-select providers configured through `th memory setup` / `context.engine` in config.
 
 ## Bundled plugins are opt-in
 
-Bundled plugins ship disabled. Discovery finds them (they appear in `hermes plugins list` and the interactive `hermes plugins` UI), but none load until you explicitly enable them:
+Bundled plugins ship disabled. Discovery finds them (they appear in `th plugins list` and the interactive `th plugins` UI), but none load until you explicitly enable them:
 
 ```bash
-hermes plugins enable disk-cleanup
+th plugins enable disk-cleanup
 ```
 
 Or via `~/.teamhermes/config.yaml`:
@@ -45,13 +45,13 @@ This is the same mechanism user-installed plugins use. Bundled plugins are never
 To turn a bundled plugin off again:
 
 ```bash
-hermes plugins disable disk-cleanup
+th plugins disable disk-cleanup
 # or: remove it from plugins.enabled in config.yaml
 ```
 
 ## Currently shipped
 
-The repo ships these bundled plugins under `plugins/`. All are opt-in — enable them via `hermes plugins enable <name>`.
+The repo ships these bundled plugins under `plugins/`. All are opt-in — enable them via `th plugins enable <name>`.
 
 | Plugin | Kind | Purpose |
 |---|---|---|
@@ -66,7 +66,7 @@ The repo ships these bundled plugins under `plugins/`. All are opt-in — enable
 | `hermes-achievements` | dashboard tab | Steam-style collectible badges generated from your real TeamHermes session history |
 | `kanban/dashboard` | dashboard tab | Kanban board UI for the multi-agent dispatcher — tasks, comments, fan-out, board switching. See [Kanban Multi-Agent](./kanban.md). |
 
-Memory providers (`plugins/memory/*`) and context engines (`plugins/context_engine/*`) are listed separately on [Memory Providers](./memory-providers.md) — they're managed through `hermes memory` and `hermes plugins` respectively. The full per-plugin detail for the two long-running hooks-based plugins follows.
+Memory providers (`plugins/memory/*`) and context engines (`plugins/context_engine/*`) are listed separately on [Memory Providers](./memory-providers.md) — they're managed through `th memory` and `th plugins` respectively. The full per-plugin detail for the two long-running hooks-based plugins follows.
 
 ### disk-cleanup
 
@@ -112,9 +112,9 @@ Auto-tracks and removes ephemeral files created during sessions — test scripts
 
 **Safety** — cleanup only ever touches paths under `HERMES_HOME` or `/tmp/hermes-*`. Windows mounts (`/mnt/c/...`) are rejected. Well-known top-level state dirs (`logs/`, `memories/`, `sessions/`, `cron/`, `cache/`, `skills/`, `plugins/`, `disk-cleanup/` itself) are never removed even when empty — a fresh install does not get gutted on first session end.
 
-**Enabling:** `hermes plugins enable disk-cleanup` (or check the box in `hermes plugins`).
+**Enabling:** `th plugins enable disk-cleanup` (or check the box in `th plugins`).
 
-**Disabling again:** `hermes plugins disable disk-cleanup`.
+**Disabling again:** `th plugins disable disk-cleanup`.
 
 ### security-guidance
 
@@ -132,15 +132,15 @@ The file is still written. The model reads the warning in the next turn's tool m
 | `SECURITY_GUIDANCE_BLOCK=1` | **block mode** — write refused, warning returned as the block reason |
 | `SECURITY_GUIDANCE_DISABLE=1` | kill switch — plugin loads but does nothing |
 
-**Enabling:** `hermes plugins enable security-guidance` (or check the box in `hermes plugins`).
+**Enabling:** `th plugins enable security-guidance` (or check the box in `th plugins`).
 
-**Disabling again:** `hermes plugins disable security-guidance`.
+**Disabling again:** `th plugins disable security-guidance`.
 
 **What it does not do (yet):** the upstream Anthropic plugin has two more layers — an LLM diff review on each agent turn that touched files, and an agentic commit-time review that traces data flow across files. Neither is ported. The agent can already run those reviews on demand via `delegate_task`.
 
 ### observability/langfuse
 
-Traces TeamHermes turns, LLM calls, and tool invocations to [Langfuse](https://langfuse.com) — an open-source LLM observability platform. One span per turn, one generation per API call, one tool observation per tool call. Usage totals, per-type token counts, and cost estimates come out of TeamHermes' canonical `agent.usage_pricing` numbers, so the Langfuse dashboard sees the same breakdown (input / output / `cache_read_input_tokens` / `cache_creation_input_tokens` / `reasoning_tokens`) that appears in `hermes logs`.
+Traces TeamHermes turns, LLM calls, and tool invocations to [Langfuse](https://langfuse.com) — an open-source LLM observability platform. One span per turn, one generation per API call, one tool observation per tool call. Usage totals, per-type token counts, and cost estimates come out of TeamHermes' canonical `agent.usage_pricing` numbers, so the Langfuse dashboard sees the same breakdown (input / output / `cache_read_input_tokens` / `cache_creation_input_tokens` / `reasoning_tokens`) that appears in `th logs`.
 
 The plugin is fail-open: no SDK installed, no credentials, or a transient Langfuse error — all turn into a silent no-op in the hook. The agent loop is never impacted.
 
@@ -148,10 +148,10 @@ The plugin is fail-open: no SDK installed, no credentials, or a transient Langfu
 
 ```bash
 pip install langfuse
-hermes plugins enable observability/langfuse
+th plugins enable observability/langfuse
 ```
 
-Or check the box in the interactive `hermes plugins` UI. Then put the credentials in `~/.teamhermes/.env`:
+Or check the box in the interactive `th plugins` UI. Then put the credentials in `~/.teamhermes/.env`:
 
 ```bash
 HERMES_LANGFUSE_PUBLIC_KEY=pk-lf-...
@@ -168,13 +168,13 @@ HERMES_LANGFUSE_BASE_URL=https://cloud.langfuse.com   # or your self-hosted URL
 | `pre_tool_call` | Start a `tool` child observation with sanitized `args`. |
 | `post_tool_call` | Close the tool observation with sanitized `result`. `read_file` payloads get summarized (head + tail + omitted-line count) so a huge file read stays under `HERMES_LANGFUSE_MAX_CHARS`. |
 
-Session grouping keys off the TeamHermes session ID (or task ID for sub-agents) via `langfuse.propagate_attributes`, so everything in a single `hermes chat` session lives under one Langfuse session.
+Session grouping keys off the TeamHermes session ID (or task ID for sub-agents) via `langfuse.propagate_attributes`, so everything in a single `th chat` session lives under one Langfuse session.
 
 **Verify:**
 
 ```bash
-hermes plugins list                 # observability/langfuse should show "enabled"
-hermes chat -q "hello"              # check the Langfuse UI for a "TeamHermes turn" trace
+th plugins list                 # observability/langfuse should show "enabled"
+th chat -q "hello"              # check the Langfuse UI for a "TeamHermes turn" trace
 ```
 
 **Optional tuning** (in `.env`):
@@ -191,7 +191,7 @@ TeamHermes-prefixed and standard SDK env vars (`LANGFUSE_PUBLIC_KEY`, `LANGFUSE_
 
 **Performance:** the Langfuse client is cached after the first hook call. If credentials or SDK are missing, that decision is also cached — subsequent hooks fast-return without re-checking env vars or reloading config.
 
-**Disabling:** `hermes plugins disable observability/langfuse`. The plugin module is still discovered, but no module code runs until you re-enable.
+**Disabling:** `th plugins disable observability/langfuse`. The plugin module is still discovered, but no module code runs until you re-enable.
 
 ### google_meet
 
@@ -207,7 +207,7 @@ Lets the agent **join, transcribe, and participate in Google Meet calls** — ta
 **Setup:**
 
 ```bash
-hermes plugins enable google_meet
+th plugins enable google_meet
 # Prompts you to sign in via the plugin's OAuth flow on first use —
 # needs a Google account with Meet access. Host approval may be required
 # if the meeting enforces "only invited participants can join".
@@ -221,7 +221,7 @@ The agent kicks off the meeting join, streams the transcription back into its co
 
 **When to use it:** recurring standups where you want a bot to transcribe + summarize for async attendees; deposition-style interviews where you want structured notes; any case where you'd otherwise need Fireflies / Otter / Grain. When you'd rather not have an AI listening in — don't enable it.
 
-**Disabling:** `hermes plugins disable google_meet`. Any cached transcripts and recordings stay in `~/.teamhermes/cache/google_meet/` until you remove them.
+**Disabling:** `th plugins disable google_meet`. Any cached transcripts and recordings stay in `~/.teamhermes/cache/google_meet/` until you remove them.
 
 ### hermes-achievements
 
@@ -270,7 +270,7 @@ Adds a **Steam-style achievements tab to the dashboard** — 60+ collectible, ti
 - Warm rescan reuses per-session stats for every session whose `started_at` + `last_active` fingerprint matches the checkpoint — completes in seconds even on large histories.
 - The in-memory snapshot TTL is 120s; stale requests serve the old snapshot immediately and kick a background refresh. You never wait on a spinner just because TTL expired.
 
-**Enabling:** Nothing to enable — `hermes-achievements` is a dashboard-only plugin (no lifecycle hooks, no model-visible tools). It auto-registers as a tab in `hermes dashboard` on first launch. The `plugins.enabled` config only gates lifecycle/tool plugins; dashboard plugins are discovered purely via their `dashboard/manifest.json`.
+**Enabling:** Nothing to enable — `hermes-achievements` is a dashboard-only plugin (no lifecycle hooks, no model-visible tools). It auto-registers as a tab in `th dashboard` on first launch. The `plugins.enabled` config only gates lifecycle/tool plugins; dashboard plugins are discovered purely via their `dashboard/manifest.json`.
 
 **Opting out:** Delete or rename `plugins/hermes-achievements/dashboard/manifest.json`, or override it with a user plugin of the same name in `~/.teamhermes/plugins/hermes-achievements/` that ships no dashboard. The plugin's state files under `$HERMES_HOME/plugins/hermes-achievements/` survive — reinstalling preserves your unlock history.
 
@@ -279,7 +279,7 @@ Adds a **Steam-style achievements tab to the dashboard** — 60+ collectible, ti
 Bundled plugins are written exactly like any other TeamHermes plugin — see [Build a TeamHermes Plugin](/guides/build-a-hermes-plugin). The only differences are:
 
 - Directory lives at `<repo>/plugins/<name>/` instead of `~/.teamhermes/plugins/<name>/`
-- Manifest source is reported as `bundled` in `hermes plugins list`
+- Manifest source is reported as `bundled` in `th plugins list`
 - User plugins with the same name override the bundled version
 
 A plugin is a good candidate for bundling when:

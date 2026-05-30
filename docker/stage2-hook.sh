@@ -205,7 +205,7 @@ s6-setuidgid hermes mkdir -p \
     "$HERMES_HOME/workspace" \
     "$HERMES_HOME/home"
 
-# --- Install-method stamp (read by detect_install_method() in hermes status) ---
+# --- Install-method stamp (read by detect_install_method() in th status) ---
 # Preserved from the tini-era entrypoint (PR #27843). Must be written as
 # the hermes user so ownership matches the file's documented owner.
 # tee is invoked directly via s6-setuidgid (no `sh -c` wrapper) for the
@@ -264,7 +264,7 @@ fi
 #
 # Fix: locate the binary at boot and export ``AGENT_BROWSER_EXECUTABLE_PATH``
 # via /run/s6/container_environment so the `with-contenv` shebang on
-# main-wrapper.sh propagates it into the supervised ``hermes`` process
+# main-wrapper.sh propagates it into the supervised ``th`` process
 # and thence to agent-browser subprocesses.
 #
 # - Skipped when the user has already set ``AGENT_BROWSER_EXECUTABLE_PATH``

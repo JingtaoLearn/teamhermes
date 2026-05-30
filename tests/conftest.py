@@ -424,7 +424,7 @@ def tmp_dir(tmp_path):
 
 @pytest.fixture()
 def mock_config():
-    """Return a minimal hermes config dict suitable for unit tests."""
+    """Return a minimal th config dict suitable for unit tests."""
     return {
         "model": "test/mock-model",
         "toolsets": ["terminal", "file"],
@@ -643,11 +643,11 @@ def _live_system_guard(request, monkeypatch):
     # ── Subprocess command-string inspection (whole-line) ──────────
     _HERMES_TOKENS = (
         "hermes-gateway",
-        "hermes.service",
+        "th.service",
         "hermes_cli.main gateway",
         "hermes_cli/main.py gateway",
         "gateway/run.py",
-        "hermes gateway",
+        "th gateway",
     )
     _MUTATING_VERBS = (
         "restart", "start", "stop", "kill", "reload",

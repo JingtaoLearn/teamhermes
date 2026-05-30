@@ -823,7 +823,7 @@ def test_cron_store_is_archived_without_config_cron_section(tmp_path: Path):
     assert Path(archived_store["destination"]).joinpath("jobs.json").exists()
 
     notes_text = (output_dir / "MIGRATION_NOTES.md").read_text(encoding="utf-8")
-    assert "Run `hermes cron` to recreate scheduled tasks" in notes_text
+    assert "Run `th cron` to recreate scheduled tasks" in notes_text
     assert "archive/cron-config.json" not in notes_text
 
 
@@ -862,7 +862,7 @@ def test_rebrand_text_replaces_openclaw_variants():
     assert mod.rebrand_text("I told Open Claw to use dark mode") == "I told TeamHermes to use dark mode"
     assert mod.rebrand_text("Open-Claw config is great") == "TeamHermes config is great"
     assert mod.rebrand_text("OPENCLAW uses tools well") == "TeamHermes uses tools well"
-    # All-lowercase matches → lowercase ``hermes``; this preserves the
+    # All-lowercase matches → lowercase ``th``; this preserves the
     # real filesystem path ``~/.teamhermes`` (TeamHermes home) when rebranding
     # memory entries that reference ``~/.openclaw`` or ``openclaw`` prose.
     assert mod.rebrand_text("openclaw should always respond concisely") == "hermes should always respond concisely"
@@ -906,7 +906,7 @@ def test_rebrand_text_preserves_filesystem_path_casing():
     assert mod.rebrand_text("Path.home() / '.openclaw'") == "Path.home() / '.teamhermes'"
     # Sentence with both lowercase path and capitalized prose.
     assert mod.rebrand_text("openclaw config path: ~/.openclaw/") == \
-        "hermes config path: ~/.teamhermes/"
+        "th config path: ~/.teamhermes/"
 
 
 def test_migrate_memory_rebrands_entries(tmp_path):

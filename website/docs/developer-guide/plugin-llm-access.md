@@ -337,7 +337,7 @@ plugins:
       llm:
         # Allow this plugin to choose a different TeamHermes provider
         # (must be one TeamHermes already knows about — same names as
-        # `hermes model` and config.yaml model.provider).
+        # `th model` and config.yaml model.provider).
         allow_provider_override: true
 
         # Optionally restrict which providers. Use ["*"] for any.

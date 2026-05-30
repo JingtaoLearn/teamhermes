@@ -214,4 +214,4 @@ delegate_task(tasks=[
 
 ## 致谢
 
-改编自 GSD（Get Shit Done）项目的 `/gsd-spike` 工作流——MIT © 2025 Lex Christopherson（[gsd-build/get-shit-done](https://github.com/gsd-build/get-shit-done)）。完整 GSD 系统提供持久化 spike 状态、MANIFEST 追踪，以及与更广泛的规格驱动开发流水线的集成；通过 `npx get-shit-done-cc --hermes --global` 安装。
+改编自 GSD（Get Shit Done）项目的 `/gsd-spike` 工作流——MIT © 2025 Lex Christopherson（[gsd-build/get-shit-done](https://github.com/gsd-build/get-shit-done)）。完整 GSD 系统提供持久化 spike 状态、MANIFEST 追踪，以及与更广泛的规格驱动开发流水线的集成；通过 `npx get-shit-done-cc --th --global` 安装。

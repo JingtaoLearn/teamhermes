@@ -821,7 +821,7 @@ class TestProfilePeerUniqueness:
     """Each TeamHermes profile can pin to its own unique peerName.
 
     Profile cloning copies host blocks, but operators routinely diverge them
-    afterwards (e.g. `hermes -p partner` pinned to a different person's peer).
+    afterwards (e.g. `th -p partner` pinned to a different person's peer).
     The resolver must honor host-level ``peerName`` so two profiles in the
     same workspace stay scoped to different Honcho peers.
     """

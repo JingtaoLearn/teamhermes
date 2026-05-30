@@ -259,7 +259,7 @@ class TestEntryPointsImportBootstrap:
 
         Also lenient about a try/except wrapper around the import: entry
         points may guard the import against ``ModuleNotFoundError`` so a
-        half-finished ``hermes update`` (git-reset landed new code but
+        half-finished ``th update`` (git-reset landed new code but
         ``uv pip install -e .`` didn't finish re-registering
         ``hermes_bootstrap`` as a top-level module) leaves hermes
         recoverable instead of crashing on every invocation.  When the
@@ -288,7 +288,7 @@ class TestEntryPointsImportBootstrap:
                 break
             # Accept a guarded-import Try block where the body is a lone
             # Import node — this is the recovery-friendly form that lets
-            # hermes start even when hermes_bootstrap hasn't been
+            # th start even when hermes_bootstrap hasn't been
             # re-registered in the venv yet.
             if isinstance(node, ast.Try) and len(node.body) == 1 and isinstance(
                 node.body[0], (ast.Import, ast.ImportFrom)

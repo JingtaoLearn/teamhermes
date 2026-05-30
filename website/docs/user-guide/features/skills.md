@@ -37,8 +37,8 @@ The bundled `plan` skill is a good example. Running `/plan [request]` loads the 
 You can also interact with skills through natural conversation:
 
 ```bash
-hermes chat --toolsets skills -q "What skills do you have?"
-hermes chat --toolsets skills -q "Show me the axolotl skill"
+th chat --toolsets skills -q "What skills do you have?"
+th chat --toolsets skills -q "Show me the axolotl skill"
 ```
 
 ## Progressive Disclosure
@@ -172,7 +172,7 @@ required_environment_variables:
     required_for: full functionality
 ```
 
-When a missing value is encountered, TeamHermes asks for it securely only when the skill is actually loaded in the local CLI. You can skip setup and keep using the skill. Messaging surfaces never ask for secrets in chat — they tell you to use `hermes setup` or `~/.teamhermes/.env` locally instead.
+When a missing value is encountered, TeamHermes asks for it securely only when the skill is actually loaded in the local CLI. You can skip setup and keep using the skill. Messaging surfaces never ask for secrets in chat — they tell you to use `th setup` or `~/.teamhermes/.env` locally instead.
 
 Once set, declared env vars are **automatically passed through** to `execute_code` and `terminal` sandboxes — the skill's scripts can use `$TENOR_API_KEY` directly. For non-skill env vars, use the `terminal.env_passthrough` config option. See [Environment Variable Passthrough](/user-guide/security#environment-variable-passthrough) for details.
 
@@ -190,7 +190,7 @@ metadata:
         prompt: Plugin data directory path
 ```
 
-Settings are stored under `skills.config` in your config.yaml. `hermes config migrate` prompts for unconfigured settings, and `hermes config show` displays them. When a skill loads, its resolved config values are injected into the context so the agent knows the configured values automatically.
+Settings are stored under `skills.config` in your config.yaml. `th config migrate` prompts for unconfigured settings, and `th config show` displays them. When a skill loads, its resolved config values are injected into the context so the agent knows the configured values automatically.
 
 See [Skill Settings](/user-guide/configuration#skill-settings) and [Creating Skills — Config Settings](/developer-guide/creating-skills#config-settings-configyaml) for details.
 
@@ -268,7 +268,7 @@ Skill bundles are tiny YAML files that group several skills under a single slash
 
 ```bash
 # Create a bundle for backend feature work
-hermes bundles create backend-dev \
+th bundles create backend-dev \
   --skill github-code-review \
   --skill test-driven-development \
   --skill github-pr-workflow \
@@ -301,7 +301,7 @@ instruction: |
 
 Fields:
 - `name` (optional — defaults to the filename stem) — the bundle's display name. Normalized to a hyphen slug for the slash command (`Backend Dev` → `/backend-dev`).
-- `description` (optional) — short text shown in `/bundles` and `hermes bundles list`.
+- `description` (optional) — short text shown in `/bundles` and `th bundles list`.
 - `skills` (required, non-empty list) — skill names or paths relative to your skills directory. Use the same identifier you'd pass to `/<skill-name>`.
 - `instruction` (optional) — extra guidance prepended to the loaded skill content. Useful for codifying "how we always use these together."
 
@@ -309,22 +309,22 @@ Fields:
 
 ```bash
 # List all installed bundles
-hermes bundles list
+th bundles list
 
 # Inspect one bundle
-hermes bundles show backend-dev
+th bundles show backend-dev
 
 # Create a bundle interactively (omit --skill flags to enter them one per line)
-hermes bundles create research
+th bundles create research
 
 # Overwrite an existing bundle
-hermes bundles create backend-dev --skill ... --force
+th bundles create backend-dev --skill ... --force
 
 # Delete a bundle
-hermes bundles delete backend-dev
+th bundles delete backend-dev
 
 # Re-scan ~/.teamhermes/skill-bundles/ and report changes
-hermes bundles reload
+th bundles reload
 ```
 
 From inside a chat session, `/bundles` lists every installed bundle and its skills.
@@ -378,28 +378,28 @@ Browse, search, install, and manage skills from online registries, `skills.sh`, 
 ### Common commands
 
 ```bash
-hermes skills browse                              # Browse all hub skills (official first)
-hermes skills browse --source official            # Browse only official optional skills
-hermes skills search kubernetes                   # Search all sources
-hermes skills search react --source skills-sh     # Search the skills.sh directory
-hermes skills search https://mintlify.com/docs --source well-known
-hermes skills inspect openai/skills/k8s           # Preview before installing
-hermes skills install openai/skills/k8s           # Install with security scan
-hermes skills install official/security/1password
-hermes skills install skills-sh/vercel-labs/json-render/json-render-react --force
-hermes skills install well-known:https://mintlify.com/docs/.well-known/skills/mintlify
-hermes skills install https://sharethis.chat/SKILL.md              # Direct URL (single-file SKILL.md)
-hermes skills install https://example.com/SKILL.md --name my-skill # Override name when frontmatter has none
-hermes skills list --source hub                   # List hub-installed skills
-hermes skills check                               # Check installed hub skills for upstream updates
-hermes skills update                              # Reinstall hub skills with upstream changes when needed
-hermes skills audit                               # Re-scan all hub skills for security
-hermes skills uninstall k8s                       # Remove a hub skill
-hermes skills reset google-workspace              # Un-stick a bundled skill from "user-modified" (see below)
-hermes skills reset google-workspace --restore    # Also restore the bundled version, deleting your local edits
-hermes skills publish skills/my-skill --to github --repo owner/repo
-hermes skills snapshot export setup.json          # Export skill config
-hermes skills tap add myorg/skills-repo           # Add a custom GitHub source
+th skills browse                              # Browse all hub skills (official first)
+th skills browse --source official            # Browse only official optional skills
+th skills search kubernetes                   # Search all sources
+th skills search react --source skills-sh     # Search the skills.sh directory
+th skills search https://mintlify.com/docs --source well-known
+th skills inspect openai/skills/k8s           # Preview before installing
+th skills install openai/skills/k8s           # Install with security scan
+th skills install official/security/1password
+th skills install skills-sh/vercel-labs/json-render/json-render-react --force
+th skills install well-known:https://mintlify.com/docs/.well-known/skills/mintlify
+th skills install https://sharethis.chat/SKILL.md              # Direct URL (single-file SKILL.md)
+th skills install https://example.com/SKILL.md --name my-skill # Override name when frontmatter has none
+th skills list --source hub                   # List hub-installed skills
+th skills check                               # Check installed hub skills for upstream updates
+th skills update                              # Reinstall hub skills with upstream changes when needed
+th skills audit                               # Re-scan all hub skills for security
+th skills uninstall k8s                       # Remove a hub skill
+th skills reset google-workspace              # Un-stick a bundled skill from "user-modified" (see below)
+th skills reset google-workspace --restore    # Also restore the bundled version, deleting your local edits
+th skills publish skills/my-skill --to github --repo owner/repo
+th skills snapshot export setup.json          # Export skill config
+th skills tap add myorg/skills-repo           # Add a custom GitHub source
 ```
 
 ### Supported hub sources
@@ -407,7 +407,7 @@ hermes skills tap add myorg/skills-repo           # Add a custom GitHub source
 | Source | Example | Notes |
 |--------|---------|-------|
 | `official` | `official/security/1password` | Optional skills shipped with TeamHermes. |
-| `skills-sh` | `skills-sh/vercel-labs/agent-skills/vercel-react-best-practices` | Searchable via `hermes skills search <query> --source skills-sh`. TeamHermes resolves alias-style skills when the skills.sh slug differs from the repo folder. |
+| `skills-sh` | `skills-sh/vercel-labs/agent-skills/vercel-react-best-practices` | Searchable via `th skills search <query> --source skills-sh`. TeamHermes resolves alias-style skills when the skills.sh slug differs from the repo folder. |
 | `well-known` | `well-known:https://mintlify.com/docs/.well-known/skills/mintlify` | Skills served directly from `/.well-known/skills/index.json` on a website. Search using the site or docs URL. |
 | `url` | `https://sharethis.chat/SKILL.md` | Direct HTTP(S) URL to a single-file `SKILL.md`. Name resolution: frontmatter → URL slug → interactive prompt → `--name` flag. |
 | `github` | `openai/skills/k8s` | Direct GitHub repo/path installs and custom taps. |
@@ -426,8 +426,8 @@ These are maintained in the TeamHermes repository itself and install with built-
 - Example:
 
 ```bash
-hermes skills browse --source official
-hermes skills install official/security/1password
+th skills browse --source official
+th skills install official/security/1password
 ```
 
 #### 2. skills.sh (`skills-sh`)
@@ -440,9 +440,9 @@ This is Vercel's public skills directory. TeamHermes can search it directly, ins
 - Example:
 
 ```bash
-hermes skills search react --source skills-sh
-hermes skills inspect skills-sh/vercel-labs/json-render/json-render-react
-hermes skills install skills-sh/vercel-labs/json-render/json-render-react --force
+th skills search react --source skills-sh
+th skills inspect skills-sh/vercel-labs/json-render/json-render-react
+th skills install skills-sh/vercel-labs/json-render/json-render-react --force
 ```
 
 #### 3. Well-known skill endpoints (`well-known`)
@@ -454,9 +454,9 @@ This is URL-based discovery from sites that publish `/.well-known/skills/index.j
 - Example:
 
 ```bash
-hermes skills search https://mintlify.com/docs --source well-known
-hermes skills inspect well-known:https://mintlify.com/docs/.well-known/skills/mintlify
-hermes skills install well-known:https://mintlify.com/docs/.well-known/skills/mintlify
+th skills search https://mintlify.com/docs --source well-known
+th skills inspect well-known:https://mintlify.com/docs/.well-known/skills/mintlify
+th skills install well-known:https://mintlify.com/docs/.well-known/skills/mintlify
 ```
 
 #### 4. Direct GitHub skills (`github`)
@@ -473,8 +473,8 @@ Default taps (browsable without any setup):
 - Example:
 
 ```bash
-hermes skills install openai/skills/k8s
-hermes skills tap add myorg/skills-repo
+th skills install openai/skills/k8s
+th skills tap add myorg/skills-repo
 ```
 
 **Category groupings (`skills.sh.json`).** A GitHub tap may ship a
@@ -532,9 +532,9 @@ TeamHermes integrates with [browse.sh](https://browse.sh), Browserbase's catalog
 - Trust level: `community`
 
 ```bash
-hermes skills search airbnb --source browse-sh
-hermes skills inspect browse-sh/airbnb.com/search-listings-ddgioa
-hermes skills install browse-sh/airbnb.com/search-listings-ddgioa
+th skills search airbnb --source browse-sh
+th skills inspect browse-sh/airbnb.com/search-listings-ddgioa
+th skills install browse-sh/airbnb.com/search-listings-ddgioa
 ```
 
 Identifiers use the form `browse-sh/<hostname>/<task-id>` and match the slug exposed by the browse.sh catalog. Content is resolved through the per-skill detail endpoint (`/api/skills/<slug>` → `skillMdUrl`), not through the catalog's GitHub `sourceUrl`.
@@ -548,8 +548,8 @@ Install a single-file `SKILL.md` directly from any HTTP(S) URL — useful when a
 - Scope: **single-file `SKILL.md`** only. Multi-file skills with `references/` or `scripts/` need a manifest and should be published via one of the other sources above.
 
 ```bash
-hermes skills install https://sharethis.chat/SKILL.md
-hermes skills install https://example.com/my-skill/SKILL.md --category productivity
+th skills install https://sharethis.chat/SKILL.md
+th skills install https://example.com/my-skill/SKILL.md --category productivity
 ```
 
 Name resolution, in order:
@@ -560,19 +560,19 @@ Name resolution, in order:
 
 ```bash
 # Frontmatter has no name and the URL slug is unhelpful — supply one:
-hermes skills install https://example.com/SKILL.md --name sharethis-chat
+th skills install https://example.com/SKILL.md --name sharethis-chat
 
 # Or inside a chat session:
 /skills install https://example.com/SKILL.md --name sharethis-chat
 ```
 
-Trust level is always `community` — the same security scan runs as for every other source. The URL is stored as the install identifier, so `hermes skills update` re-fetches from the same URL automatically when you want to refresh.
+Trust level is always `community` — the same security scan runs as for every other source. The URL is stored as the install identifier, so `th skills update` re-fetches from the same URL automatically when you want to refresh.
 
 ### Security scanning and `--force`
 
 All hub-installed skills go through a **security scanner** that checks for data exfiltration, prompt injection, destructive commands, supply-chain signals, and other threats.
 
-`hermes skills inspect ...` now also surfaces upstream metadata when available:
+`th skills inspect ...` now also surfaces upstream metadata when available:
 - repo URL
 - skills.sh detail page URL
 - install command
@@ -583,7 +583,7 @@ All hub-installed skills go through a **security scanner** that checks for data 
 Use `--force` when you have reviewed a third-party skill and want to override a non-dangerous policy block:
 
 ```bash
-hermes skills install skills-sh/anthropics/skills/pdf --force
+th skills install skills-sh/anthropics/skills/pdf --force
 ```
 
 Important behavior:
@@ -605,9 +605,9 @@ Important behavior:
 The hub now tracks enough provenance to re-check upstream copies of installed skills:
 
 ```bash
-hermes skills check          # Report which installed hub skills changed upstream
-hermes skills update         # Reinstall only the skills with updates available
-hermes skills update react   # Update one specific installed hub skill
+th skills check          # Report which installed hub skills changed upstream
+th skills update         # Reinstall only the skills with updates available
+th skills update react   # Update one specific installed hub skill
 ```
 
 This uses the stored source identifier plus the current upstream bundle content hash to detect drift.
@@ -618,7 +618,7 @@ Skills hub operations use the GitHub API, which has a rate limit of 60 requests/
 
 ### Publishing a custom skill tap
 
-If you want to share a curated set of skills — for your team, your org, or publicly — you can publish them as a **tap**: a GitHub repository other TeamHermes users add with `hermes skills tap add <owner/repo>`. No server, no registry sign-up, no release pipeline. Just a directory of `SKILL.md` files.
+If you want to share a curated set of skills — for your team, your org, or publicly — you can publish them as a **tap**: a GitHub repository other TeamHermes users add with `th skills tap add <owner/repo>`. No server, no registry sign-up, no release pipeline. Just a directory of `SKILL.md` files.
 
 #### Repo layout
 
@@ -678,9 +678,9 @@ Step 1: ...
 After pushing that to GitHub, any TeamHermes user can subscribe and install:
 
 ```bash
-hermes skills tap add my-org/hermes-skills
-hermes skills search deploy
-hermes skills install my-org/hermes-skills/deploy-runbook
+th skills tap add my-org/hermes-skills
+th skills search deploy
+th skills install my-org/hermes-skills/deploy-runbook
 ```
 
 #### Non-default paths
@@ -695,14 +695,14 @@ If your skills don't live under `skills/` (common when you're adding a `skills/`
 }
 ```
 
-The `hermes skills tap add` CLI defaults new taps to `path: "skills/"`; edit the file directly if you need a different path. `hermes skills tap list` shows the effective path per tap.
+The `th skills tap add` CLI defaults new taps to `path: "skills/"`; edit the file directly if you need a different path. `th skills tap list` shows the effective path per tap.
 
 #### Installing individual skills directly (without adding a tap)
 
 Users can also install a single skill from any public GitHub repo without adding the whole repo as a tap:
 
 ```bash
-hermes skills install owner/repo/skills/my-workflow
+th skills install owner/repo/skills/my-workflow
 ```
 
 Useful when you want to share one skill without asking the user to subscribe to your whole registry.
@@ -714,9 +714,9 @@ New taps are assigned `community` trust by default. Skills installed from them r
 #### Tap management
 
 ```bash
-hermes skills tap list                                # show all configured taps
-hermes skills tap add myorg/skills-repo               # add (default path: skills/)
-hermes skills tap remove myorg/skills-repo            # remove
+th skills tap list                                # show all configured taps
+th skills tap add myorg/skills-repo               # add (default path: skills/)
+th skills tap remove myorg/skills-repo            # remove
 ```
 
 Inside a running session:
@@ -729,9 +729,9 @@ Inside a running session:
 
 Taps are stored in `~/.teamhermes/.hub/taps.json` (created on demand).
 
-## Bundled skill updates (`hermes skills reset`)
+## Bundled skill updates (`th skills reset`)
 
-TeamHermes ships with a set of bundled skills in `skills/` inside the repo. On install and on every `hermes update`, a sync pass copies those into `~/.teamhermes/skills/` and records a manifest at `~/.teamhermes/skills/.bundled_manifest` mapping each skill name to the content hash at the time it was synced (the **origin hash**).
+TeamHermes ships with a set of bundled skills in `skills/` inside the repo. On install and on every `th update`, a sync pass copies those into `~/.teamhermes/skills/` and records a manifest at `~/.teamhermes/skills/.bundled_manifest` mapping each skill name to the content hash at the time it was synced (the **origin hash**).
 
 On each sync, TeamHermes recomputes the hash of your local copy and compares it to the origin hash:
 
@@ -740,19 +740,19 @@ On each sync, TeamHermes recomputes the hash of your local copy and compares it 
 
 The protection is good, but it has one sharp edge. If you edit a bundled skill and then later want to abandon your changes and go back to the bundled version by just copy-pasting from `~/.teamhermes/hermes-agent/skills/`, the manifest still holds the *old* origin hash from whenever the last successful sync ran. Your fresh copy-paste contents (current bundled hash) won't match that stale origin hash, so sync keeps flagging it as user-modified.
 
-`hermes skills reset` is the escape hatch:
+`th skills reset` is the escape hatch:
 
 ```bash
 # Safe: clears the manifest entry for this skill. Your current copy is preserved,
 # but the next sync re-baselines against it so future updates work normally.
-hermes skills reset google-workspace
+th skills reset google-workspace
 
 # Full restore: also deletes your local copy and re-copies the current bundled
 # version. Use this when you want the pristine upstream skill back.
-hermes skills reset google-workspace --restore
+th skills reset google-workspace --restore
 
 # Non-interactive (e.g. in scripts or TUI mode) — skip the --restore confirmation.
-hermes skills reset google-workspace --restore --yes
+th skills reset google-workspace --restore --yes
 ```
 
 The same command works in chat as a slash command:
@@ -763,7 +763,7 @@ The same command works in chat as a slash command:
 ```
 
 :::note Profiles
-Each profile has its own `.bundled_manifest` under its own `HERMES_HOME`, so `hermes -p coder skills reset <name>` only affects that profile.
+Each profile has its own `.bundled_manifest` under its own `HERMES_HOME`, so `th -p coder skills reset <name>` only affects that profile.
 :::
 
 ### Slash commands (inside chat)

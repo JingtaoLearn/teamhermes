@@ -7,10 +7,10 @@ you explicitly enable it.
 
 ```bash
 pip install langfuse
-hermes plugins enable observability/langfuse
+th plugins enable observability/langfuse
 ```
 
-Or check the box in the interactive `hermes plugins` UI.
+Or check the box in the interactive `th plugins` UI.
 
 ## Required credentials
 
@@ -28,8 +28,8 @@ open.
 ## Verify
 
 ```bash
-hermes plugins list                 # observability/langfuse should show "enabled"
-hermes chat -q "hello"              # then check Langfuse for a "TeamHermes turn" trace
+th plugins list                 # observability/langfuse should show "enabled"
+th chat -q "hello"              # then check Langfuse for a "TeamHermes turn" trace
 ```
 
 ## Optional tuning
@@ -45,5 +45,5 @@ HERMES_LANGFUSE_DEBUG=true           # verbose plugin logging
 ## Disable
 
 ```bash
-hermes plugins disable observability/langfuse
+th plugins disable observability/langfuse
 ```

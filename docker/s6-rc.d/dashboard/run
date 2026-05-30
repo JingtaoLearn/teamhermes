@@ -48,5 +48,5 @@ case "${HERMES_DASHBOARD_INSECURE:-}" in
 esac
 
 # shellcheck disable=SC2086  # word-splitting of $insecure is intentional
-exec s6-setuidgid hermes hermes dashboard \
+exec s6-setuidgid hermes th dashboard \
     --host "$dash_host" --port "$dash_port" --no-open $insecure

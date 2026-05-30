@@ -61,7 +61,7 @@ Setting `approvals.mode: off` disables all safety prompts. Use only in trusted e
 
 YOLO mode bypasses **all** dangerous command approval prompts for the current session. It can be activated three ways:
 
-1. **CLI flag**: Start a session with `hermes --yolo` or `hermes chat --yolo`
+1. **CLI flag**: Start a session with `th --yolo` or `th chat --yolo`
 2. **Slash command**: Type `/yolo` during a session to toggle it on/off
 3. **Environment variable**: Set `HERMES_YOLO_MODE=1`
 
@@ -203,7 +203,7 @@ command_allowlist:
 These patterns are loaded at startup and silently approved in all future sessions.
 
 :::tip
-Use `hermes config edit` to review or remove patterns from your permanent allowlist.
+Use `th config edit` to review or remove patterns from your permanent allowlist.
 :::
 
 ## User Authorization (Gateway)
@@ -260,7 +260,7 @@ For more flexible authorization, TeamHermes includes a code-based pairing system
 
 1. An unknown user sends a DM to the bot
 2. The bot replies with an 8-character pairing code
-3. The bot owner runs `hermes pairing approve <platform> <code>` on the CLI
+3. The bot owner runs `th pairing approve <platform> <code>` on the CLI
 4. The user is permanently approved for that platform
 
 Control how unauthorized direct messages are handled in `~/.teamhermes/config.yaml`:
@@ -293,16 +293,16 @@ whatsapp:
 
 ```bash
 # List pending and approved users
-hermes pairing list
+th pairing list
 
 # Approve a pairing code
-hermes pairing approve telegram ABC12DEF
+th pairing approve telegram ABC12DEF
 
 # Revoke a user's access
-hermes pairing revoke telegram 123456789
+th pairing revoke telegram 123456789
 
 # Clear all pending codes
-hermes pairing clear-pending
+th pairing clear-pending
 ```
 
 **Storage:** Pairing data is stored in `~/.teamhermes/pairing/` with per-platform JSON files:
@@ -589,7 +589,7 @@ Blocked files show a warning:
 7. **Set `terminal.cwd`** — don't let the agent operate from sensitive directories
 8. **Run as non-root** — never run the gateway as root
 9. **Monitor logs** — check `~/.teamhermes/logs/` for unauthorized access attempts
-10. **Keep updated** — run `hermes update` regularly for security patches
+10. **Keep updated** — run `th update` regularly for security patches
 
 ### Securing API Keys
 
@@ -626,14 +626,14 @@ TeamHermes ships with a built-in advisory scanner that flags Python packages in 
 
 How it runs:
 
-- **CLI startup banner.** A one-line warning is printed if any advisory matches, with a pointer to `hermes doctor` for the full remediation.
-- **`hermes doctor`.** Surfaces every active advisory with version specifics and 2-4 step remediation instructions.
+- **CLI startup banner.** A one-line warning is printed if any advisory matches, with a pointer to `th doctor` for the full remediation.
+- **`th doctor`.** Surfaces every active advisory with version specifics and 2-4 step remediation instructions.
 - **Gateway startup.** Logged to `gateway.log`; the first interactive message gets a short operator banner.
 
 Each advisory carries a stable id. Once you have read and acted on it you can dismiss it for good:
 
 ```bash
-hermes doctor --ack <advisory-id>
+th doctor --ack <advisory-id>
 ```
 
 The ack is persisted to `config.security.acked_advisories` and survives restart. Old advisories are intentionally **not** removed from the catalog — leaving them in place keeps fresh installs warned about historically poisoned versions that might still be cached in a private mirror.
@@ -653,7 +653,7 @@ How it works:
 
 1. A backend module calls `ensure("feature.name")` at the top of its first-import path.
 2. If the deps are missing, `ensure` checks `security.allow_lazy_installs` in `config.yaml` (default `true`) and runs a venv-scoped `pip install` for the allowlisted specs.
-3. If the install fails or the user has disabled lazy installs, the call raises `FeatureUnavailable` with the actual pip stderr and a pointer at `hermes tools`.
+3. If the install fails or the user has disabled lazy installs, the call raises `FeatureUnavailable` with the actual pip stderr and a pointer at `th tools`.
 
 Security guarantees enforced by `tools/lazy_deps.py`:
 
@@ -673,4 +673,4 @@ security:
   allow_lazy_installs: false
 ```
 
-When disabled, backends that need optional deps will tell the user to run the install manually (`pip install …`) or pick a different backend via `hermes tools`.
+When disabled, backends that need optional deps will tell the user to run the install manually (`pip install …`) or pick a different backend via `th tools`.

@@ -268,7 +268,7 @@ export const af: Translations = {
     enableRuntime: "Aktiveer",
     forceReinstall: "Forseer herinstallasie (skrap eers bestaande gids)",
     headline:
-      "Ontdek, installeer, aktiveer en werk TeamHermes-inproppe op (`hermes plugins` ekwivalent).",
+      "Ontdek, installeer, aktiveer en werk TeamHermes-inproppe op (`th plugins` ekwivalent).",
     identifierLabel: "Git-URL of owner/repo",
     inactive: "onaktief",
     installBtn: "Installeer",

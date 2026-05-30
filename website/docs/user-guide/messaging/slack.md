@@ -38,7 +38,7 @@ Mode — all at once.
 
 1. Generate the manifest:
    ```bash
-   hermes slack manifest --write
+   th slack manifest --write
    ```
    This writes `~/.teamhermes/slack-manifest.json` and prints paste-in
    instructions.
@@ -202,15 +202,15 @@ SLACK_HOME_CHANNEL_NAME=general              # Human-readable name for the home 
 Or run the interactive setup:
 
 ```bash
-hermes gateway setup    # Select Slack when prompted
+th gateway setup    # Select Slack when prompted
 ```
 
 Then start the gateway:
 
 ```bash
-hermes gateway              # Foreground
-hermes gateway install      # Install as a user service
-sudo hermes gateway install --system   # Linux only: boot-time system service
+th gateway              # Foreground
+th gateway install      # Install as a user service
+sudo th gateway install --system   # Linux only: boot-time system service
 ```
 
 ---
@@ -242,11 +242,11 @@ through the WebSocket regardless of the manifest's `url` field.
 
 ### Refreshing slash commands after updates
 
-When TeamHermes adds new commands (e.g. after `hermes update`), regenerate
+When TeamHermes adds new commands (e.g. after `th update`), regenerate
 the manifest and update your Slack app:
 
 ```bash
-hermes slack manifest --write
+th slack manifest --write
 ```
 
 Then in Slack:
@@ -286,7 +286,7 @@ If you maintain your Slack manifest by hand and just want the slash
 command list:
 
 ```bash
-hermes slack manifest --slashes-only > /tmp/slashes.json
+th slack manifest --slashes-only > /tmp/slashes.json
 ```
 
 Paste that array into the `features.slash_commands` key of your

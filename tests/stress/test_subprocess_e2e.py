@@ -58,7 +58,7 @@ def main():
     sys.path.insert(0, WT)
     from hermes_cli import kanban_db as kb
 
-    # Point the `hermes` CLI child processes will run at the worktree
+    # Point the `th` CLI child processes will run at the worktree
     # hermes_cli.main. We do this by putting a shim on PATH.
     shim_dir = os.path.join(home, "bin")
     os.makedirs(shim_dir, exist_ok=True)

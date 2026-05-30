@@ -14,7 +14,7 @@ Give TeamHermes phone capabilities without core tool changes. Provision and pers
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/productivity/telephony` |
+| Source | Optional — install with `th skills install official/productivity/telephony` |
 | Path | `optional-skills/productivity/telephony` |
 | Version | `1.0.0` |
 | Author | Nous Research |
@@ -157,8 +157,8 @@ If `SCRIPT` is empty, the skill is not installed yet.
 This is an official optional skill, so install it from the Skills Hub:
 
 ```bash
-hermes skills search telephony
-hermes skills install official/productivity/telephony
+th skills search telephony
+th skills install official/productivity/telephony
 ```
 
 ## Provider setup

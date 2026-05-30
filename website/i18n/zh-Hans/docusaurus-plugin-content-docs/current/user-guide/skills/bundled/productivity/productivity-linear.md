@@ -35,7 +35,7 @@ Linear：通过 GraphQL + curl 管理 issues、项目和团队。
 ## 配置
 
 1. 从 **Linear 设置 > Account > Security & access > Personal API keys** 获取个人 API key（URL：https://linear.app/settings/account/security）。注意：组织级别的 *Settings > API* 页面仅显示 OAuth 应用和工作区成员 key，不显示个人 key。
-2. 在环境中设置 `LINEAR_API_KEY`（通过 `hermes setup` 或你的环境配置）
+2. 在环境中设置 `LINEAR_API_KEY`（通过 `th setup` 或你的环境配置）
 
 ## API 基础
 

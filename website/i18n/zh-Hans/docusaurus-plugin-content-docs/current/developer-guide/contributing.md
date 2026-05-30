@@ -71,11 +71,11 @@ echo 'OPENROUTER_API_KEY=sk-or-v1-your-key' >> ~/.teamhermes/.env
 ```bash
 # 创建全局访问的符号链接
 mkdir -p ~/.local/bin
-ln -sf "$(pwd)/venv/bin/hermes" ~/.local/bin/hermes
+ln -sf "$(pwd)/venv/bin/th" ~/.local/bin/th
 
 # 验证
-hermes doctor
-hermes chat -q "Hello"
+th doctor
+th chat -q "Hello"
 ```
 
 ### 运行测试
@@ -186,7 +186,7 @@ refactor/description   # 代码重构
 ### 提交前检查
 
 1. **运行测试**：`pytest tests/ -v`
-2. **手动测试**：运行 `hermes` 并验证您修改的代码路径
+2. **手动测试**：运行 `th` 并验证您修改的代码路径
 3. **检查跨平台影响**：考虑 macOS 和不同 Linux 发行版
 4. **保持 PR 聚焦**：每个 PR 只包含一个逻辑变更
 
@@ -227,7 +227,7 @@ fix(security): prevent shell injection in sudo password piping
 ## 报告问题
 
 - 使用 [GitHub Issues](https://github.com/NousResearch/hermes-agent/issues)
-- 请包含：操作系统、Python 版本、TeamHermes 版本（`hermes version`）、完整错误堆栈
+- 请包含：操作系统、Python 版本、TeamHermes 版本（`th version`）、完整错误堆栈
 - 包含复现步骤
 - 创建前请检查是否已有重复 issue
 - 安全漏洞请私下报告

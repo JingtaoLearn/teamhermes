@@ -10,13 +10,13 @@ Semantic long-term memory with profile recall, semantic search, explicit memory 
 ## Setup
 
 ```bash
-hermes memory setup    # select "supermemory"
+th memory setup    # select "supermemory"
 ```
 
 Or manually:
 
 ```bash
-hermes config set memory.provider supermemory
+th config set memory.provider supermemory
 echo 'SUPERMEMORY_API_KEY=***' >> ~/.teamhermes/.env
 ```
 
@@ -26,7 +26,7 @@ Config file: `$HERMES_HOME/supermemory.json`
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `container_tag` | `hermes` | Container tag used for search and writes. Supports `{identity}` template for profile-scoped tags (e.g. `hermes-{identity}` → `hermes-coder`). |
+| `container_tag` | `th` | Container tag used for search and writes. Supports `{identity}` template for profile-scoped tags (e.g. `hermes-{identity}` → `hermes-coder`). |
 | `auto_recall` | `true` | Inject relevant memory context before turns |
 | `auto_capture` | `true` | Store cleaned user-assistant turns after each response |
 | `max_recall_results` | `10` | Max recalled items to format into context |

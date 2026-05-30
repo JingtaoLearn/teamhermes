@@ -520,7 +520,7 @@ def check_requirements() -> bool:
     channel = os.getenv("IRC_CHANNEL", "")
     # Also accept config.yaml-only configuration (no env vars).
     # The gateway passes PlatformConfig; we just check env for the
-    # hermes setup / requirements check path.
+    # th setup / requirements check path.
     return bool(server and channel)
 
 
@@ -533,7 +533,7 @@ def validate_config(config) -> bool:
 
 
 def interactive_setup() -> None:
-    """Interactive `hermes gateway setup` flow for the IRC platform.
+    """Interactive `th gateway setup` flow for the IRC platform.
 
     Lazy-imports ``hermes_cli.setup`` helpers so the plugin stays importable
     in non-CLI contexts (gateway runtime, tests).
@@ -636,7 +636,7 @@ def interactive_setup() -> None:
 
     print()
     print_success("IRC configuration saved to ~/.teamhermes/.env")
-    print_info("Restart the gateway for changes to take effect: hermes gateway restart")
+    print_info("Restart the gateway for changes to take effect: th gateway restart")
 
 
 def is_connected(config) -> bool:
@@ -725,8 +725,8 @@ async def _standalone_send(
     """Open an ephemeral IRC connection, send a PRIVMSG, and quit.
 
     Used by ``tools/send_message_tool._send_via_adapter`` when the gateway
-    runner is not in this process (e.g. ``hermes cron`` running as a
-    separate process from ``hermes gateway``).  Without this hook,
+    runner is not in this process (e.g. ``th cron`` running as a
+    separate process from ``th gateway``).  Without this hook,
     ``deliver=irc`` cron jobs fail with ``No live adapter for platform``.
 
     The standalone client uses a distinct nick suffix (``-cron``) so it

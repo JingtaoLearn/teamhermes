@@ -455,7 +455,7 @@
       extraArgs = mkOption {
         type = types.listOf types.str;
         default = [ ];
-        description = "Extra command-line arguments for `hermes gateway`.";
+        description = "Extra command-line arguments for `th gateway`.";
       };
 
       extraPackages = mkOption {
@@ -476,7 +476,7 @@
         type = types.listOf types.package;
         default = [ ];
         description = ''
-          Directory-based plugin packages to symlink into the hermes plugins
+          Directory-based plugin packages to symlink into the th plugins
           directory. Each package should contain a plugin.yaml and __init__.py
           at its root. TeamHermes discovers these automatically on startup.
         '';
@@ -765,7 +765,7 @@
     backend=${cfg.container.backend}
     container_name=${containerName}
     exec_user=${cfg.user}
-    hermes_bin=${containerDataDir}/current-package/bin/hermes
+    hermes_bin=${containerDataDir}/current-package/bin/th
     HERMES_CONTAINER_MODE_EOF
             chown ${cfg.user}:${cfg.group} ${cfg.stateDir}/.teamhermes/.container-mode
             chmod 0644 ${cfg.stateDir}/.teamhermes/.container-mode
@@ -887,7 +887,7 @@
             # reads them at Python startup — no systemd EnvironmentFile needed.
 
             ExecStart = lib.concatStringsSep " " ([
-              "${effectivePackage}/bin/hermes"
+              "${effectivePackage}/bin/th"
               "gateway"
             ] ++ cfg.extraArgs);
 
@@ -974,7 +974,7 @@
                 --env MESSAGING_CWD=${containerWorkDir} \
                 ${lib.concatStringsSep " " cfg.container.extraOptions} \
                 ${cfg.container.image} \
-                ${containerDataDir}/current-package/bin/hermes gateway run --replace ${lib.concatStringsSep " " cfg.extraArgs}
+                ${containerDataDir}/current-package/bin/th gateway run --replace ${lib.concatStringsSep " " cfg.extraArgs}
 
               echo "${containerIdentity}" > ${identityFile}
             fi

@@ -304,7 +304,7 @@ class TestHistoryDisplay:
             {
                 "id": "20260401_201329_d85961",
                 "title": "Checking Running TeamHermes Agent",
-                "preview": "check running gateways for hermes agent",
+                "preview": "check running gateways for th agent",
                 "last_active": 0,
             },
         ]
@@ -332,7 +332,7 @@ class TestHistoryDisplay:
             {
                 "id": "20260401_201329_d85961",
                 "title": "Checking Running TeamHermes Agent",
-                "preview": "check running gateways for hermes agent",
+                "preview": "check running gateways for th agent",
                 "last_active": 0,
             },
         ]
@@ -415,7 +415,7 @@ class TestHistoryDisplay:
             {
                 "id": "20260401_201329_d85961",
                 "title": "Checking Running TeamHermes Agent",
-                "preview": "check running gateways for hermes agent",
+                "preview": "check running gateways for th agent",
                 "last_active": 0,
             },
         ]
@@ -439,7 +439,7 @@ class TestHistoryDisplay:
             {
                 "id": "20260401_201329_d85961",
                 "title": "Checking Running TeamHermes Agent",
-                "preview": "check running gateways for hermes agent",
+                "preview": "check running gateways for th agent",
                 "last_active": 0,
             },
         ]

@@ -235,4 +235,4 @@ browser_vision(question="How does this look? Any obvious layout issues?")
 
 ## 致谢
 
-改编自 GSD（Get Shit Done）项目的 `/gsd-sketch` 工作流——MIT © 2025 Lex Christopherson（[gsd-build/get-shit-done](https://github.com/gsd-build/get-shit-done)）。完整 GSD 系统提供持久化草图状态、主题/方案模式参考及一致性审计工作流；通过 `npx get-shit-done-cc --hermes --global` 安装。
+改编自 GSD（Get Shit Done）项目的 `/gsd-sketch` 工作流——MIT © 2025 Lex Christopherson（[gsd-build/get-shit-done](https://github.com/gsd-build/get-shit-done)）。完整 GSD 系统提供持久化草图状态、主题/方案模式参考及一致性审计工作流；通过 `npx get-shit-done-cc --th --global` 安装。

@@ -99,7 +99,7 @@ def remove_wrapper_script():
     """Remove the hermes wrapper script if it exists."""
     wrapper_paths = [
         Path.home() / ".local" / "bin" / "hermes",
-        Path("/usr/local/bin/hermes"),
+        Path("/usr/local/bin/th"),
     ]
     
     removed = []
@@ -168,7 +168,7 @@ def uninstall_gateway_service():
     - Linux: user + system systemd services (with proper DBUS env setup)
     - macOS: launchd plists
     - Windows: Scheduled Task + Startup-folder fallback, via ``gateway_windows``
-    - All platforms: standalone ``hermes gateway run`` processes
+    - All platforms: standalone ``th gateway run`` processes
     - Termux/Android: skips systemd (no systemd on Android), still kills standalone processes
     """
     import platform
@@ -290,7 +290,7 @@ def uninstall_gateway_service():
 #   3. Downloads PortableGit to ``%LOCALAPPDATA%\hermes\git\`` and Node to
 #      ``%LOCALAPPDATA%\hermes\node\`` as user-scoped, isolated copies.
 #      These are ~200MB combined and serve no purpose after uninstall.
-#   4. On the ``hermes dashboard`` + gateway paths, drops files into
+#   4. On the ``th dashboard`` + gateway paths, drops files into
 #      ``%LOCALAPPDATA%\hermes\gateway-service\`` and sometimes
 #      ``%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\`` — the
 #      latter is handled by ``gateway_windows.uninstall()`` already.
@@ -430,7 +430,7 @@ def _uninstall_profile(profile) -> None:
     """Fully uninstall a single named profile: stop its gateway service,
     remove its alias wrapper, and wipe its HERMES_HOME directory.
 
-    We shell out to ``hermes -p <name> gateway stop|uninstall`` because
+    We shell out to ``th -p <name> gateway stop|uninstall`` because
     service names, unit paths, and plist paths are all derived from the
     current HERMES_HOME and can't be easily switched in-process.
     """
@@ -441,7 +441,7 @@ def _uninstall_profile(profile) -> None:
     log_info(f"Uninstalling profile '{name}'...")
 
     # 1. Stop and remove this profile's gateway service.
-    #    Use `python -m hermes_cli.main` so we don't depend on a `hermes`
+    #    Use `python -m hermes_cli.main` so we don't depend on a `th`
     #    wrapper that may be half-removed mid-uninstall.
     hermes_invocation = [_sys.executable, "-m", "hermes_cli.main", "--profile", name]
     for subcmd in ("stop", "uninstall"):

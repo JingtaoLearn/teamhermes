@@ -2,13 +2,13 @@
 TeamHermes CLI - Unified command-line interface for TeamHermes Agent.
 
 Provides subcommands for:
-- hermes chat          - Interactive chat (same as ./hermes)
-- hermes gateway       - Run gateway in foreground
-- hermes gateway start - Start gateway service
-- hermes gateway stop  - Stop gateway service
-- hermes setup         - Interactive setup wizard
-- hermes status        - Show status of all components
-- hermes cron          - Manage cron jobs
+- th chat          - Interactive chat (same as ./hermes)
+- th gateway       - Run gateway in foreground
+- th gateway start - Start gateway service
+- th gateway stop  - Stop gateway service
+- th setup         - Interactive setup wizard
+- th status        - Show status of all components
+- th cron          - Manage cron jobs
 """
 
 import os

@@ -159,8 +159,8 @@ class TestStripMention:
 
     def test_localpart_preserved(self):
         """Bare localpart (no @) is preserved — avoids false positives in paths."""
-        result = self.adapter._strip_mention("hermes help me")
-        assert result == "hermes help me"
+        result = self.adapter._strip_mention("th help me")
+        assert result == "th help me"
 
     def test_localpart_in_path_preserved(self):
         """Localpart inside a file path must not be damaged."""
@@ -168,7 +168,7 @@ class TestStripMention:
         assert result == "read /home/hermes/config.yaml"
 
     def test_strip_localpart_when_explicit_at_mention(self):
-        result = self.adapter._strip_mention("@hermes help me")
+        result = self.adapter._strip_mention("@th help me")
         assert result == "help me"
 
     def test_does_not_strip_bare_localpart_word(self):
@@ -389,12 +389,12 @@ async def test_dm_preserves_localpart_in_body(monkeypatch):
 
     adapter = _make_adapter()
     _set_dm(adapter)
-    event = _make_event("hermes help me")
+    event = _make_event("th help me")
 
     await adapter._on_room_message(event)
     adapter.handle_message.assert_awaited_once()
     msg = adapter.handle_message.await_args.args[0]
-    assert msg.text == "hermes help me"
+    assert msg.text == "th help me"
 
 
 @pytest.mark.asyncio

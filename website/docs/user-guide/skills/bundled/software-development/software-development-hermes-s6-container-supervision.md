@@ -61,12 +61,12 @@ If you're just running the TeamHermes Agent and want to use Docker, see `website
 │
 ├── s6-rc.d (static services, in /etc/s6-overlay/s6-rc.d/)
 │   ├── main-hermes/run                ← exec sleep infinity (no-op slot)
-│   └── dashboard/run                  ← if HERMES_DASHBOARD=1, runs `hermes dashboard`
+│   └── dashboard/run                  ← if HERMES_DASHBOARD=1, runs `th dashboard`
 │
 ├── /run/service (s6-svscan watches; tmpfs)
 │   ├── gateway-coder/                 ← runtime-registered per-profile
 │   │   ├── type        ("longrun")
-│   │   ├── run         ("#!/command/with-contenv sh ... exec s6-setuidgid hermes hermes -p coder gateway run")
+│   │   ├── run         ("#!/command/with-contenv sh ... exec s6-setuidgid hermes th -p coder gateway run")
 │   │   ├── down        (marker — present means "registered but don't auto-start")
 │   │   └── log/run     (s6-log → $HERMES_HOME/logs/gateways/coder/current)
 │   └── ...
@@ -90,7 +90,7 @@ If you're just running the TeamHermes Agent and want to use Docker, see `website
 | `docker/entrypoint.sh` | Back-compat shim that `exec`s the stage2 hook. External scripts that hard-coded the old entrypoint path still work. |
 | `hermes_cli/service_manager.py` | `S6ServiceManager`: `register_profile_gateway`, `unregister_profile_gateway`, `start/stop/restart/is_running`, `list_profile_gateways`. |
 | `hermes_cli/container_boot.py` | `reconcile_profile_gateways()` — walks persistent profiles, regenerates s6 slots, emits `container-boot.log`. |
-| `hermes_cli/gateway.py::_dispatch_via_service_manager_if_s6` | Intercepts `hermes gateway start/stop/restart` and routes to s6 when running in a container. |
+| `hermes_cli/gateway.py::_dispatch_via_service_manager_if_s6` | Intercepts `th gateway start/stop/restart` and routes to s6 when running in a container. |
 
 ## Why Architecture B (CMD as main program, not s6-supervised)
 
@@ -164,11 +164,11 @@ The harness lives in `tests/docker/` and skips when Docker isn't available. The 
 
 ### "command not found" via `docker exec`
 
-`/command/` (where s6-overlay puts its binaries) is on PATH only for processes spawned by the supervision tree — services, cont-init.d, main-wrapper.sh. `docker exec <c> s6-svstat …` will fail with "command not found"; always use the absolute path `/command/s6-svstat`. The `hermes` binary works because the Dockerfile adds `/opt/hermes/.venv/bin` to the runtime `ENV PATH`.
+`/command/` (where s6-overlay puts its binaries) is on PATH only for processes spawned by the supervision tree — services, cont-init.d, main-wrapper.sh. `docker exec <c> s6-svstat …` will fail with "command not found"; always use the absolute path `/command/s6-svstat`. The `th` binary works because the Dockerfile adds `/opt/hermes/.venv/bin` to the runtime `ENV PATH`.
 
 ### Profile directory ownership
 
-The cont-init reconciler runs as hermes (`s6-setuidgid hermes` in `02-reconcile-profiles`). If a profile dir ends up root-owned (e.g. because `docker exec <c> hermes profile create …` ran as root by default), the reconciler can't read SOUL.md and fails with `PermissionError`. Mitigation: `stage2-hook.sh` chowns `$HERMES_HOME/profiles` to hermes on **every** boot, idempotently. Don't remove that block.
+The cont-init reconciler runs as hermes (`s6-setuidgid hermes` in `02-reconcile-profiles`). If a profile dir ends up root-owned (e.g. because `docker exec <c> th profile create …` ran as root by default), the reconciler can't read SOUL.md and fails with `PermissionError`. Mitigation: `stage2-hook.sh` chowns `$HERMES_HOME/profiles` to hermes on **every** boot, idempotently. Don't remove that block.
 
 ### Files written by `docker exec` are root-owned
 
@@ -180,11 +180,11 @@ The service directory is on tmpfs and was wiped on container restart. Either the
 
 ### Gateway starts then immediately exits (`down (exitcode 1)` in svstat)
 
-Most likely the profile has no model or auth configured. The service slot is correct — the gateway itself is unconfigured. Run `hermes -p <profile> setup` first. The s6 supervisor will keep restarting it; that's the desired behavior (when you fix the config, the next attempt succeeds and stays up).
+Most likely the profile has no model or auth configured. The service slot is correct — the gateway itself is unconfigured. Run `th -p <profile> setup` first. The s6 supervisor will keep restarting it; that's the desired behavior (when you fix the config, the next attempt succeeds and stays up).
 
 ### Reconciler skipped a profile
 
-The reconciler keys on the **presence of `SOUL.md`** as the "real profile" marker. `hermes profile create` always seeds it. If a profile dir is missing SOUL.md (stray directory, partial restore, backup-in-progress), the reconciler skips it intentionally. Add a `SOUL.md` (even empty) to opt back in.
+The reconciler keys on the **presence of `SOUL.md`** as the "real profile" marker. `th profile create` always seeds it. If a profile dir is missing SOUL.md (stray directory, partial restore, backup-in-progress), the reconciler skips it intentionally. Add a `SOUL.md` (even empty) to opt back in.
 
 ### "Help, the container exits 143!"
 

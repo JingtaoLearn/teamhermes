@@ -200,7 +200,7 @@ Each entry supports:
 - `key` (required) — dotpath for the setting (e.g., `myplugin.path`)
 - `description` (required) — explains what the setting controls
 - `default` (optional) — default value if the user doesn't configure it
-- `prompt` (optional) — prompt text shown during `hermes config migrate`; falls back to `description`
+- `prompt` (optional) — prompt text shown during `th config migrate`; falls back to `description`
 
 **How it works:**
 
@@ -212,7 +212,7 @@ Each entry supports:
          path: ~/my-data
    ```
 
-2. **Discovery:** `hermes config migrate` scans all enabled skills, finds unconfigured settings, and prompts the user. Settings also appear in `hermes config show` under "Skill Settings."
+2. **Discovery:** `th config migrate` scans all enabled skills, finds unconfigured settings, and prompts the user. Settings also appear in `th config show` under "Skill Settings."
 
 3. **Runtime injection:** When a skill loads, its config values are resolved and appended to the skill message:
    ```
@@ -224,7 +224,7 @@ Each entry supports:
 
 4. **Manual setup:** Users can also set values directly:
    ```bash
-   hermes config set skills.config.myplugin.path ~/my-data
+   th config set skills.config.myplugin.path ~/my-data
    ```
 
 :::tip When to use which
@@ -320,7 +320,7 @@ Snippets run with the skill directory as their working directory, and output is 
 Run the skill and verify the agent follows the instructions correctly:
 
 ```bash
-hermes chat --toolsets skills -q "Use the X skill to do Y"
+th chat --toolsets skills -q "Use the X skill to do Y"
 ```
 
 ## Where Should the Skill Live?
@@ -330,16 +330,16 @@ Bundled skills (in `skills/`) ship with every TeamHermes install. They should be
 - Document handling, web research, common dev workflows, system administration
 - Used regularly by a wide range of people
 
-If your skill is official and useful but not universally needed (e.g., a paid service integration, a heavyweight dependency), put it in **`optional-skills/`** — it ships with the repo, is discoverable via `hermes skills browse` (labeled "official"), and installs with built-in trust.
+If your skill is official and useful but not universally needed (e.g., a paid service integration, a heavyweight dependency), put it in **`optional-skills/`** — it ships with the repo, is discoverable via `th skills browse` (labeled "official"), and installs with built-in trust.
 
-If your skill is specialized, community-contributed, or niche, it's better suited for a **Skills Hub** — upload it to a registry and share it via `hermes skills install`.
+If your skill is specialized, community-contributed, or niche, it's better suited for a **Skills Hub** — upload it to a registry and share it via `th skills install`.
 
 ## Publishing Skills
 
 ### To the Skills Hub
 
 ```bash
-hermes skills publish skills/my-skill --to github --repo owner/repo
+th skills publish skills/my-skill --to github --repo owner/repo
 ```
 
 ### To a Custom Repository
@@ -347,7 +347,7 @@ hermes skills publish skills/my-skill --to github --repo owner/repo
 Add your repo as a tap:
 
 ```bash
-hermes skills tap add owner/repo
+th skills tap add owner/repo
 ```
 
 Users can then search and install from your repository.

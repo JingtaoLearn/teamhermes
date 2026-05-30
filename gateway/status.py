@@ -173,7 +173,7 @@ def _looks_like_gateway_process(pid: int) -> bool:
     patterns = (
         "hermes_cli.main gateway",
         "hermes_cli/main.py gateway",
-        "hermes gateway",
+        "th gateway",
         "hermes-gateway",
         "gateway/run.py",
     )
@@ -194,7 +194,7 @@ def _record_looks_like_gateway(record: dict[str, Any]) -> bool:
     patterns = (
         "hermes_cli.main gateway",
         "hermes_cli/main.py gateway",
-        "hermes gateway",
+        "th gateway",
         "gateway/run.py",
     )
     return any(pattern in cmdline for pattern in patterns)
@@ -747,7 +747,7 @@ def release_all_scoped_locks(
 # unexpected kills — but that also means a --replace takeover target
 # exits 1, which tricks systemd into reviving it 30 seconds later,
 # starting a flap loop against the replacer when both services are
-# enabled in the user's systemd (e.g. ``hermes.service`` + ``hermes-
+# enabled in the user's systemd (e.g. ``th.service`` + ``hermes-
 # gateway.service``).
 #
 # The takeover marker breaks the loop: the replacer writes a short-lived
@@ -821,7 +821,7 @@ def _consume_pid_marker_for_self(
     # platforms without ``/proc`` (macOS, native Windows — the very
     # platform the planned-stop watcher exists for). Requiring a non-None
     # match there would make every consume return False, so a legitimate
-    # ``hermes gateway stop`` on Windows would be misclassified as an
+    # ``th gateway stop`` on Windows would be misclassified as an
     # unexpected ``UNKNOWN`` exit (exit 1) and revived by the service
     # manager. So: when both start_times are known they must match; when
     # either is unknown, fall back to PID equality alone (bounded by the

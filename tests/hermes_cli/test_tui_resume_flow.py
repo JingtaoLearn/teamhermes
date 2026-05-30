@@ -710,7 +710,7 @@ def test_oneshot_rejects_disabled_mcp_toolset(monkeypatch, capsys):
     valid, error = _validate_explicit_toolsets("mcp-off")
 
     assert valid is None
-    assert error == "hermes -z: --toolsets did not contain any valid toolsets.\n"
+    assert error == "th -z: --toolsets did not contain any valid toolsets.\n"
     err = capsys.readouterr().err
     assert "ignoring disabled MCP servers" in err
     assert "mcp-off" in err
@@ -739,7 +739,7 @@ def test_oneshot_distinguishes_disabled_mcp_from_unknown(monkeypatch, capsys):
 
 
 def test_oneshot_wires_session_db_for_recall(monkeypatch):
-    """hermes -z bypasses HermesCLI, but recall still needs SessionDB."""
+    """th -z bypasses HermesCLI, but recall still needs SessionDB."""
     from hermes_cli.oneshot import _run_agent
 
     captured = {}
@@ -959,8 +959,8 @@ def test_print_tui_exit_summary_includes_resume_and_token_totals(monkeypatch, ca
     out = capsys.readouterr().out
 
     assert "Resume this session with:" in out
-    assert "hermes --tui --resume 20260409_000001_abc123" in out
-    assert 'hermes --tui -c "demo title"' in out
+    assert "th --tui --resume 20260409_000001_abc123" in out
+    assert 'th --tui -c "demo title"' in out
     assert "Tokens:         21 (in 10, out 6, cache 4, reasoning 1)" in out
 
 
@@ -999,5 +999,5 @@ def test_print_tui_exit_summary_prefers_actual_active_session_file(
     out = capsys.readouterr().out
 
     assert seen == ["actual_session"]
-    assert "hermes --tui --resume actual_session" in out
+    assert "th --tui --resume actual_session" in out
     assert "startup_resume" not in out

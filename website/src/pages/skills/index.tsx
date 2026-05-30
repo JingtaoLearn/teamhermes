@@ -378,7 +378,7 @@ function SkillCard({
               </div>
             )}
             <div className={styles.installHint}>
-              <code>{skill.installCmd || `hermes skills install ${skill.name}`}</code>
+              <code>{skill.installCmd || `th skills install ${skill.name}`}</code>
             </div>
             {skill.docsPath && (
               <a

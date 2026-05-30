@@ -9,7 +9,7 @@ description: "Practical advice to get the most out of TeamHermes Agent — promp
 A quick-wins collection of practical tips that make you immediately more effective with TeamHermes Agent. Each section targets a different aspect — scan the headers and jump to what's relevant.
 
 :::tip Confused which model to pick?
-Run `hermes setup --portal` — you get 300+ models including Claude, GPT-5, and Gemini under one subscription. See [Nous Portal](/integrations/nous-portal).
+Run `th setup --portal` — you get 300+ models including Claude, GPT-5, and Gemini under one subscription. See [Nous Portal](/integrations/nous-portal).
 :::
 
 ---
@@ -52,7 +52,7 @@ Press **Ctrl+C** once to interrupt the agent mid-response. You can then type a n
 
 ### Resume Sessions with `-c`
 
-Forgot something from your last session? Run `hermes -c` to resume exactly where you left off, with full conversation history restored. You can also resume by title: `hermes -r "my research project"`.
+Forgot something from your last session? Run `th -c` to resume exactly where you left off, with full conversation history restored. You can also resume by title: `th -r "my research project"`.
 
 ### Clipboard Image Paste
 
@@ -163,11 +163,11 @@ Use `/sethome` in your preferred Telegram or Discord chat to designate it as the
 
 ### Use /title to Organize Sessions
 
-Name your sessions with `/title auth-refactor` or `/title research-llm-quantization`. Named sessions are easy to find with `hermes sessions list` and resume with `hermes -r "auth-refactor"`. Unnamed sessions pile up and become impossible to distinguish.
+Name your sessions with `/title auth-refactor` or `/title research-llm-quantization`. Named sessions are easy to find with `th sessions list` and resume with `th -r "auth-refactor"`. Unnamed sessions pile up and become impossible to distinguish.
 
 ### DM Pairing for Team Access
 
-Instead of manually collecting user IDs for allowlists, enable DM pairing. When a teammate DMs the bot, they get a one-time pairing code. You approve it with `hermes pairing approve telegram XKGH5N7P` — simple and secure.
+Instead of manually collecting user IDs for allowlists, enable DM pairing. When a teammate DMs the bot, they get a one-time pairing code. You approve it with `th pairing approve telegram XKGH5N7P` — simple and secure.
 
 ### Tool Progress Display Modes
 

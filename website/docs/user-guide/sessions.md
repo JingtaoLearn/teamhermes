@@ -59,7 +59,7 @@ into chat.
 
 :::tip
 Use `/compress` when a session gets long, `/new` for a fresh thread, and
-`hermes sessions prune` only when you want to delete old ended sessions from
+`th sessions prune` only when you want to delete old ended sessions from
 storage. Compression reduces the active context; it is not a privacy delete.
 Pass a name to `/new` (e.g. `/new payments-refactor`) to set the new session's
 initial title up front — useful for finding it later with `/resume <name>` or
@@ -72,7 +72,7 @@ Each session is tagged with its source platform:
 
 | Source | Description |
 |--------|-------------|
-| `cli` | Interactive CLI (`hermes` or `hermes chat`) |
+| `cli` | Interactive CLI (`th` or `th chat`) |
 | `telegram` | Telegram messenger |
 | `discord` | Discord server/DM |
 | `slack` | Slack workspace |
@@ -103,12 +103,12 @@ Resume previous conversations from the CLI using `--continue` or `--resume`:
 
 ```bash
 # Resume the most recent CLI session
-hermes --continue
-hermes -c
+th --continue
+th -c
 
 # Or with the chat subcommand
-hermes chat --continue
-hermes chat -c
+th chat --continue
+th chat -c
 ```
 
 This looks up the most recent `cli` session from the SQLite database and loads its full conversation history.
@@ -119,28 +119,28 @@ If you've given a session a title (see [Session Naming](#session-naming) below),
 
 ```bash
 # Resume a named session
-hermes -c "my project"
+th -c "my project"
 
 # If there are lineage variants (my project, my project #2, my project #3),
 # this automatically resumes the most recent one
-hermes -c "my project"   # → resumes "my project #3"
+th -c "my project"   # → resumes "my project #3"
 ```
 
 ### Resume Specific Session
 
 ```bash
 # Resume a specific session by ID
-hermes --resume 20250305_091523_a1b2c3d4
-hermes -r 20250305_091523_a1b2c3d4
+th --resume 20250305_091523_a1b2c3d4
+th -r 20250305_091523_a1b2c3d4
 
 # Resume by title
-hermes --resume "refactoring auth"
+th --resume "refactoring auth"
 
 # Or with the chat subcommand
-hermes chat --resume 20250305_091523_a1b2c3d4
+th chat --resume 20250305_091523_a1b2c3d4
 ```
 
-Session IDs are shown when you exit a CLI session, and can be found with `hermes sessions list`.
+Session IDs are shown when you exit a CLI session, and can be found with `th sessions list`.
 
 ### Conversation Recap on Resume
 
@@ -196,7 +196,7 @@ What happens:
 
 6. From that point, the conversation lives on the platform. Reply in the new thread — anyone authorized in that channel shares the same session, and any later real user message in the thread joins seamlessly because thread sessions key without `user_id`.
 
-**Resume back to CLI:** when you want to come back to a desktop, just run `/resume <title>` (or `hermes -r "<title>"` from the shell) and pick up where the platform left off.
+**Resume back to CLI:** when you want to come back to a desktop, just run `/resume <title>` (or `th -r "<title>"` from the shell) and pick up where the platform left off.
 
 **Failure modes:**
 - No home channel configured → CLI refuses with a `/sethome` hint.
@@ -212,7 +212,7 @@ Give sessions human-readable titles so you can find and resume them easily.
 
 ### Auto-Generated Titles
 
-TeamHermes automatically generates a short descriptive title (3–7 words) for each session after the first exchange. This runs in a background thread using a fast auxiliary model, so it adds no latency. You'll see auto-generated titles when browsing sessions with `hermes sessions list` or `hermes sessions browse`.
+TeamHermes automatically generates a short descriptive title (3–7 words) for each session after the first exchange. This runs in a background thread using a fast auxiliary model, so it adds no latency. You'll see auto-generated titles when browsing sessions with `th sessions list` or `th sessions browse`.
 
 Auto-titling only fires once per session and is skipped if you've already set a title manually.
 
@@ -229,7 +229,7 @@ The title is applied immediately. If the session hasn't been created in the data
 You can also rename existing sessions from the command line:
 
 ```bash
-hermes sessions rename 20250305_091523_a1b2c3d4 "refactoring auth module"
+th sessions rename 20250305_091523_a1b2c3d4 "refactoring auth module"
 ```
 
 ### Title Rules
@@ -247,7 +247,7 @@ When a session's context is compressed (manually via `/compress` or automaticall
 "my project" → "my project #2" → "my project #3"
 ```
 
-When you resume by name (`hermes -c "my project"`), it automatically picks the most recent session in the lineage.
+When you resume by name (`th -c "my project"`), it automatically picks the most recent session in the lineage.
 
 ### /title in Messaging Platforms
 
@@ -258,19 +258,19 @@ The `/title` command works in all gateway platforms (Telegram, Discord, Slack, W
 
 ## Session Management Commands
 
-TeamHermes provides a full set of session management commands via `hermes sessions`:
+TeamHermes provides a full set of session management commands via `th sessions`:
 
 ### List Sessions
 
 ```bash
 # List recent sessions (default: last 20)
-hermes sessions list
+th sessions list
 
 # Filter by platform
-hermes sessions list --source telegram
+th sessions list --source telegram
 
 # Show more sessions
-hermes sessions list --limit 50
+th sessions list --limit 50
 ```
 
 When sessions have titles, the output shows titles, previews, and relative timestamps:
@@ -296,13 +296,13 @@ What's the weather in Las Vegas?                    3d ago        tele   2025030
 
 ```bash
 # Export all sessions to a JSONL file
-hermes sessions export backup.jsonl
+th sessions export backup.jsonl
 
 # Export sessions from a specific platform
-hermes sessions export telegram-history.jsonl --source telegram
+th sessions export telegram-history.jsonl --source telegram
 
 # Export a single session
-hermes sessions export session.jsonl --session-id 20250305_091523_a1b2c3d4
+th sessions export session.jsonl --session-id 20250305_091523_a1b2c3d4
 ```
 
 Exported files contain one JSON object per line with full session metadata and all messages.
@@ -311,20 +311,20 @@ Exported files contain one JSON object per line with full session metadata and a
 
 ```bash
 # Delete a specific session (with confirmation)
-hermes sessions delete 20250305_091523_a1b2c3d4
+th sessions delete 20250305_091523_a1b2c3d4
 
 # Delete without confirmation
-hermes sessions delete 20250305_091523_a1b2c3d4 --yes
+th sessions delete 20250305_091523_a1b2c3d4 --yes
 ```
 
 ### Rename a Session
 
 ```bash
 # Set or change a session's title
-hermes sessions rename 20250305_091523_a1b2c3d4 "debugging auth flow"
+th sessions rename 20250305_091523_a1b2c3d4 "debugging auth flow"
 
 # Multi-word titles don't need quotes in the CLI
-hermes sessions rename 20250305_091523_a1b2c3d4 debugging auth flow
+th sessions rename 20250305_091523_a1b2c3d4 debugging auth flow
 ```
 
 If the title is already in use by another session, an error is shown.
@@ -333,16 +333,16 @@ If the title is already in use by another session, an error is shown.
 
 ```bash
 # Delete ended sessions older than 90 days (default)
-hermes sessions prune
+th sessions prune
 
 # Custom age threshold
-hermes sessions prune --older-than 30
+th sessions prune --older-than 30
 
 # Only prune sessions from a specific platform
-hermes sessions prune --source telegram --older-than 60
+th sessions prune --source telegram --older-than 60
 
 # Skip confirmation
-hermes sessions prune --older-than 30 --yes
+th sessions prune --older-than 30 --yes
 ```
 
 :::info
@@ -352,7 +352,7 @@ Pruning only deletes **ended** sessions (sessions that have been explicitly ende
 ### Session Statistics
 
 ```bash
-hermes sessions stats
+th sessions stats
 ```
 
 Output:
@@ -366,7 +366,7 @@ Total messages: 3847
 Database size: 12.4 MB
 ```
 
-For deeper analytics — token usage, cost estimates, tool breakdown, and activity patterns — use [`hermes insights`](/reference/cli-commands#hermes-insights).
+For deeper analytics — token usage, cost estimates, tool breakdown, and activity patterns — use [`th insights`](/reference/cli-commands#hermes-insights).
 
 ## Session Search Tool
 
@@ -535,16 +535,16 @@ Active sessions are never auto-pruned, regardless of age.
 
 ```bash
 # Prune sessions older than 90 days
-hermes sessions prune
+th sessions prune
 
 # Delete a specific session
-hermes sessions delete <session_id>
+th sessions delete <session_id>
 
 # Export before pruning (backup)
-hermes sessions export backup.jsonl
-hermes sessions prune --older-than 30 --yes
+th sessions export backup.jsonl
+th sessions prune --older-than 30 --yes
 ```
 
 :::tip
-The database grows slowly (typical: 10-15 MB for hundreds of sessions) and session history powers `session_search` recall across past conversations, so auto-prune ships disabled. Enable it if you're running a heavy gateway/cron workload where `state.db` is meaningfully affecting performance (observed failure mode: 384 MB state.db with ~1000 sessions slowing down FTS5 inserts and `/resume` listing). Use `hermes sessions prune` for one-off cleanup without turning on the automatic sweep.
+The database grows slowly (typical: 10-15 MB for hundreds of sessions) and session history powers `session_search` recall across past conversations, so auto-prune ships disabled. Enable it if you're running a heavy gateway/cron workload where `state.db` is meaningfully affecting performance (observed failure mode: 384 MB state.db with ~1000 sessions slowing down FTS5 inserts and `/resume` listing). Use `th sessions prune` for one-off cleanup without turning on the automatic sweep.
 :::

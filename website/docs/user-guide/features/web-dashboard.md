@@ -9,13 +9,13 @@ description: "Browser-based dashboard for managing configuration, API keys, sess
 The web dashboard is a browser-based UI for managing your TeamHermes Agent installation. Instead of editing YAML files or running CLI commands, you can configure settings, manage API keys, and monitor sessions from a clean web interface.
 
 :::tip
-Hosted-mode auth uses Nous Portal OAuth; if you also want the dashboard to talk to a real backend, `hermes setup --portal` wires up the model and tool gateway too. See [Nous Portal](/integrations/nous-portal).
+Hosted-mode auth uses Nous Portal OAuth; if you also want the dashboard to talk to a real backend, `th setup --portal` wires up the model and tool gateway too. See [Nous Portal](/integrations/nous-portal).
 :::
 
 ## Quick Start
 
 ```bash
-hermes dashboard
+th dashboard
 ```
 
 This starts a local web server and opens `http://127.0.0.1:9119` in your browser. The dashboard runs entirely on your machine — no data leaves localhost.
@@ -28,20 +28,20 @@ This starts a local web server and opens `http://127.0.0.1:9119` in your browser
 | `--host` | `127.0.0.1` | Bind address |
 | `--no-open` | — | Don't auto-open the browser |
 | `--insecure` | off | Allow binding to non-localhost hosts (**DANGEROUS** — exposes API keys on the network; pair with a firewall and strong auth) |
-| `--tui` | off | Expose the in-browser Chat tab (embedded `hermes --tui` via PTY/WebSocket). Alternatively set `HERMES_DASHBOARD_TUI=1`. |
+| `--tui` | off | Expose the in-browser Chat tab (embedded `th --tui` via PTY/WebSocket). Alternatively set `HERMES_DASHBOARD_TUI=1`. |
 
 ```bash
 # Custom port
-hermes dashboard --port 8080
+th dashboard --port 8080
 
 # Bind to all interfaces (use with caution on shared networks)
-hermes dashboard --host 0.0.0.0
+th dashboard --host 0.0.0.0
 
 # Start without opening browser
-hermes dashboard --no-open
+th dashboard --no-open
 
 # Enable the in-browser Chat tab
-hermes dashboard --tui
+th dashboard --tui
 ```
 
 ## Prerequisites
@@ -54,9 +54,9 @@ pip install 'hermes-agent[web,pty]'
 
 The `web` extra pulls in FastAPI/Uvicorn; `pty` pulls in `ptyprocess` (POSIX) or `pywinpty` (native Windows — note that the embedded TUI itself still requires WSL). `pip install hermes-agent[all]` includes both extras and is the easiest path if you also want messaging/voice/etc.
 
-When you run `hermes dashboard` without the dependencies, it will tell you what to install. If the frontend hasn't been built yet and `npm` is available, it builds automatically on first launch.
+When you run `th dashboard` without the dependencies, it will tell you what to install. If the frontend hasn't been built yet and `npm` is available, it builds automatically on first launch.
 
-The Chat tab is intentionally off for a plain `hermes dashboard` launch. Start the dashboard with `hermes dashboard --tui` or set `HERMES_DASHBOARD_TUI=1` when you want the embedded browser chat pane.
+The Chat tab is intentionally off for a plain `th dashboard` launch. Start the dashboard with `th dashboard --tui` or set `HERMES_DASHBOARD_TUI=1` when you want the embedded browser chat pane.
 
 ## Pages
 
@@ -73,12 +73,12 @@ The status page auto-refreshes every 5 seconds.
 
 ### Chat
 
-The **Chat** tab embeds the full TeamHermes TUI (the same interface you get from `hermes --tui`) directly in the browser. Everything you can do in the terminal TUI — slash commands, model picker, tool-call cards, markdown streaming, clarify/sudo/approval prompts, skin theming — works identically here, because the dashboard is running the real TUI binary and rendering its ANSI output through [xterm.js](https://xtermjs.org/) with its WebGL renderer for pixel-perfect cell layout.
+The **Chat** tab embeds the full TeamHermes TUI (the same interface you get from `th --tui`) directly in the browser. Everything you can do in the terminal TUI — slash commands, model picker, tool-call cards, markdown streaming, clarify/sudo/approval prompts, skin theming — works identically here, because the dashboard is running the real TUI binary and rendering its ANSI output through [xterm.js](https://xtermjs.org/) with its WebGL renderer for pixel-perfect cell layout.
 
 **How it works:**
 
 - `/api/pty` opens a WebSocket authenticated with the dashboard's session token
-- The server spawns `hermes --tui` behind a POSIX pseudo-terminal
+- The server spawns `th --tui` behind a POSIX pseudo-terminal
 - Keystrokes travel to the PTY; ANSI output streams back to the browser
 - xterm.js's WebGL renderer paints each cell to an integer-pixel grid; mouse tracking (SGR 1006), wide characters (Unicode 11), and box-drawing glyphs all render natively
 - Resizing the browser window resizes the TUI via the `@xterm/addon-fit` addon
@@ -87,7 +87,7 @@ The **Chat** tab embeds the full TeamHermes TUI (the same interface you get from
 
 **Prerequisites:**
 
-- Node.js (same requirement as `hermes --tui`; the TUI bundle is built on first launch)
+- Node.js (same requirement as `th --tui`; the TUI bundle is built on first launch)
 - `ptyprocess` — installed by the `pty` extra (`pip install 'hermes-agent[web,pty]'`, or `[all]` covers both)
 - POSIX kernel (Linux, macOS, or WSL2).  The `/chat` terminal pane specifically needs a POSIX PTY — native Windows Python has no equivalent, so on a native Windows install the rest of the dashboard (sessions, jobs, metrics, config editor) works but the `/chat` tab will show a banner telling you to use WSL2 for that feature.
 
@@ -116,7 +116,7 @@ Fields with known valid values (terminal backend, skin, approval mode, etc.) ren
 - **Import** — uploads a JSON config file to replace the current values
 
 :::tip
-Config changes take effect on the next agent session or gateway restart. The web dashboard edits the same `config.yaml` file that `hermes config set` and the gateway read from.
+Config changes take effect on the next agent session or gateway restart. The web dashboard edits the same `config.yaml` file that `th config set` and the gateway read from.
 :::
 
 ### API Keys
@@ -310,9 +310,9 @@ This is intended for hosted deployments (typically Fly.io) where the dashboard i
 
 | Flags | Auth gate | Use case |
 |-------|-----------|----------|
-| `hermes dashboard` (default — binds to `127.0.0.1`) | OFF | Local development |
-| `hermes dashboard --host 0.0.0.0` | **ON** | Production / Fly.io deployment |
-| `hermes dashboard --host 192.168.1.10 --insecure` | OFF | Trusted LAN; user opts into legacy session-token auth |
+| `th dashboard` (default — binds to `127.0.0.1`) | OFF | Local development |
+| `th dashboard --host 0.0.0.0` | **ON** | Production / Fly.io deployment |
+| `th dashboard --host 192.168.1.10 --insecure` | OFF | Trusted LAN; user opts into legacy session-token auth |
 
 The gate is on if and only if:
 
@@ -323,7 +323,7 @@ Setting `--insecure` keeps the existing single-process session-token behaviour �
 
 ### Fail-closed semantics
 
-If the gate would engage but **no** `DashboardAuthProvider` is registered (no Nous plugin, no custom plugin), `hermes dashboard` refuses to bind with an explicit error message. There is no "default-deny but accept everything" fallback — a misconfigured gated dashboard never starts.
+If the gate would engage but **no** `DashboardAuthProvider` is registered (no Nous plugin, no custom plugin), `th dashboard` refuses to bind with an explicit error message. There is no "default-deny but accept everything" fallback — a misconfigured gated dashboard never starts.
 
 ### Default provider: Nous Research
 
@@ -457,7 +457,7 @@ The login page lists all registered providers; multiple providers can be stacked
 # Quick env-var path (Fly.io shape). HERMES_DASHBOARD_PORTAL_URL is
 # optional — defaults to production.
 HERMES_DASHBOARD_OAUTH_CLIENT_ID=agent:test \
-  hermes dashboard --host 0.0.0.0
+  th dashboard --host 0.0.0.0
 
 # Or the equivalent via config.yaml (recommended for local dev / on-prem):
 #
@@ -466,7 +466,7 @@ HERMES_DASHBOARD_OAUTH_CLIENT_ID=agent:test \
 #       client_id: agent:test
 #
 # then just:
-hermes dashboard --host 0.0.0.0
+th dashboard --host 0.0.0.0
 
 # Hit /api/status to see the gate state:
 curl -s http://127.0.0.1:9119/api/status | jq '.auth_required, .auth_providers'
@@ -492,7 +492,7 @@ If you're contributing to the web dashboard frontend:
 
 ```bash
 # Terminal 1: start the backend API
-hermes dashboard --no-open
+th dashboard --no-open
 
 # Terminal 2: start the Vite dev server with HMR
 cd web/
@@ -506,7 +506,7 @@ The frontend is built with React 19, TypeScript, Tailwind CSS v4, and shadcn/ui-
 
 ## Automatic Build on Update
 
-When you run `hermes update`, the web frontend is automatically rebuilt if `npm` is available. This keeps the dashboard in sync with code updates. If `npm` isn't installed, the update skips the frontend build and `hermes dashboard` will build it on first launch.
+When you run `th update`, the web frontend is automatically rebuilt if `npm` is available. This keeps the dashboard in sync with code updates. If `npm` isn't installed, the update skips the frontend build and `th dashboard` will build it on first launch.
 
 ## Themes & plugins
 

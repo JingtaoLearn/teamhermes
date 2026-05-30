@@ -33,9 +33,9 @@ them collectively.
 
 ```bash
 # Create profiles (once)
-hermes profile create coder
-hermes profile create personal-bot
-hermes profile create research
+th profile create coder
+th profile create personal-bot
+th profile create research
 
 # Configure each
 coder setup
@@ -60,7 +60,7 @@ automatically on crash and on user login.
 
 The CLI ships with single-profile lifecycle commands. To act across every
 profile, wrap them in a shell loop. Put the snippet below in
-`~/.local/bin/hermes-gateways` and `chmod +x` it:
+`~/.local/bin/th-gateways` and `chmod +x` it:
 
 ```sh
 #!/bin/sh
@@ -77,9 +77,9 @@ run_for_profile() {
   profile="$1"
   action="$2"
   if [ "$profile" = "default" ]; then
-    hermes gateway "$action"
+    th gateway "$action"
   else
-    hermes -p "$profile" gateway "$action"
+    th -p "$profile" gateway "$action"
   fi
 }
 
@@ -92,7 +92,7 @@ case "$action" in
     done
     ;;
   list)
-    hermes gateway list
+    th gateway list
     ;;
   *)
     usage
@@ -108,12 +108,12 @@ hermes-gateways start      # start every configured profile
 hermes-gateways stop       # stop every configured profile
 hermes-gateways restart    # restart all
 hermes-gateways status     # status across all
-hermes-gateways list       # delegates to `hermes gateway list`
+hermes-gateways list       # delegates to `th gateway list`
 ```
 
 :::tip
-The `default` profile is targeted with `hermes gateway <action>` (no `-p`),
-not `hermes -p default gateway <action>`. The wrapper above handles both forms.
+The `default` profile is targeted with `th gateway <action>` (no `-p`),
+not `th -p default gateway <action>`. The wrapper above handles both forms.
 :::
 
 ## Manage one profile
@@ -130,7 +130,7 @@ coder gateway install    # create the LaunchAgent / systemd unit
 coder gateway uninstall  # remove the service file
 ```
 
-These are equivalent to `hermes -p coder gateway <action>` — useful if a
+These are equivalent to `th -p coder gateway <action>` — useful if a
 profile alias is not on `PATH` or if you target profiles dynamically from a
 script.
 
@@ -170,15 +170,15 @@ tail -f ~/.teamhermes/logs/gateway.log ~/.teamhermes/profiles/*/logs/gateway.log
 The CLI also has a structured log viewer:
 
 ```bash
-hermes logs --tail              # follow default profile
-hermes -p coder logs --tail     # follow one profile
-hermes logs --help              # filters, levels, JSON output
+th logs --tail              # follow default profile
+th -p coder logs --tail     # follow one profile
+th logs --help              # filters, levels, JSON output
 ```
 
 ## Identify what's actually running
 
 ```bash
-hermes profile list             # profiles + model + gateway state
+th profile list             # profiles + model + gateway state
 hermes-gateways status          # full status across every profile
 launchctl list | grep hermes    # macOS — PIDs and labels
 systemctl --user list-units 'hermes-gateway-*'   # Linux — units
@@ -200,7 +200,7 @@ The default profile uses `~/.teamhermes/` directly with the same three files.
 Edit them with any editor or via the CLI:
 
 ```bash
-hermes config set model.model anthropic/claude-sonnet-4    # default profile
+th config set model.model anthropic/claude-sonnet-4    # default profile
 coder config set model.model openai/gpt-5                  # named profile
 ```
 
@@ -255,7 +255,7 @@ use a third-party tool.
 
 ```bash
 # Inhibit suspend while a command runs
-systemd-inhibit --what=idle:sleep --who=hermes --why="gateways running" \
+systemd-inhibit --what=idle:sleep --who=th --why="gateways running" \
   sleep infinity &
 
 # Allow user services to keep running after logout (recommended)
@@ -281,11 +281,11 @@ grep -H 'TELEGRAM_BOT_TOKEN\|DISCORD_BOT_TOKEN' \
 
 ## Updating the code
 
-`hermes update` pulls the latest code once and syncs new bundled skills into
+`th update` pulls the latest code once and syncs new bundled skills into
 every profile:
 
 ```bash
-hermes update
+th update
 hermes-gateways restart
 ```
 
@@ -295,7 +295,7 @@ User-modified skills are never overwritten.
 
 ### "Could not find service in domain for user gui: 501"
 
-You ran `hermes gateway start` after a previous `hermes gateway stop`. The
+You ran `th gateway start` after a previous `th gateway stop`. The
 CLI's `stop` does a full `launchctl unload`, which removes the service from
 launchd's registry. The CLI catches this specific error on `start` and
 automatically re-loads the plist (`↻ launchd job was unloaded; reloading
@@ -327,6 +327,6 @@ systemctl --user restart hermes-gateway-<profile>.service
 ### Health check
 
 ```bash
-hermes doctor                  # default profile
-hermes -p <profile> doctor     # one profile
+th doctor                  # default profile
+th -p <profile> doctor     # one profile
 ```

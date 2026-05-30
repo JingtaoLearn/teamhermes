@@ -41,7 +41,7 @@ pip install -e '.[acp]'
 
 This installs the `agent-client-protocol` dependency and enables:
 
-- `hermes acp`
+- `th acp`
 - `hermes-acp`
 - `python -m acp_adapter`
 
@@ -58,7 +58,7 @@ Make sure `uv` is available on `PATH` before using the registry install path.
 Any of the following starts TeamHermes in ACP mode:
 
 ```bash
-hermes acp
+th acp
 ```
 
 ```bash
@@ -74,8 +74,8 @@ TeamHermes logs to stderr so stdout remains reserved for ACP JSON-RPC traffic.
 For non-interactive checks:
 
 ```bash
-hermes acp --version
-hermes acp --check
+th acp --version
+th acp --check
 ```
 
 ### Browser tools (optional)
@@ -85,11 +85,11 @@ Browser tools (`browser_navigate`, `browser_click`, etc.) depend on the
 wheel. Install them with:
 
 ```bash
-hermes acp --setup-browser           # interactive (prompts before ~400 MB download)
-hermes acp --setup-browser --yes     # accept the download non-interactively
+th acp --setup-browser           # interactive (prompts before ~400 MB download)
+th acp --setup-browser --yes     # accept the download non-interactively
 ```
 
-This is the standalone command. The Zed registry's terminal-auth flow (`hermes acp --setup`) also offers the browser bootstrap as a follow-up question after model selection, so most users never need to run `--setup-browser` directly.
+This is the standalone command. The Zed registry's terminal-auth flow (`th acp --setup`) also offers the browser bootstrap as a follow-up question after model selection, so most users never need to run `--setup-browser` directly.
 
 What it does:
 
@@ -135,7 +135,7 @@ Zed v0.221.x and newer installs external agents through the official ACP Registr
 
 Prerequisites:
 
-- Configure TeamHermes provider credentials first with `hermes model`, or set them in `~/.teamhermes/.env` / `~/.teamhermes/config.yaml`.
+- Configure TeamHermes provider credentials first with `th model`, or set them in `~/.teamhermes/.env` / `~/.teamhermes/config.yaml`.
 - Install `uv` so the registry launcher can run `uvx --from 'hermes-agent[acp]==<version>' hermes-acp`.
 
 For local development before the registry entry is available, use a custom agent server in Zed settings:
@@ -240,7 +240,7 @@ The ACP bridge maps these options onto TeamHermes' internal approval semantics â
 Check:
 
 - In Zed, open the ACP Registry with `zed: acp registry` and search for **TeamHermes Agent**.
-- For manual/local development, verify the custom `agent_servers` command points to `hermes acp`.
+- For manual/local development, verify the custom `agent_servers` command points to `th acp`.
 - TeamHermes is installed and on your PATH.
 - The ACP extra is installed (`pip install -e '.[acp]'`).
 - `uv` is installed if launching from the official Zed registry entry.
@@ -250,10 +250,10 @@ Check:
 Try these checks:
 
 ```bash
-hermes acp --version
-hermes acp --check
-hermes doctor
-hermes status
+th acp --version
+th acp --check
+th doctor
+th status
 ```
 
 ### Missing credentials
@@ -261,7 +261,7 @@ hermes status
 ACP mode uses TeamHermes' existing provider setup. Configure credentials with:
 
 ```bash
-hermes model
+th model
 ```
 
 or by editing `~/.teamhermes/.env`. Registry clients can also trigger TeamHermes' terminal auth flow, which runs the same interactive provider/model setup.

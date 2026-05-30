@@ -508,7 +508,7 @@ def _normalize_profile(profile: Optional[str]) -> Optional[str]:
     """Normalize and validate an optional cron job profile name.
 
     Empty / None disables per-job profile selection. Otherwise the profile name
-    is canonicalized with the same rules as ``hermes -p`` and must refer to an
+    is canonicalized with the same rules as ``th -p`` and must refer to an
     existing profile at create/update time. ``default`` is the built-in root
     profile and is always valid.
     """

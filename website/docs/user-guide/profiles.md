@@ -15,7 +15,7 @@ When you create a profile, it automatically becomes its own command. Create a pr
 ## Quick start
 
 ```bash
-hermes profile create coder       # creates profile + "coder" command alias
+th profile create coder       # creates profile + "coder" command alias
 coder setup                       # configure API keys and model
 coder chat                        # start chatting
 ```
@@ -25,13 +25,13 @@ That's it. `coder` is now its own TeamHermes profile with its own config, memory
 ## Creating a profile
 
 :::tip
-Quickest setup: run `hermes setup --portal` inside the new profile to wire up models + tools at once. See [Nous Portal](/integrations/nous-portal).
+Quickest setup: run `th setup --portal` inside the new profile to wire up models + tools at once. See [Nous Portal](/integrations/nous-portal).
 :::
 
 ### Blank profile
 
 ```bash
-hermes profile create mybot
+th profile create mybot
 ```
 
 Creates a fresh profile with bundled skills seeded. Run `mybot setup` to configure API keys, model, and gateway tokens.
@@ -39,15 +39,15 @@ Creates a fresh profile with bundled skills seeded. Run `mybot setup` to configu
 If you plan to use this profile as a kanban worker (or want the kanban orchestrator to route work to it), pass `--description "<role>"` at create time so the orchestrator knows what it's good at:
 
 ```bash
-hermes profile create researcher --description "Reads source code and external docs, writes findings."
+th profile create researcher --description "Reads source code and external docs, writes findings."
 ```
 
-You can also set or auto-generate the description later with `hermes profile describe` — see the [Kanban guide](./features/kanban#auto-vs-manual-orchestration) for the full routing model.
+You can also set or auto-generate the description later with `th profile describe` — see the [Kanban guide](./features/kanban#auto-vs-manual-orchestration) for the full routing model.
 
 ### Clone config only (`--clone`)
 
 ```bash
-hermes profile create work --clone
+th profile create work --clone
 ```
 
 Copies your current profile's `config.yaml`, `.env`, and `SOUL.md` into the new profile. Same API keys and model, but fresh sessions and memory. Edit `~/.teamhermes/profiles/work/.env` for different API keys, or `~/.teamhermes/profiles/work/SOUL.md` for a different personality.
@@ -55,7 +55,7 @@ Copies your current profile's `config.yaml`, `.env`, and `SOUL.md` into the new 
 ### Clone everything (`--clone-all`)
 
 ```bash
-hermes profile create backup --clone-all
+th profile create backup --clone-all
 ```
 
 Copies **everything** — config, API keys, personality, all memories, full session history, skills, cron jobs, plugins. A complete snapshot. Useful for backups or forking an agent that already has context.
@@ -63,7 +63,7 @@ Copies **everything** — config, API keys, personality, all memories, full sess
 ### Clone from a specific profile
 
 ```bash
-hermes profile create work --clone --clone-from coder
+th profile create work --clone --clone-from coder
 ```
 
 :::tip Honcho memory + profiles
@@ -85,28 +85,28 @@ coder skills list             # list coder's skills
 coder config set model.default anthropic/claude-sonnet-4
 ```
 
-The alias works with every hermes subcommand — it's just `hermes -p <name>` under the hood.
+The alias works with every hermes subcommand — it's just `th -p <name>` under the hood.
 
 ### The `-p` flag
 
 You can also target a profile explicitly with any command:
 
 ```bash
-hermes -p coder chat
-hermes --profile=coder doctor
-hermes chat -p coder -q "hello"    # works in any position
+th -p coder chat
+th --profile=coder doctor
+th chat -p coder -q "hello"    # works in any position
 ```
 
-### Sticky default (`hermes profile use`)
+### Sticky default (`th profile use`)
 
 ```bash
-hermes profile use coder
-hermes chat                   # now targets coder
-hermes tools                  # configures coder's tools
-hermes profile use default    # switch back
+th profile use coder
+th chat                   # now targets coder
+th tools                  # configures coder's tools
+th profile use default    # switch back
 ```
 
-Sets a default so plain `hermes` commands target that profile. Like `kubectl config use-context`.
+Sets a default so plain `th` commands target that profile. Like `kubectl config use-context`.
 
 ### Knowing where you are
 
@@ -114,7 +114,7 @@ The CLI always shows which profile is active:
 
 - **Prompt**: `coder ❯` instead of `❯`
 - **Banner**: Shows `Profile: coder` on startup
-- **`hermes profile`**: Shows current profile name, path, model, gateway status
+- **`th profile`**: Shows current profile name, path, model, gateway status
 
 ## Profiles vs workspaces vs sandboxing
 
@@ -177,7 +177,7 @@ assistant gateway install     # creates hermes-gateway-assistant service
 Each profile gets its own service name. They run independently.
 
 :::note Inside the official Docker image
-Per-profile gateways are supervised by [s6-overlay](https://github.com/just-containers/s6-overlay) (PID 1 in the container), so `hermes profile create <name>` automatically registers an s6 service slot at `/run/service/gateway-<name>/`. `hermes -p <name> gateway start/stop/restart` dispatches to `s6-svc` instead of spawning a bare process — crashes are auto-restarted and `docker restart` preserves the previously-running set of gateways. See [Per-profile gateway supervision](/user-guide/docker#per-profile-gateway-supervision) for details.
+Per-profile gateways are supervised by [s6-overlay](https://github.com/just-containers/s6-overlay) (PID 1 in the container), so `th profile create <name>` automatically registers an s6 service slot at `/run/service/gateway-<name>/`. `th -p <name> gateway start/stop/restart` dispatches to `s6-svc` instead of spawning a bare process — crashes are auto-restarted and `docker restart` preserves the previously-running set of gateways. See [Per-profile gateway supervision](/user-guide/docker#per-profile-gateway-supervision) for details.
 :::
 
 ## Configuring profiles
@@ -201,10 +201,10 @@ coder config set terminal.cwd /absolute/path/to/project
 
 ## Updating
 
-`hermes update` pulls code once (shared) and syncs new bundled skills to **all** profiles automatically:
+`th update` pulls code once (shared) and syncs new bundled skills to **all** profiles automatically:
 
 ```bash
-hermes update
+th update
 # → Code updated (12 commits)
 # → Skills synced: default (up to date), coder (+2 new), assistant (+2 new)
 ```
@@ -214,35 +214,35 @@ User-modified skills are never overwritten.
 ## Managing profiles
 
 ```bash
-hermes profile list           # show all profiles with status
-hermes profile show coder     # detailed info for one profile
-hermes profile rename coder dev-bot   # rename (updates alias + service)
-hermes profile export coder   # export to coder.tar.gz
-hermes profile import coder.tar.gz   # import from archive
+th profile list           # show all profiles with status
+th profile show coder     # detailed info for one profile
+th profile rename coder dev-bot   # rename (updates alias + service)
+th profile export coder   # export to coder.tar.gz
+th profile import coder.tar.gz   # import from archive
 ```
 
 ## Deleting a profile
 
 ```bash
-hermes profile delete coder
+th profile delete coder
 ```
 
 This stops the gateway, removes the systemd/launchd service, removes the command alias, and deletes all profile data. You'll be asked to type the profile name to confirm.
 
-Use `--yes` to skip confirmation: `hermes profile delete coder --yes`
+Use `--yes` to skip confirmation: `th profile delete coder --yes`
 
 :::note
-You cannot delete the default profile (`~/.teamhermes`). To remove everything, use `hermes uninstall`.
+You cannot delete the default profile (`~/.teamhermes`). To remove everything, use `th uninstall`.
 :::
 
 ## Tab completion
 
 ```bash
 # Bash
-eval "$(hermes completion bash)"
+eval "$(th completion bash)"
 
 # Zsh
-eval "$(hermes completion zsh)"
+eval "$(th completion zsh)"
 ```
 
 Add the line to your `~/.bashrc` or `~/.zshrc` for persistent completion. Completes profile names after `-p`, profile subcommands, and top-level commands.
@@ -261,10 +261,10 @@ A profile you built on one machine can be packaged as a **git repository** and i
 
 ```bash
 # Install a whole agent from a git repo
-hermes profile install github.com/you/research-bot --alias
+th profile install github.com/you/research-bot --alias
 
 # Update later when the author ships a new version (keeps your memories + .env)
-hermes profile update research-bot
+th profile update research-bot
 ```
 
 See **[Profile Distributions: Share a Whole Agent](./profile-distributions.md)** for the full guide — authoring, publishing, update semantics, security model, and use cases.

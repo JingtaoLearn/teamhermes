@@ -42,13 +42,13 @@ Bring your own keys anytime — per-tool, whenever you want to. The gateway isn'
 The fastest path for a fresh install:
 
 ```bash
-hermes setup --portal     # Nous OAuth, set Nous as provider, and turn on the Tool Gateway in one go
+th setup --portal     # Nous OAuth, set Nous as provider, and turn on the Tool Gateway in one go
 ```
 
 Already have TeamHermes configured? Just switch your provider:
 
 ```bash
-hermes model              # Pick Nous Portal — TeamHermes will offer to turn on the Tool Gateway
+th model              # Pick Nous Portal — TeamHermes will offer to turn on the Tool Gateway
 ```
 
 When you select Nous Portal, TeamHermes offers to turn on the Tool Gateway. Accept, and you're done — every supported tool is live on the next run.
@@ -56,12 +56,12 @@ When you select Nous Portal, TeamHermes offers to turn on the Tool Gateway. Acce
 Check what's active at any time:
 
 ```bash
-hermes portal status      # Portal auth + Tool Gateway routing summary
-hermes portal tools       # Gateway catalog with current routing per tool
-hermes status             # Full system status (Tool Gateway is one section)
+th portal status      # Portal auth + Tool Gateway routing summary
+th portal tools       # Gateway catalog with current routing per tool
+th status             # Full system status (Tool Gateway is one section)
 ```
 
-`hermes portal status` shows a section like:
+`th portal status` shows a section like:
 
 ```
 ◆ Nous Tool Gateway
@@ -89,7 +89,7 @@ The gateway is per-tool. Turn it on for just what you want:
 Switch any tool at any time via:
 
 ```bash
-hermes tools          # Interactive picker for each tool category
+th tools          # Interactive picker for each tool category
 ```
 
 Select the tool, pick **Nous Subscription** as the provider (or any direct provider you prefer). No config editing required.
@@ -110,13 +110,13 @@ Image generation defaults to FLUX 2 Klein 9B for speed. Override per-call by pas
 | Recraft V4 Pro | `fal-ai/recraft/v4/pro` | Vector-style, graphic design |
 | Qwen Image | `fal-ai/qwen-image` | Alibaba multimodal |
 
-The set evolves — `hermes tools` → Image Generation shows the current live list.
+The set evolves — `th tools` → Image Generation shows the current live list.
 
 ---
 
 ## Configuration reference
 
-Most users never need to touch this — `hermes model` and `hermes tools` cover every workflow interactively. This section is for writing config.yaml directly or scripting setups.
+Most users never need to touch this — `th model` and `th tools` cover every workflow interactively. This section is for writing config.yaml directly or scripting setups.
 
 ### Per-tool `use_gateway` flag
 
@@ -148,7 +148,7 @@ web:
   use_gateway: false   # TeamHermes now uses FIRECRAWL_API_KEY from .env
 ```
 
-`hermes tools` automatically clears the flag when you pick a non-gateway provider, so this usually happens for you.
+`th tools` automatically clears the flag when you pick a non-gateway provider, so this usually happens for you.
 
 ### Self-hosted gateway (advanced)
 
@@ -171,7 +171,7 @@ Yes. Tool Gateway operates at the tool-execution layer, not the CLI. Every inter
 
 ### What happens if my subscription expires?
 
-Tools routed through the gateway stop working until you renew or swap in direct API keys via `hermes tools`. TeamHermes shows a clear error pointing at the portal.
+Tools routed through the gateway stop working until you renew or swap in direct API keys via `th tools`. TeamHermes shows a clear error pointing at the portal.
 
 ### Can I see usage or costs per tool?
 
@@ -179,7 +179,7 @@ Yes — the [Nous Portal dashboard](https://portal.nousresearch.com) breaks usag
 
 ### Is Modal (serverless terminal) included?
 
-Modal is available as an **optional add-on** through the Nous subscription, not part of the default Tool Gateway bundle. Configure it via `hermes setup terminal` or directly in `config.yaml` when you want a remote sandbox for shell execution.
+Modal is available as an **optional add-on** through the Nous subscription, not part of the default Tool Gateway bundle. Configure it via `th setup terminal` or directly in `config.yaml` when you want a remote sandbox for shell execution.
 
 ### Do I need to delete my existing API keys when I enable the gateway?
 

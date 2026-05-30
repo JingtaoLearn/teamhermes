@@ -33,7 +33,7 @@ Honcho is integrated into the [Memory Providers](./memory-providers.md) system. 
 ## Setup
 
 ```bash
-hermes memory setup    # select "honcho" from the provider list
+th memory setup    # select "honcho" from the provider list
 ```
 
 Or configure manually:
@@ -108,7 +108,7 @@ Honcho is configured in `~/.honcho/config.json` (global) or `$HERMES_HOME/honcho
 
 ### Self-Hosted Honcho with Authentication
 
-When pointing TeamHermes at a self-hosted Honcho server, `hermes honcho setup` (and `hermes memory setup`) ask for a **local JWT / bearer token** after the base URL. Paste a JWT signed with the server's `AUTH_JWT_SECRET` (the Honcho compose env var) to enable authenticated access; leave it blank for servers running with `AUTH_USE_AUTH=false`. The local token is stored under the host block (`hosts.<host>.apiKey` in `honcho.json`), separate from any cloud `apiKey`, so you can flip the `Cloud or local?` prompt back to `cloud` later without losing either credential.
+When pointing TeamHermes at a self-hosted Honcho server, `th honcho setup` (and `th memory setup`) ask for a **local JWT / bearer token** after the base URL. Paste a JWT signed with the server's `AUTH_JWT_SECRET` (the Honcho compose env var) to enable authenticated access; leave it blank for servers running with `AUTH_USE_AUTH=false`. The local token is stored under the host block (`hosts.<host>.apiKey` in `honcho.json`), separate from any cloud `apiKey`, so you can flip the `Cloud or local?` prompt back to `cloud` later without losing either credential.
 
 ### Full Config Reference
 
@@ -131,7 +131,7 @@ When pointing TeamHermes at a self-hosted Honcho server, `hermes honcho setup` (
 | `sessionStrategy` | `'per-directory'` | `per-directory`, `per-repo`, `per-session`, or `global` |
 
 **Session strategy** controls how Honcho sessions map to your work:
-- `per-session` — each `hermes` run gets a fresh session. Clean starts, memory via tools. Recommended for new users.
+- `per-session` — each `th` run gets a fresh session. Clean starts, memory via tools. Recommended for new users.
 - `per-directory` — one Honcho session per working directory. Context accumulates across runs.
 - `per-repo` — one session per git repository.
 - `global` — single session across all directories.
@@ -203,35 +203,35 @@ When Honcho is active as the memory provider, five tools become available:
 
 ## CLI Commands
 
-The `hermes honcho` subcommand is **only registered when Honcho is the active memory provider** (`memory.provider: honcho` in `config.yaml`). On a fresh install, configure Honcho directly with `hermes memory setup honcho` (or run `hermes memory setup` and pick it from the list); the `hermes honcho` subcommand then appears on the next invocation.
+The `th honcho` subcommand is **only registered when Honcho is the active memory provider** (`memory.provider: honcho` in `config.yaml`). On a fresh install, configure Honcho directly with `th memory setup honcho` (or run `th memory setup` and pick it from the list); the `th honcho` subcommand then appears on the next invocation.
 
 ```bash
-hermes memory setup honcho    # Configure Honcho directly (works before activation)
-hermes honcho status          # Connection status, config, and key settings
-hermes honcho setup           # Redirects to `hermes memory setup` (post-activation alias)
-hermes honcho strategy        # Show or set session strategy (per-session/per-directory/per-repo/global)
-hermes honcho peer            # Show or update peer names + dialectic reasoning level
-hermes honcho mode            # Show or set recall mode (hybrid/context/tools)
-hermes honcho tokens          # Show or set token budget for context and dialectic
-hermes honcho identity        # Seed or show the AI peer's Honcho identity
-hermes honcho sync            # Sync Honcho config to all existing profiles
-hermes honcho peers           # Show peer identities across all profiles
-hermes honcho sessions        # List known Honcho session mappings
-hermes honcho map             # Map current directory to a Honcho session name
-hermes honcho enable          # Enable Honcho for the active profile
-hermes honcho disable         # Disable Honcho for the active profile
-hermes honcho migrate         # Step-by-step migration guide from openclaw-honcho
+th memory setup honcho    # Configure Honcho directly (works before activation)
+th honcho status          # Connection status, config, and key settings
+th honcho setup           # Redirects to `th memory setup` (post-activation alias)
+th honcho strategy        # Show or set session strategy (per-session/per-directory/per-repo/global)
+th honcho peer            # Show or update peer names + dialectic reasoning level
+th honcho mode            # Show or set recall mode (hybrid/context/tools)
+th honcho tokens          # Show or set token budget for context and dialectic
+th honcho identity        # Seed or show the AI peer's Honcho identity
+th honcho sync            # Sync Honcho config to all existing profiles
+th honcho peers           # Show peer identities across all profiles
+th honcho sessions        # List known Honcho session mappings
+th honcho map             # Map current directory to a Honcho session name
+th honcho enable          # Enable Honcho for the active profile
+th honcho disable         # Disable Honcho for the active profile
+th honcho migrate         # Step-by-step migration guide from openclaw-honcho
 ```
 
-## Migrating from `hermes honcho`
+## Migrating from `th honcho`
 
-If you previously used the standalone `hermes honcho setup`:
+If you previously used the standalone `th honcho setup`:
 
 1. Your existing configuration (`honcho.json` or `~/.honcho/config.json`) is preserved
 2. Your server-side data (memories, conclusions, user profiles) is intact
 3. Set `memory.provider: honcho` in config.yaml to reactivate
 
-No re-login or re-setup needed. Run `hermes memory setup` and select "honcho" — the wizard detects your existing config.
+No re-login or re-setup needed. Run `th memory setup` and select "honcho" — the wizard detects your existing config.
 
 ## Full Documentation
 

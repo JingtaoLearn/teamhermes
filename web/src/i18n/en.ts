@@ -268,7 +268,7 @@ export const en: Translations = {
     enableRuntime: "Enable",
     forceReinstall: "Force reinstall (delete existing folder first)",
     headline:
-      "Discover, install, enable, and update TeamHermes plugins (`hermes plugins` parity).",
+      "Discover, install, enable, and update TeamHermes plugins (`th plugins` parity).",
     identifierLabel: "Git URL or owner/repo",
     inactive: "inactive",
     installBtn: "Install",

@@ -1,4 +1,4 @@
-"""Tests for the ``hermes send`` CLI subcommand.
+"""Tests for the ``th send`` CLI subcommand.
 
 Covers the argument parsing / stdin / file / list behavior of
 ``hermes_cli.send_cmd``. The underlying ``send_message_tool`` is stubbed so
@@ -335,8 +335,8 @@ def test_load_hermes_env_bridges_config_yaml_scalars(tmp_path, monkeypatch):
     """Top-level config.yaml scalars should be bridged into os.environ.
 
     This mirrors the gateway/run.py bootstrap behavior: without this, running
-    ``hermes send`` from a fresh shell cannot resolve the home channel
-    because ``TELEGRAM_HOME_CHANNEL`` (saved by ``hermes config set``) lives
+    ``th send`` from a fresh shell cannot resolve the home channel
+    because ``TELEGRAM_HOME_CHANNEL`` (saved by ``th config set``) lives
     in config.yaml, not in .env — and the gateway's config loader reads via
     ``os.getenv(...)``.
     """

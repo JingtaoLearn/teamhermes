@@ -10,7 +10,7 @@ TeamHermes can optionally hand `openai/*` and `openai-codex/*` turns to the [Cod
 This is **opt-in only**. Default TeamHermes behavior is unchanged unless you flip the flag. TeamHermes never auto-routes you onto this runtime.
 
 :::tip
-Not using OpenAI Codex? `hermes setup --portal` configures a non-Codex backend with Claude/Gemini/etc. in one step. See [Nous Portal](/integrations/nous-portal).
+Not using OpenAI Codex? `th setup --portal` configures a non-Codex backend with Claude/Gemini/etc. in one step. See [Nous Portal](/integrations/nous-portal).
 :::
 
 ## Why
@@ -87,7 +87,7 @@ These four TeamHermes tools require the running AIAgent context (mid-loop state)
 
 ### Kanban (multi-agent worktree dispatch)
 
-**Works on this runtime, with one subtle dependency.** The kanban dispatcher spawns each worker as a separate `hermes chat -q` subprocess that reads the user's config — which means if `model.openai_runtime: codex_app_server` is set globally, workers also come up on the codex runtime.
+**Works on this runtime, with one subtle dependency.** The kanban dispatcher spawns each worker as a separate `th chat -q` subprocess that reads the user's config — which means if `model.openai_runtime: codex_app_server` is set globally, workers also come up on the codex runtime.
 
 What works inside a codex-runtime worker:
 - Codex's full toolset (shell, apply_patch, update_plan, view_image, web_search) — the worker does its actual task work natively
@@ -143,7 +143,7 @@ The kanban tools are gated by `HERMES_KANBAN_TASK` env var the dispatcher sets �
    ```bash
    codex login                  # writes tokens to ~/.codex/auth.json
    ```
-   TeamHermes' own `hermes auth login codex` writes to `~/.teamhermes/auth.json` — that's a separate session. **Run `codex login` separately** if you haven't.
+   TeamHermes' own `th auth login codex` writes to `~/.teamhermes/auth.json` — that's a separate session. **Run `codex login` separately** if you haven't.
 
 3. **(Optional) Install the Codex plugins you want.** When you enable the runtime, TeamHermes auto-migrates whichever curated plugins you've already installed via Codex CLI:
    ```bash
@@ -275,7 +275,7 @@ The self-improvement review fork inherits the main runtime via `_current_main_ru
 TeamHermes wraps everything it manages between two marker comments:
 
 ```toml
-# managed by hermes-agent — `hermes codex-runtime migrate` regenerates this section
+# managed by hermes-agent — `th codex-runtime migrate` regenerates this section
 default_permissions = ":workspace"
 [mcp_servers.filesystem]
 ...
@@ -295,16 +295,16 @@ Anything you add **inside** the managed block will get clobbered on the next mig
 
 ## Multi-profile / multi-tenant setups
 
-By default, TeamHermes points the codex subprocess at `~/.codex/` regardless of which TeamHermes profile is active. This means `hermes -p work` and `hermes -p personal` share the same Codex auth, plugins, and config. For most users this is the right behavior — it matches what running `codex` CLI directly would do.
+By default, TeamHermes points the codex subprocess at `~/.codex/` regardless of which TeamHermes profile is active. This means `th -p work` and `th -p personal` share the same Codex auth, plugins, and config. For most users this is the right behavior — it matches what running `codex` CLI directly would do.
 
 If you want per-profile Codex isolation (separate auth, separate installed plugins, separate config), set `CODEX_HOME` explicitly per profile. The cleanest way is to point at a directory under your `HERMES_HOME`:
 
 ```bash
 # Inside the work profile, you might wrap hermes:
-CODEX_HOME=~/.teamhermes/profiles/work/codex hermes chat
+CODEX_HOME=~/.teamhermes/profiles/work/codex th chat
 ```
 
-You'll need to re-run `codex login` once with that `CODEX_HOME` set so the OAuth tokens land in the profile-scoped location. After that, `hermes -p work` will operate on isolated Codex state.
+You'll need to re-run `codex login` once with that `CODEX_HOME` set so the OAuth tokens land in the profile-scoped location. After that, `th -p work` will operate on isolated Codex state.
 
 We don't auto-scope this because moving an existing user's `~/.codex/` would silently invalidate their Codex CLI auth — anyone who already ran `codex login` would have to re-authenticate. Opt-in feels safer than surprising users.
 
@@ -390,12 +390,12 @@ This runtime is **opt-in beta**. Working as of TeamHermes Agent 2026.5 + Codex C
 
 Known limitations:
 
-- **TeamHermes auth and codex auth are separate sessions.** You need both `codex login` AND `hermes auth login codex` for the cleanest UX (the runtime uses codex's session for the LLM call). This is a deliberate design choice in TeamHermes' `_import_codex_cli_tokens` — TeamHermes won't share OAuth state with codex CLI to avoid clobbering each other on token refresh.
+- **TeamHermes auth and codex auth are separate sessions.** You need both `codex login` AND `th auth login codex` for the cleanest UX (the runtime uses codex's session for the LLM call). This is a deliberate design choice in TeamHermes' `_import_codex_cli_tokens` — TeamHermes won't share OAuth state with codex CLI to avoid clobbering each other on token refresh.
 - **`delegate_task`, `memory`, `session_search`, `todo` are unavailable on this runtime.** They need the running AIAgent context which a stateless MCP callback can't provide. Use `/codex-runtime auto` when you need these.
 - **No inline patch preview in approval prompts when codex doesn't track the changeset.** Codex's `fileChange` approval params don't always carry the changeset. TeamHermes caches the data from the corresponding `item/started` notification when possible, but if approval arrives before the item has streamed, the prompt falls back to whatever `reason` codex provides.
 - **Sub-second cancellation isn't guaranteed.** Mid-stream interrupts (Ctrl+C while codex is responding) are sent via `turn/interrupt`, but if codex has already flushed the final message, you get the response anyway.
 
-If you find a bug, [open an issue](https://github.com/NousResearch/hermes-agent/issues) with the output of `hermes logs --since 5m`. Mention `codex-runtime` in the title so it's easy to triage.
+If you find a bug, [open an issue](https://github.com/NousResearch/hermes-agent/issues) with the output of `th logs --since 5m`. Mention `codex-runtime` in the title so it's easy to triage.
 
 ## Architecture
 

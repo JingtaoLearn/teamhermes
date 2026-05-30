@@ -19,14 +19,14 @@ TeamHermes Agent works with any OpenAI-compatible API. Supported providers inclu
 - **[OpenRouter](https://openrouter.ai/)** — access hundreds of models through one API key (recommended for flexibility)
 - **[Nous Portal](/integrations/nous-portal)** — Nous Research's subscription gateway — 300+ models plus web/image/TTS/browser through one OAuth login (recommended for newcomers)
 - **OpenAI** — GPT-5.4, GPT-5-codex, GPT-4.1, GPT-4o, etc.
-- **Anthropic** — Claude models (direct API, OAuth via `hermes auth add anthropic`, OpenRouter, or any compatible proxy)
+- **Anthropic** — Claude models (direct API, OAuth via `th auth add anthropic`, OpenRouter, or any compatible proxy)
 - **Google** — Gemini models (direct API via `gemini` provider, the `google-gemini-cli` OAuth provider, OpenRouter, or compatible proxy)
 - **z.ai / ZhipuAI** — GLM models
 - **Kimi / Moonshot AI** — Kimi models
 - **MiniMax** — global and China endpoints
 - **Local models** — via [Ollama](https://ollama.com/), [vLLM](https://docs.vllm.ai/), [llama.cpp](https://github.com/ggerganov/llama.cpp), [SGLang](https://github.com/sgl-project/sglang), or any OpenAI-compatible server
 
-Set your provider with `hermes model` or by editing `~/.teamhermes/.env`. See the [Environment Variables](./environment-variables.md) reference for all provider keys.
+Set your provider with `th model` or by editing `~/.teamhermes/.env`. See the [Environment Variables](./environment-variables.md) reference for all provider keys.
 
 ### Does it work on Windows?
 
@@ -74,10 +74,10 @@ API calls go **only to the LLM provider you configure** (e.g., OpenRouter, your 
 
 ### Can I use it offline / with local models?
 
-Yes. Run `hermes model`, select **Custom endpoint**, and enter your server's URL:
+Yes. Run `th model`, select **Custom endpoint**, and enter your server's URL:
 
 ```bash
-hermes model
+th model
 # Select: Custom endpoint (enter URL manually)
 # API base URL: http://localhost:11434/v1
 # API key: ollama
@@ -155,8 +155,8 @@ source ~/.zshrc     # zsh
 
 If it still doesn't work, verify the install location:
 ```bash
-which hermes
-ls ~/.local/bin/hermes
+which th
+ls ~/.local/bin/th
 ```
 
 :::tip
@@ -223,7 +223,7 @@ source ~/.bashrc
 ```bash
 # Don't use sudo with the installer — it installs to ~/.local/bin
 # If you previously installed with sudo, clean up:
-sudo rm /usr/local/bin/hermes
+sudo rm /usr/local/bin/th
 # Then re-run the standard installer
 curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash
 ```
@@ -236,24 +236,24 @@ curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scri
 
 **Cause:** `/model` (inside a chat session) can only switch between providers you've **already configured**. If you've only set up OpenRouter, that's all `/model` will show.
 
-**Solution:** Exit your session and use `hermes model` from your terminal to add new providers:
+**Solution:** Exit your session and use `th model` from your terminal to add new providers:
 
 ```bash
 # Exit the TeamHermes chat session first (Ctrl+C or /quit)
 
 # Run the full provider setup wizard
-hermes model
+th model
 
 # This lets you: add providers, run OAuth, enter API keys, configure endpoints
 ```
 
-After adding a new provider via `hermes model`, start a new chat session — `/model` will now show all your configured providers.
+After adding a new provider via `th model`, start a new chat session — `/model` will now show all your configured providers.
 
 :::tip Quick reference
 | Want to... | Use |
 |-----------|-----|
-| Add a new provider | `hermes model` (from terminal) |
-| Enter/change API keys | `hermes model` (from terminal) |
+| Add a new provider | `th model` (from terminal) |
+| Enter/change API keys | `th model` (from terminal) |
 | Switch model mid-session | `/model <name>` (inside session) |
 | Switch to different configured provider | `/model provider:model` (inside session) |
 :::
@@ -265,13 +265,13 @@ After adding a new provider via `hermes model`, start a new chat session — `/m
 **Solution:**
 ```bash
 # Check your configuration
-hermes config show
+th config show
 
 # Re-configure your provider
-hermes model
+th model
 
 # Or set directly
-hermes config set OPENROUTER_API_KEY sk-or-v1-xxxxxxxxxxxx
+th config set OPENROUTER_API_KEY sk-or-v1-xxxxxxxxxxxx
 ```
 
 :::warning
@@ -285,13 +285,13 @@ Make sure the key matches the provider. An OpenAI key won't work with OpenRouter
 **Solution:**
 ```bash
 # List available models for your provider
-hermes model
+th model
 
 # Set a valid model
-hermes config set HERMES_MODEL anthropic/claude-opus-4.7
+th config set HERMES_MODEL anthropic/claude-opus-4.7
 
 # Or specify per-session
-hermes chat --model openrouter/meta-llama/llama-3.1-70b-instruct
+th chat --model openrouter/meta-llama/llama-3.1-70b-instruct
 ```
 
 #### Rate limiting (429 errors)
@@ -301,7 +301,7 @@ hermes chat --model openrouter/meta-llama/llama-3.1-70b-instruct
 **Solution:** Wait a moment and retry. For sustained usage, consider:
 - Upgrading your provider plan
 - Switching to a different model or provider
-- Using `hermes chat --provider <alternative>` to route to a different backend
+- Using `th chat --provider <alternative>` to route to a different backend
 
 #### Context length exceeded
 
@@ -313,10 +313,10 @@ hermes chat --model openrouter/meta-llama/llama-3.1-70b-instruct
 /compress
 
 # Or start a fresh session
-hermes chat
+th chat
 
 # Use a model with a larger context window
-hermes chat --model openrouter/google/gemini-3-flash-preview
+th chat --model openrouter/google/gemini-3-flash-preview
 ```
 
 If this happens on the first long conversation, TeamHermes may have the wrong context length for your model. Check what it detected:
@@ -368,7 +368,7 @@ This is working as intended — TeamHermes never silently runs destructive comma
 **Solution:**
 - Avoid `sudo` in messaging — ask the agent to find alternatives
 - If you must use `sudo`, configure passwordless sudo for specific commands in `/etc/sudoers`
-- Or switch to the terminal interface for administrative tasks: `hermes chat`
+- Or switch to the terminal interface for administrative tasks: `th chat`
 
 #### Docker backend not connecting
 
@@ -398,10 +398,10 @@ docker run hello-world
 **Solution:**
 ```bash
 # Check if the gateway is running
-hermes gateway status
+th gateway status
 
 # Start the gateway
-hermes gateway start
+th gateway start
 
 # Check logs for errors
 cat ~/.teamhermes/logs/gateway.log | tail -50
@@ -412,7 +412,7 @@ cat ~/.teamhermes/logs/gateway.log | tail -50
 **Cause:** Network issues, bot token expired, or platform webhook misconfiguration.
 
 **Solution:**
-- Verify your bot token is valid with `hermes gateway setup`
+- Verify your bot token is valid with `th gateway setup`
 - Check gateway logs: `cat ~/.teamhermes/logs/gateway.log | tail -50`
 - For webhook-based platforms (Slack, WhatsApp), ensure your server is publicly accessible
 
@@ -443,10 +443,10 @@ pip install "hermes-agent[messaging]"  # Telegram, Discord, Slack, and shared ga
 lsof -i :8080
 
 # Verify configuration
-hermes config show
+th config show
 ```
 
-#### WSL: Gateway keeps disconnecting or `hermes gateway start` fails
+#### WSL: Gateway keeps disconnecting or `th gateway start` fails
 
 **Cause:** WSL's systemd support is unreliable. Many WSL2 installations don't have systemd enabled, and even when enabled, services may not survive WSL restarts or Windows idle shutdowns.
 
@@ -454,14 +454,14 @@ hermes config show
 
 ```bash
 # Option 1: Direct foreground (simplest)
-hermes gateway run
+th gateway run
 
 # Option 2: Persistent via tmux (survives terminal close)
-tmux new -s hermes 'hermes gateway run'
+tmux new -s hermes 'th gateway run'
 # Reattach later: tmux attach -t hermes
 
 # Option 3: Background via nohup
-nohup hermes gateway run > ~/.teamhermes/logs/gateway.log 2>&1 &
+nohup th gateway run > ~/.teamhermes/logs/gateway.log 2>&1 &
 ```
 
 If you want to try systemd anyway, make sure it's enabled:
@@ -478,7 +478,7 @@ If you want to try systemd anyway, make sure it's enabled:
 
 :::tip Auto-start on Windows boot
 For reliable auto-start, use Windows Task Scheduler to launch WSL + the gateway on login:
-1. Create a task that runs `wsl -d Ubuntu -- bash -lc 'hermes gateway run'`
+1. Create a task that runs `wsl -d Ubuntu -- bash -lc 'th gateway run'`
 2. Set it to trigger on user logon
 :::
 
@@ -486,11 +486,11 @@ For reliable auto-start, use Windows Task Scheduler to launch WSL + the gateway 
 
 **Cause:** launchd services inherit a minimal PATH (`/usr/bin:/bin:/usr/sbin:/sbin`) that doesn't include Homebrew, nvm, cargo, or other user-installed tool directories. This commonly breaks the WhatsApp bridge (`node not found`) or voice transcription (`ffmpeg not found`).
 
-**Solution:** The gateway captures your shell PATH when you run `hermes gateway install`. If you installed tools after setting up the gateway, re-run the install to capture the updated PATH:
+**Solution:** The gateway captures your shell PATH when you run `th gateway install`. If you installed tools after setting up the gateway, re-run the install to capture the updated PATH:
 
 ```bash
-hermes gateway install    # Re-snapshots your current PATH
-hermes gateway start      # Detects the updated plist and reloads
+th gateway install    # Re-snapshots your current PATH
+th gateway start      # Detects the updated plist and reloads
 ```
 
 You can verify the plist has the correct PATH:
@@ -508,8 +508,8 @@ You can verify the plist has the correct PATH:
 **Cause:** Large model, distant API server, or heavy system prompt with many tools.
 
 **Solution:**
-- Try a faster/smaller model: `hermes chat --model openrouter/meta-llama/llama-3.1-8b-instruct`
-- Reduce active toolsets: `hermes chat -t "terminal"`
+- Try a faster/smaller model: `th chat --model openrouter/meta-llama/llama-3.1-8b-instruct`
+- Reduce active toolsets: `th chat -t "terminal"`
 - Check your network latency to the provider
 - For local models, ensure you have enough GPU VRAM
 
@@ -540,10 +540,10 @@ Use `/compress` regularly during long sessions. It summarizes the conversation h
 /compress
 
 # Start a new session with a reference to the old one
-hermes chat
+th chat
 
 # Resume a specific session later if needed
-hermes chat --continue
+th chat --continue
 ```
 
 ---
@@ -588,10 +588,10 @@ mcp_servers:
 
 ```bash
 # Verify MCP servers are configured
-hermes config show | grep -A 12 mcp_servers
+th config show | grep -A 12 mcp_servers
 
 # Restart TeamHermes or reload MCP after config changes
-hermes chat
+th chat
 ```
 
 See also:
@@ -626,11 +626,11 @@ No. Each messaging platform (Telegram, Discord, etc.) requires exclusive access 
 
 ### Do profiles share memory or sessions?
 
-No. Each profile has its own memory store, session database, and skills directory. They are completely isolated. If you want to start a new profile with existing memories and sessions, use `hermes profile create newname --clone-all` to copy everything from the current profile.
+No. Each profile has its own memory store, session database, and skills directory. They are completely isolated. If you want to start a new profile with existing memories and sessions, use `th profile create newname --clone-all` to copy everything from the current profile.
 
-### What happens when I run `hermes update`?
+### What happens when I run `th update`?
 
-`hermes update` pulls the latest code and reinstalls dependencies **once** (not per-profile). It then syncs updated skills to all profiles automatically. You only need to run `hermes update` once — it covers every profile on the machine.
+`th update` pulls the latest code and reinstalls dependencies **once** (not per-profile). It then syncs updated skills to all profiles automatically. You only need to run `th update` once — it covers every profile on the machine.
 
 
 ### How many profiles can I run?
@@ -712,9 +712,9 @@ display:
 
 ### Managing skills on Telegram (slash command limit)
 
-**Scenario:** Telegram has a 100 slash command limit, and your skills are pushing past it. You want to disable skills you don't need on Telegram, but `hermes skills config` settings don't seem to take effect.
+**Scenario:** Telegram has a 100 slash command limit, and your skills are pushing past it. You want to disable skills you don't need on Telegram, but `th skills config` settings don't seem to take effect.
 
-**Solution:** Use `hermes skills config` to disable skills per-platform. This writes to `config.yaml`:
+**Solution:** Use `th skills config` to disable skills per-platform. This writes to `config.yaml`:
 
 ```yaml
 skills:
@@ -723,7 +723,7 @@ skills:
     telegram: [skill-a, skill-b]  # disabled only on telegram
 ```
 
-After changing this, **restart the gateway** (`hermes gateway restart` or kill and relaunch). The Telegram bot command menu rebuilds on startup.
+After changing this, **restart the gateway** (`th gateway restart` or kill and relaunch). The Telegram bot command menu rebuilds on startup.
 
 :::tip
 Skills with very long descriptions are truncated to 40 characters in the Telegram menu to stay within payload size limits. If skills aren't appearing, it may be a total payload size issue rather than the 100 command count limit — disabling unused skills helps with both.
@@ -756,7 +756,7 @@ Skills with very long descriptions are truncated to 40 characters in the Telegra
 
 2. On the **source machine**, create a full backup:
    ```bash
-   hermes backup
+   th backup
    ```
    This creates a zip of your entire `~/.teamhermes/` directory — config, API keys, memories, skills, sessions, and profiles — saved to your home directory as `~/hermes-backup-<timestamp>.zip`.
 
@@ -766,10 +766,10 @@ Skills with very long descriptions are truncated to 40 characters in the Telegra
    scp ~/hermes-backup-<timestamp>.zip newmachine:~/
 
    # On the new machine
-   hermes import ~/hermes-backup-<timestamp>.zip
+   th import ~/hermes-backup-<timestamp>.zip
    ```
 
-4. On the new machine, run `hermes setup` to verify API keys and provider config are working.
+4. On the new machine, run `th setup` to verify API keys and provider config are working.
 
 ### Moving a single profile to another machine
 
@@ -777,17 +777,17 @@ Skills with very long descriptions are truncated to 40 characters in the Telegra
 
 ```bash
 # On the source machine
-hermes profile export work ./work-backup.tar.gz
+th profile export work ./work-backup.tar.gz
 
 # Copy the file to the target machine, then:
-hermes profile import ./work-backup.tar.gz work
+th profile import ./work-backup.tar.gz work
 ```
 
 The imported profile will have all config, memories, sessions, and skills from the export. You may need to update paths or re-authenticate with providers if the new machine has a different setup.
 
-### `hermes backup` vs `hermes profile export`
+### `th backup` vs `th profile export`
 
-| Feature | `hermes backup` | `hermes profile export` |
+| Feature | `th backup` | `th profile export` |
 | :--- | :--- | :--- |
 | **Use Case** | **Full machine migration** | **Porting/sharing a specific profile** |
 | **Scope** | Global (entire `~/.teamhermes` directory) | Local (single profile directory) |
@@ -801,7 +801,7 @@ rsync -av --exclude='hermes-agent' ~/.teamhermes/ newmachine:~/.teamhermes/
 ```
 
 :::tip
-`hermes backup` produces a consistent snapshot even while TeamHermes is actively running. The restored archive excludes machine-local runtime files like `gateway.pid` and `cron.pid`.
+`th backup` produces a consistent snapshot even while TeamHermes is actively running. The restored archive excludes machine-local runtime files like `gateway.pid` and `cron.pid`.
 :::
 
 ### Permission denied when reloading shell after install
@@ -838,13 +838,13 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
 **Solution:**
 ```bash
 # Check what model and provider are configured
-hermes config show | head -20
+th config show | head -20
 
 # Re-run model selection
-hermes model
+th model
 
 # Or test with a known-good model
-hermes chat -q "hello" --model anthropic/claude-opus-4.7
+th chat -q "hello" --model anthropic/claude-opus-4.7
 ```
 
 If using OpenRouter, make sure your API key has credits. A 400 from OpenRouter often means the model requires a paid plan or the model ID has a typo.
@@ -857,4 +857,4 @@ If your issue isn't covered here:
 
 1. **Search existing issues:** [GitHub Issues](https://github.com/NousResearch/hermes-agent/issues)
 2. **Ask the community:** [Nous Research Discord](https://discord.gg/nousresearch)
-3. **File a bug report:** Include your OS, Python version (`python3 --version`), TeamHermes version (`hermes --version`), and the full error message
+3. **File a bug report:** Include your OS, Python version (`python3 --version`), TeamHermes version (`th --version`), and the full error message

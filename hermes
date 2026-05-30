@@ -2,7 +2,7 @@
 """
 TeamHermes Agent CLI launcher.
 
-This wrapper should behave like the installed `hermes` command, including
+This wrapper should behave like the installed `th` command, including
 subcommands such as `gateway`, `cron`, and `doctor`.
 """
 

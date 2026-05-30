@@ -314,7 +314,7 @@ class TestCreateProfile:
 # ===================================================================
 
 class TestNoSkillsOptOut:
-    """Tests for `hermes profile create --no-skills` and the opt-out marker."""
+    """Tests for `th profile create --no-skills` and the opt-out marker."""
 
     def test_no_skills_writes_marker_and_skips_seeding(self, profile_env):
         profile_dir = create_profile("orchestrator", no_alias=True, no_skills=True)
@@ -352,7 +352,7 @@ class TestNoSkillsOptOut:
 
     def test_seed_profile_skills_respects_marker(self, profile_env):
         """seed_profile_skills() must no-op on opted-out profiles even when
-        called directly (e.g. by `hermes update`'s all-profile sync loop)."""
+        called directly (e.g. by `th update`'s all-profile sync loop)."""
         profile_dir = create_profile("orchestrator", no_alias=True, no_skills=True)
 
         # Call seed_profile_skills() directly — it should NOT invoke subprocess,
@@ -645,7 +645,7 @@ class TestWrapperScript:
         assert wrapper.name == "mybot"
         content = wrapper.read_text()
         assert content.startswith("#!/bin/sh")
-        assert "hermes -p mybot" in content
+        assert "th -p mybot" in content
 
     def test_creates_bat_on_windows(self, profile_env, monkeypatch):
         monkeypatch.setattr("sys.platform", "win32")
@@ -655,7 +655,7 @@ class TestWrapperScript:
         assert wrapper.name == "mybot.bat"
         content = wrapper.read_text()
         assert "@echo off" in content
-        assert "hermes -p mybot" in content
+        assert "th -p mybot" in content
         assert "%*" in content
 
     def test_remove_finds_bat_on_windows(self, profile_env, monkeypatch):
@@ -692,7 +692,7 @@ class TestWrapperScript:
         assert wrapper.name == "rq"
         content = wrapper.read_text()
         assert content.startswith("#!/bin/sh")
-        assert "hermes -p redqueen" in content
+        assert "th -p redqueen" in content
 
     def test_custom_alias_target_on_windows(self, profile_env, monkeypatch):
         # Regression: custom-name aliases must still produce an executable
@@ -704,7 +704,7 @@ class TestWrapperScript:
         assert wrapper.name == "rq.bat"
         content = wrapper.read_text()
         assert "@echo off" in content
-        assert "hermes -p redqueen" in content
+        assert "th -p redqueen" in content
         assert "%*" in content
         assert "#!/bin/sh" not in content
 

@@ -6,7 +6,7 @@ set -euo pipefail
 # Idempotent by design:
 # - ensures ~/.teamhermes/.env has API server settings
 # - installs Open WebUI into ~/.local/open-webui-venv
-# - writes a reusable launcher at ~/.local/bin/start-open-webui-hermes.sh
+# - writes a reusable launcher at ~/.local/bin/start-open-webui-th.sh
 # - optionally installs a user service (launchd on macOS, systemd --user on Linux)
 #
 # Usage:
@@ -37,7 +37,7 @@ HERMES_API_HOST="${HERMES_API_HOST:-127.0.0.1}"
 HERMES_API_CONNECT_HOST="${HERMES_API_CONNECT_HOST:-127.0.0.1}"
 HERMES_API_MODEL_NAME="${HERMES_API_MODEL_NAME:-TeamHermes Agent}"
 HERMES_API_BASE_URL="http://${HERMES_API_CONNECT_HOST}:${HERMES_API_PORT}/v1"
-LAUNCHER_PATH="$HOME/.local/bin/start-open-webui-hermes.sh"
+LAUNCHER_PATH="$HOME/.local/bin/start-open-webui-th.sh"
 LOG_DIR="$HOME/.teamhermes/logs"
 
 log() {
@@ -258,7 +258,7 @@ EOF
 install_systemd_user_service() {
   require_cmd systemctl
   local unit_dir="$HOME/.config/systemd/user"
-  local unit="$unit_dir/openwebui-hermes.service"
+  local unit="$unit_dir/openwebui-th.service"
   mkdir -p "$unit_dir"
   cat > "$unit" <<EOF
 [Unit]
@@ -267,7 +267,7 @@ After=default.target
 
 [Service]
 Type=simple
-ExecStart=/bin/bash %h/.local/bin/start-open-webui-hermes.sh
+ExecStart=/bin/bash %h/.local/bin/start-open-webui-th.sh
 Restart=always
 RestartSec=3
 WorkingDirectory=%h
@@ -278,7 +278,7 @@ StandardError=append:%h/.teamhermes/logs/openwebui.error.log
 WantedBy=default.target
 EOF
   systemctl --user daemon-reload
-  systemctl --user enable --now openwebui-hermes.service
+  systemctl --user enable --now openwebui-th.service
 }
 
 start_foreground_hint() {
@@ -287,7 +287,7 @@ start_foreground_hint() {
 }
 
 main() {
-  require_cmd hermes
+  require_cmd th
   require_cmd curl
   require_cmd python3
 
@@ -308,11 +308,11 @@ main() {
   ensure_env_permissions
 
   log 'Restarting TeamHermes gateway so API server settings take effect...'
-  hermes gateway restart >/dev/null 2>&1 || true
+  th gateway restart >/dev/null 2>&1 || true
   sleep 4
   if ! curl -fsS "http://${HERMES_API_CONNECT_HOST}:${HERMES_API_PORT}/health" >/dev/null; then
     log 'TeamHermes API server did not answer on the first check. Trying to start gateway in the background...'
-    nohup hermes gateway run >/dev/null 2>&1 &
+    nohup th gateway run >/dev/null 2>&1 &
     sleep 6
   fi
   curl -fsS "http://${HERMES_API_CONNECT_HOST}:${HERMES_API_PORT}/health" >/dev/null

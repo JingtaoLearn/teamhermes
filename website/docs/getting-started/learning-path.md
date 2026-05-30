@@ -13,7 +13,7 @@ If you haven't installed TeamHermes Agent yet, begin with the [Installation guid
 :::
 
 :::tip First-time provider setup
-First-time users almost always want `hermes setup --portal` — one OAuth covers a model plus the four Tool Gateway tools (search/image/TTS/browser). See [Nous Portal](/integrations/nous-portal).
+First-time users almost always want `th setup --portal` — one OAuth covers a model plus the four Tool Gateway tools (search/image/TTS/browser). See [Nous Portal](/integrations/nous-portal).
 :::
 
 ## How to Use This Page

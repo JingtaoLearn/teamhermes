@@ -189,14 +189,14 @@ RUN uv pip install --no-cache-dir --no-deps -e "."
 
 # ---------- Bake build-time git revision ----------
 # .dockerignore excludes .git, so `git rev-parse HEAD` from inside the
-# container always returns nothing — meaning `hermes dump` reports
+# container always returns nothing — meaning `th dump` reports
 # "(unknown)" and the startup banner drops its `· upstream <sha>` suffix.
 # That makes support triage from container bug reports impossible:
 # we can't tell which commit the user is actually running.
 #
 # Fix: write the commit SHA passed via the HERMES_GIT_SHA build-arg to
 # /opt/hermes/.teamhermes_build_sha at build time, and have
-# hermes_cli/build_info.py read it at runtime.  Both `hermes dump` and
+# hermes_cli/build_info.py read it at runtime.  Both `th dump` and
 # banner.get_git_banner_state() try the baked SHA first, then fall back
 # to live `git rev-parse` for source installs (unchanged behaviour).
 #
@@ -241,14 +241,14 @@ ENV HERMES_HOME=/opt/data
 # `docker exec <c> hermes ...` they default to root, and any file the
 # command writes under $HERMES_HOME (auth.json, .env, config.yaml) ends
 # up root-owned and unreadable to the supervised gateway (UID 10000).
-# The shim lives at /opt/hermes/bin/hermes, sits earliest on PATH, and
+# The shim lives at /opt/hermes/bin/th, sits earliest on PATH, and
 # transparently re-exec's the real venv binary via `s6-setuidgid hermes`
 # when invoked as root. Non-root callers (supervised processes,
 # `--user hermes`, etc.) hit the short-circuit path with no overhead.
 # Recursion is impossible because the shim exec's the venv binary by
-# absolute path (/opt/hermes/.venv/bin/hermes). See the shim source for
+# absolute path (/opt/hermes/.venv/bin/th). See the shim source for
 # the opt-out env var (HERMES_DOCKER_EXEC_AS_ROOT=1).
-COPY --chmod=0755 docker/hermes-exec-shim.sh /opt/hermes/bin/hermes
+COPY --chmod=0755 docker/hermes-exec-shim.sh /opt/hermes/bin/th
 
 # Pre-s6 entrypoint.sh did `source .venv/bin/activate` which exported
 # the venv bin onto PATH; Architecture B's main-wrapper.sh does the

@@ -129,7 +129,7 @@ MIGRATION_OPTION_METADATA: Dict[str, Dict[str, str]] = {
     },
     "cron-jobs": {
         "label": "Cron / scheduled tasks",
-        "description": "Import cron job definitions. Archive for manual recreation via 'hermes cron'.",
+        "description": "Import cron job definitions. Archive for manual recreation via 'th cron'.",
     },
     "hooks-config": {
         "label": "Hooks and webhooks",
@@ -401,7 +401,7 @@ def backup_existing(path: Path, backup_root: Path) -> Optional[Path]:
 # read as self-referential to the new agent identity.
 #
 # Case-preserving: ``OpenClaw`` → ``TeamHermes`` (prose), but lowercase matches
-# like ``openclaw`` → ``hermes`` (so filesystem paths like ``~/.openclaw``
+# like ``openclaw`` → ``th`` (so filesystem paths like ``~/.openclaw``
 # become ``~/.teamhermes`` — the real TeamHermes home — not the broken ``~/.TeamHermes``).
 _REBRAND_PATTERNS: List[Tuple[re.Pattern, str]] = [
     (re.compile(r'\bOpen[\s-]?Claw\b', re.IGNORECASE), 'TeamHermes'),
@@ -414,7 +414,7 @@ def _case_preserving_replacement(replacement: str):
     """Return a re.sub replacement fn that lowercases the result when the
     matched text was all-lowercase.
 
-    Keeps ``OpenClaw`` → ``TeamHermes`` but maps ``openclaw`` → ``hermes`` so a
+    Keeps ``OpenClaw`` → ``TeamHermes`` but maps ``openclaw`` → ``th`` so a
     filesystem path like ``~/.openclaw/config.yaml`` rewrites to
     ``~/.teamhermes/config.yaml`` (the real TeamHermes home) instead of the broken
     ``~/.TeamHermes/config.yaml``.
@@ -1533,7 +1533,7 @@ class Migrator:
                             None,
                             "skipped",
                             f"Provider '{provider_name}' uses a {raw_key['source']}-backed SecretRef "
-                            f"that cannot be auto-migrated. Add this key manually via: hermes config set",
+                            f"that cannot be auto-migrated. Add this key manually via: th config set",
                         )
                     continue
 
@@ -2228,7 +2228,7 @@ class Migrator:
                 dest = self.archive_dir / "cron-config.json"
                 dest.write_text(json.dumps(cron, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
                 self.record("cron-jobs", "openclaw.json cron.*", str(dest), "archived",
-                            "Cron config archived. Use 'hermes cron' to recreate jobs manually.")
+                            "Cron config archived. Use 'th cron' to recreate jobs manually.")
             else:
                 self.record("cron-jobs", "openclaw.json cron.*", "archive/cron-config.json",
                             "archived", "Would archive cron config")
@@ -2408,7 +2408,7 @@ class Migrator:
             dest = self.archive_dir / "gateway-config.json"
             dest.write_text(json.dumps(gateway, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         self.record("gateway-config", "openclaw.json gateway.*", "archive/gateway-config.json",
-                    "archived", "Gateway config archived. Use 'hermes gateway' to configure.")
+                    "archived", "Gateway config archived. Use 'th gateway' to configure.")
 
         # Extract gateway auth token to .env if present
         auth = gateway.get("auth") or {}
@@ -2897,25 +2897,25 @@ class Migrator:
             "directories, it may read/write to them instead of the TeamHermes state, causing",
             "confusion (e.g., cron jobs reading a different todo list than interactive sessions).",
             "",
-            "**Strongly recommended:** Run `hermes claw cleanup` to rename the OpenClaw",
+            "**Strongly recommended:** Run `th claw cleanup` to rename the OpenClaw",
             "directory to `.openclaw.pre-migration`. This prevents the agent from finding it.",
             "The directory is renamed, not deleted — you can undo this at any time.",
             "",
             "If you skip this step and notice the agent getting confused about workspaces",
-            "or todo lists, run `hermes claw cleanup` to fix it.",
+            "or todo lists, run `th claw cleanup` to fix it.",
             "",
             "## TeamHermes-Specific Setup",
             "",
             "After migration, you may want to:",
-            "- Run `hermes claw cleanup` to archive the OpenClaw directory (prevents state confusion)",
-            "- Run `hermes setup` to configure any remaining settings",
-            "- Run `hermes mcp list` to verify MCP servers were imported correctly",
+            "- Run `th claw cleanup` to archive the OpenClaw directory (prevents state confusion)",
+            "- Run `th setup` to configure any remaining settings",
+            "- Run `th mcp list` to verify MCP servers were imported correctly",
         ])
 
         if has_cron_config_archive:
-            notes.append("- Run `hermes cron` to recreate scheduled tasks (see archive/cron-config.json)")
+            notes.append("- Run `th cron` to recreate scheduled tasks (see archive/cron-config.json)")
         elif has_cron_store_archive:
-            notes.append("- Run `hermes cron` to recreate scheduled tasks (see archived cron-store)")
+            notes.append("- Run `th cron` to recreate scheduled tasks (see archived cron-store)")
 
         # Check if skills were imported
         has_skills = any(i.kind == "skills" and i.status == "migrated" for i in self.items)
@@ -2940,12 +2940,12 @@ class Migrator:
                 "WhatsApp uses QR-code pairing, not token-based auth. Your allowlist",
                 "was migrated, but you must re-pair the device by running:",
                 "",
-                "    hermes whatsapp",
+                "    th whatsapp",
                 "",
             ])
 
         notes.extend([
-            "- Run `hermes gateway install` if you need the gateway service",
+            "- Run `th gateway install` if you need the gateway service",
             "- Review `~/.teamhermes/config.yaml` for any adjustments",
             "",
         ])
@@ -3114,9 +3114,9 @@ def main() -> int:
         print()
         print("  Next steps:")
         print("    1. Review ~/.teamhermes/config.yaml")
-        print("    2. Run: hermes mcp list")
+        print("    2. Run: th mcp list")
         if any(i["kind"] == "cron-jobs" and i["status"] == "archived" for i in items):
-            print("    3. Recreate cron jobs: hermes cron")
+            print("    3. Recreate cron jobs: th cron")
         if report.get("output_dir"):
             print(f"    → Full report: {report['output_dir']}/MIGRATION_NOTES.md")
     elif not args.execute:

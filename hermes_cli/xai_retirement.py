@@ -4,7 +4,7 @@ Source: https://docs.x.ai/developers/migration/may-15-retirement
 
 Pure logic: walks a TeamHermes config dict, returns issues for any reference
 to a retired xAI model. No I/O, no CLI dependencies — testable in isolation
-and reusable from both `hermes doctor` and a future `hermes migrate xai`.
+and reusable from both `th doctor` and a future `th migrate xai`.
 """
 from __future__ import annotations
 
