@@ -3209,7 +3209,7 @@ class HermesCLI:
             self.session_id = f"{timestamp_str}_{short_uuid}"
         
         # History file for persistent input recall across sessions
-        self._history_file = _hermes_home / ".hermes_history"
+        self._history_file = _hermes_home / ".teamhermes_history"
         self._last_invalidate: float = 0.0  # throttle UI repaints
         self._app = None
 
