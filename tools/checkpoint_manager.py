@@ -16,7 +16,7 @@ Storage layout (single shared store, git objects deduplicated across projects)
     ~/.teamhermes/checkpoints/
         store/                          — single bare-ish git repo
             HEAD, config, objects/      — standard git internals (shared)
-            refs/hermes/<hash16>        — per-project branch tip
+            refs/thm/<hash16>        — per-project branch tip
             indexes/<hash16>            — per-project git index
             projects/<hash16>.json      — {workdir, created_at, last_touch}
             info/exclude                — default excludes (shared)
@@ -70,7 +70,7 @@ CHECKPOINT_BASE = get_hermes_home() / "checkpoints"
 
 # Single shared store directory under CHECKPOINT_BASE.
 _STORE_DIRNAME = "store"
-_REFS_PREFIX = "refs/hermes"
+_REFS_PREFIX = "refs/thm"
 _INDEXES_DIRNAME = "indexes"
 _PROJECTS_DIRNAME = "projects"
 _LEGACY_PREFIX = "legacy-"
@@ -434,7 +434,7 @@ def _init_store(store: Path, working_dir: str) -> Optional[str]:
     # Use the base dir as the working_dir for config commands — it always
     # exists since we just created the store inside it.
     cfg_wd = str(base)
-    _run_git(["config", "user.email", "hermes@local"], store, cfg_wd)
+    _run_git(["config", "user.email", "thm@local"], store, cfg_wd)
     _run_git(["config", "user.name", "TeamHermes Checkpoint"], store, cfg_wd)
     _run_git(["config", "commit.gpgsign", "false"], store, cfg_wd)
     _run_git(["config", "tag.gpgSign", "false"], store, cfg_wd)

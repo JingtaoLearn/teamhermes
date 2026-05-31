@@ -1198,7 +1198,7 @@ def _emergency_cleanup_all_sessions():
     Called on process exit or interrupt to prevent orphaned sessions.
 
     Also runs the orphan reaper to clean up daemons left behind by previously
-    crashed hermes processes — this way every clean hermes exit sweeps
+    crashed thm processes — this way every clean thm exit sweeps
     accumulated orphans, not just ones that actively used the browser tool.
     """
     global _cleanup_done

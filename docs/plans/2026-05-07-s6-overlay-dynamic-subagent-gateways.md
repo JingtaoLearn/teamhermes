@@ -50,7 +50,7 @@ service registration that only s6 implements.
 - Dynamic registration is limited to per-profile gateways — one service per
   profile, created when a profile is created, torn down when deleted. A
   `gateway-default` slot is always registered for the root HERMES_HOME
-  profile so `hermes gateway start` (no `-p`) has somewhere to land.
+  profile so `thm gateway start` (no `-p`) has somewhere to land.
 
 **Out of scope:**
 
@@ -86,7 +86,7 @@ old `docker/entrypoint.sh`:
 3. Synced bundled skills via `tools/skills_sync.py`.
 4. Optionally backgrounded `thm dashboard` in a subshell when
    `HERMES_DASHBOARD=1` — **not supervised**, no restart.
-5. `exec hermes "$@"` — tini's sole direct child.
+5. `exec thm "$@"` — tini's sole direct child.
 
 Known limitations: dashboard crash → stays dead; dashboard fails at startup →
 silent; gateway crash → dashboard dies too. The May 4, 2026 decision was
@@ -124,7 +124,7 @@ Container-relevant callers outside `gateway.py`:
 
 ### Per-profile gateway spawning
 
-`hermes gateway start`, `coder gateway start` (profile alias), and
+`thm gateway start`, `coder gateway start` (profile alias), and
 `thm -p <profile> gateway start` all spawn a gateway process scoped to a
 given profile. See
 [Profiles: Running Gateways](https://hermes-agent.nousresearch.com/docs/user-guide/profiles#running-gateways).
@@ -245,7 +245,7 @@ profile gateway," not a general-purpose process-management API.
 ### D5. Per-profile gateway service spec is fixed, not user-provided
 
 Every profile gateway has the same command shape
-(`thm -p <profile> gateway run`, or `hermes gateway run` for the default
+(`thm -p <profile> gateway run`, or `thm gateway run` for the default
 profile). The s6 backend generates the `run` script from a fixed template
 given the profile name — no arbitrary command list. This keeps the API
 surface tight and prevents callers from accidentally registering
@@ -295,11 +295,11 @@ commands continue to work — in the container they dispatch to
 `ServiceManager.start/stop/restart("gateway-<profile>")`, which translates
 to `s6-svc -u`/`-d`/`-t` on the service dir.
 
-`hermes gateway start` (no `-p`) targets a special `gateway-default` slot
+`thm gateway start` (no `-p`) targets a special `gateway-default` slot
 that's always registered by the cont-init reconciler. Its run script omits
 the `-p` flag and runs against the root `$HERMES_HOME` profile.
 
-`--all` lifecycle (`hermes gateway stop --all`, `... restart --all`)
+`--all` lifecycle (`thm gateway stop --all`, `... restart --all`)
 iterates `mgr.list_profile_gateways()` through s6 so s6's `want up`/`want
 down` flips correctly. Without this, `--all` fell through to `pkill`
 followed by s6-supervise auto-restart — net effect: kick instead of stop.
@@ -392,7 +392,7 @@ and `COLUMNS=123` as the probe.
   pinned via build ARGs and verified with `sha256sum -c` against a single
   checksum file (avoids hadolint DL4006 piped-shell warning).
 - **`gateway-default` slot:** always registered by the reconciler so
-  `hermes gateway start` (no `-p`) has somewhere to land.
+  `thm gateway start` (no `-p`) has somewhere to land.
 - **Friendly lifecycle errors:** `GatewayNotRegisteredError` and
   `S6CommandError` translate `CalledProcessError` into actionable CLI
   messages.
@@ -420,9 +420,9 @@ and `COLUMNS=123` as the probe.
 - [x] Profile gateway logs persist at
       `$HERMES_HOME/logs/gateways/test/current`
 - [x] `thm status` inside the container shows `Manager: s6`
-- [x] `hermes gateway start` (no `-p`) inside a container targets
+- [x] `thm gateway start` (no `-p`) inside a container targets
       `gateway-default` and runs against the root profile
-- [x] `hermes gateway stop --all` / `... restart --all` iterate every
+- [x] `thm gateway stop --all` / `... restart --all` iterate every
       profile gateway under s6 instead of pkill-then-supervise-restart
 - [x] `docker restart` survives per-profile gateway registrations via the
       cont-init reconciler; running gateways come back up, stopped ones
@@ -430,5 +430,5 @@ and `COLUMNS=123` as the probe.
 - [x] Multi-arch image builds for both `linux/amd64` and `linux/arm64`
 - [x] s6-overlay tarballs are SHA256-verified at build time
 - [x] No systemd/launchd host-side functions were modified (only wrapped)
-- [x] `hermes gateway install/start/stop` on Linux host and macOS host
+- [x] `thm gateway install/start/stop` on Linux host and macOS host
       behave identically to pre-change
