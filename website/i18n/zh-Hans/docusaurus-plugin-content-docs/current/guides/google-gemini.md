@@ -186,7 +186,7 @@ model:
 ## 诊断
 
 ```bash
-hermes doctor
+thm doctor
 ```
 
 doctor 命令检查：

@@ -83,20 +83,20 @@ auxiliary:
 ## CLI
 
 ```bash
-hermes curator status         # last run, counts, pinned list, LRU top 5
-hermes curator run            # trigger a review now (blocks until the LLM pass finishes)
-hermes curator run --background  # fire-and-forget: start the LLM pass in a background thread
-hermes curator run --dry-run  # preview only — report without any mutations
-hermes curator backup         # take a manual snapshot of ~/.teamhermes/skills/
-hermes curator rollback       # restore from the newest snapshot
-hermes curator rollback --list     # list available snapshots
-hermes curator rollback --id <ts>  # restore a specific snapshot
-hermes curator rollback -y         # skip the confirmation prompt
-hermes curator pause          # stop runs until resumed
-hermes curator resume
-hermes curator pin <skill>    # never auto-transition this skill
-hermes curator unpin <skill>
-hermes curator restore <skill>  # move an archived skill back to active
+thm curator status         # last run, counts, pinned list, LRU top 5
+thm curator run            # trigger a review now (blocks until the LLM pass finishes)
+thm curator run --background  # fire-and-forget: start the LLM pass in a background thread
+thm curator run --dry-run  # preview only — report without any mutations
+thm curator backup         # take a manual snapshot of ~/.teamhermes/skills/
+thm curator rollback       # restore from the newest snapshot
+thm curator rollback --list     # list available snapshots
+thm curator rollback --id <ts>  # restore a specific snapshot
+thm curator rollback -y         # skip the confirmation prompt
+thm curator pause          # stop runs until resumed
+thm curator resume
+thm curator pin <skill>    # never auto-transition this skill
+thm curator unpin <skill>
+thm curator restore <skill>  # move an archived skill back to active
 ```
 
 ## 备份与回滚
@@ -104,9 +104,9 @@ hermes curator restore <skill>  # move an archived skill back to active
 在每次真正的 curator pass 之前，TeamHermes 会在 `~/.teamhermes/skills/.curator_backups/<utc-iso>/skills.tar.gz` 处对 `~/.teamhermes/skills/` 进行 tar.gz 快照。如果某次 pass 归档或合并了你不希望被触碰的内容，可以用一条命令撤销整次运行：
 
 ```bash
-hermes curator rollback        # restore newest snapshot (with confirmation)
-hermes curator rollback -y     # skip the prompt
-hermes curator rollback --list # see all snapshots with reason + size
+thm curator rollback        # restore newest snapshot (with confirmation)
+thm curator rollback -y     # skip the prompt
+thm curator rollback --list # see all snapshots with reason + size
 ```
 
 回滚本身也是可逆的：在替换技能树之前，TeamHermes 会再次创建一个标记为 `pre-rollback to <target-id>` 的快照，因此误操作的回滚可以通过 `--id` 滚动到该快照来撤销。
@@ -165,8 +165,8 @@ curator:
 使用以下命令固定和取消固定：
 
 ```bash
-hermes curator pin <skill>
-hermes curator unpin <skill>
+thm curator pin <skill>
+thm curator unpin <skill>
 ```
 
 该标志以 `"pinned": true` 的形式存储在 `~/.teamhermes/skills/.usage.json` 中技能对应的条目上，因此跨会话持久有效。
@@ -226,7 +226,7 @@ Curator 在 `~/.teamhermes/skills/.usage.json` 维护一个附属文件，每个
 如果 curator 归档了你仍需要的技能：
 
 ```bash
-hermes curator restore <skill-name>
+thm curator restore <skill-name>
 ```
 
 这会将技能从 `~/.teamhermes/skills/.archive/` 移回活跃树，并将其状态重置为 `active`。如果此后有同名的捆绑或 hub 安装技能（会遮蔽上游），则恢复操作会被拒绝。

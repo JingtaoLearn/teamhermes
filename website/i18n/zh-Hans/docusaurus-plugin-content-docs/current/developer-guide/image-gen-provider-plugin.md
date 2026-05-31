@@ -253,14 +253,14 @@ mkdir -p $HERMES_HOME/plugins/image_gen/my-backend
 # …copy __init__.py + plugin.yaml into that dir…
 
 export MY_BACKEND_API_KEY=your-test-key
-hermes plugins enable my-backend
+thm plugins enable my-backend
 
 # Pick it as the active provider
 echo "image_gen:" >> $HERMES_HOME/config.yaml
 echo "  provider: my-backend" >> $HERMES_HOME/config.yaml
 
 # Exercise it
-hermes -z "Generate an image of a corgi in a spacesuit"
+thm -z "Generate an image of a corgi in a spacesuit"
 ```
 
 或交互式操作：`thm tools` → "Image Generation" → 选择 `my-backend` → 根据提示输入 API key。

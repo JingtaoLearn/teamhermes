@@ -242,7 +242,7 @@ You can override the default in `~/.codex/config.toml` outside TeamHermes' manag
 default_permissions = ":read-only"
 ```
 
-(TeamHermes will preserve your override on re-migration as long as it lives outside the `# managed by teamhermes` markers.)
+(TeamHermes will preserve your override on re-migration as long as it lives outside the `# managed by teamthm` markers.)
 
 ## Auxiliary tasks and ChatGPT subscription token cost
 
@@ -275,13 +275,13 @@ The self-improvement review fork inherits the main runtime via `_current_main_ru
 TeamHermes wraps everything it manages between two marker comments:
 
 ```toml
-# managed by teamhermes — `thm  codex-runtime migrate` regenerates this section
+# managed by teamthm — `thm  codex-runtime migrate` regenerates this section
 default_permissions = ":workspace"
 [mcp_servers.filesystem]
 ...
 [plugins."github@openai-curated"]
 ...
-# end teamhermes managed section
+# end teamthm managed section
 ```
 
 Anything **outside** that block is yours. Re-running migration (via `/codex-runtime codex_app_server` or whenever you toggle the runtime on) replaces the managed block in place but preserves user content above and below it verbatim. This means you can:
@@ -300,7 +300,7 @@ By default, TeamHermes points the codex subprocess at `~/.codex/` regardless of 
 If you want per-profile Codex isolation (separate auth, separate installed plugins, separate config), set `CODEX_HOME` explicitly per profile. The cleanest way is to point at a directory under your `HERMES_HOME`:
 
 ```bash
-# Inside the work profile, you might wrap hermes:
+# Inside the work profile, you might wrap thm:
 CODEX_HOME=~/.teamhermes/profiles/work/codex thm  chat
 ```
 
@@ -354,7 +354,7 @@ Codex's built-in toolset covers shell/file ops/patches but doesn't have web sear
 [mcp_servers.teamhermes-tools]
 command = "/path/to/python"
 args = ["-m", "agent.transports.hermes_tools_mcp_server"]
-env = { HERMES_HOME = "/your/.teamhermes", PYTHONPATH = "...", HERMES_QUIET = "1" }
+env = { HERMES_HOME = "/your/.teamthm", PYTHONPATH = "...", HERMES_QUIET = "1" }
 startup_timeout_sec = 30.0
 tool_timeout_sec = 600.0
 ```

@@ -64,7 +64,7 @@ mcp_servers:
 
 ### 3. 重启 TeamHermes
 ```bash
-hermes
+thm
 ```
 所有 11 个 AgentMail 工具现已自动可用。
 
@@ -88,7 +88,7 @@ hermes
 
 ### 创建收件箱并发送邮件
 1. 创建专属收件箱：
-   - 使用 `create_inbox` 并指定用户名（例如 `teamhermes`）
+   - 使用 `create_inbox` 并指定用户名（例如 `teamthm`）
    - Agent 获得地址：`teamhermes@agentmail.to`
 2. 发送邮件：
    - 使用 `send_message`，传入 `inbox_id`、`to`、`subject`、`text`
@@ -132,7 +132,7 @@ hermes
 ## 验证
 配置完成后，使用以下命令测试：
 ```
-hermes --toolsets mcp -q "Create an AgentMail inbox called test-agent and tell me its email address"
+thm --toolsets mcp -q "Create an AgentMail inbox called test-agent and tell me its email address"
 ```
 应返回新收件箱的地址。
 

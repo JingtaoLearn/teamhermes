@@ -526,7 +526,7 @@ agent:
 启用隔离的 git worktree，以便在同一仓库上并行运行多个 agent：
 
 ```yaml
-worktree: true    # 始终创建 worktree（与 hermes -w 相同）
+worktree: true    # 始终创建 worktree（与 thm -w 相同）
 # worktree: false # 默认 —— 仅在传递 -w 标志时
 ```
 
@@ -1355,7 +1355,7 @@ whatsapp:
 quick_commands:
   status:
     type: exec
-    command: systemctl status teamhermes
+    command: systemctl status teamthm
   disk:
     type: exec
     command: df -h /

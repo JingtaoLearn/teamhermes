@@ -345,7 +345,7 @@ requires_env:
     url: "https://my-platform.example.com/bots"
     password: true
   - name: MY_PLATFORM_CHANNEL
-    description: "Channel to join (e.g. #hermes)"
+    description: "Channel to join (e.g. #thm)"
     prompt: "Channel"
     password: false
 optional_env:

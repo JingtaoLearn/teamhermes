@@ -70,7 +70,7 @@ git config --global credential.helper 2>/dev/null || echo "no git credential hel
 告知用户访问：**https://github.com/settings/tokens**
 
 - 点击"Generate new token (classic)"
-- 填写名称，如"teamhermes"
+- 填写名称，如"teamthm"
 - 选择权限范围（scope）：
   - `repo`（完整仓库访问——读、写、推送、PR）
   - `workflow`（触发和管理 GitHub Actions）

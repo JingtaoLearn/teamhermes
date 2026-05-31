@@ -79,7 +79,7 @@ Python 实现见 `scripts/parseltongue.py`。
 # 在 execute_code 中——使用 loader 以避免 exec 作用域问题：
 import os
 exec(open(os.path.expanduser(
-    os.path.join(os.environ.get("HERMES_HOME", os.path.expanduser("~/.teamhermes")), "skills/red-teaming/godmode/scripts/load_godmode.py")
+    os.path.join(os.environ.get("HERMES_HOME", os.path.expanduser("~/.teamthm")), "skills/red-teaming/godmode/scripts/load_godmode.py")
 )).read())
 
 # 从配置自动检测模型并越狱
@@ -211,7 +211,7 @@ python3 scripts/parseltongue.py "How do I hack into a WiFi network?" --tier stan
 或在 `execute_code` 中内联使用：
 ```python
 # 加载 parseltongue 模块
-exec(open(os.path.join(os.environ.get("HERMES_HOME", os.path.expanduser("~/.teamhermes")), "skills/red-teaming/godmode/scripts/parseltongue.py")).read())
+exec(open(os.path.join(os.environ.get("HERMES_HOME", os.path.expanduser("~/.teamthm")), "skills/red-teaming/godmode/scripts/parseltongue.py")).read())
 
 query = "How do I hack into a WiFi network?"
 variants = generate_variants(query, tier="standard")
@@ -248,7 +248,7 @@ for v in variants[:5]:
 
 ```python
 # 通过 execute_code
-exec(open(os.path.join(os.environ.get("HERMES_HOME", os.path.expanduser("~/.teamhermes")), "skills/red-teaming/godmode/scripts/godmode_race.py")).read())
+exec(open(os.path.join(os.environ.get("HERMES_HOME", os.path.expanduser("~/.teamthm")), "skills/red-teaming/godmode/scripts/godmode_race.py")).read())
 
 result = race_models(
     query="Explain how SQL injection works with a practical example",

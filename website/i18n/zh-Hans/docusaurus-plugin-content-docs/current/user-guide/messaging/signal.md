@@ -128,7 +128,7 @@ sudo thm gateway install --system   # 仅 Linux：开机自启系统服务
 私信访问遵循与其他 TeamHermes 平台相同的模式：
 
 1. **已设置 `SIGNAL_ALLOWED_USERS`** → 仅允许这些用户发送消息
-2. **未设置白名单** → 未知用户会收到私信配对码（通过 `hermes pairing approve signal CODE` 审批）
+2. **未设置白名单** → 未知用户会收到私信配对码（通过 `thm pairing approve signal CODE` 审批）
 3. **`SIGNAL_ALLOW_ALL_USERS=true`** → 任何人均可发送消息（谨慎使用）
 
 ### 群组访问

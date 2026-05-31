@@ -19,7 +19,7 @@ The `curl | bash` installer manages Python, Node, and dependencies itself. The N
 
 **For non-NixOS users**, this only changes the install step. Everything after (`thm setup`, `thm  gateway install`, config editing) works identically to the standard install.
 
-**For NixOS module users**, the entire lifecycle is different: configuration lives in `configuration.nix`, secrets go through sops-nix/agenix, the service is a systemd unit, and CLI config commands are blocked. You manage hermes the same way you manage any other NixOS service.
+**For NixOS module users**, the entire lifecycle is different: configuration lives in `configuration.nix`, secrets go through sops-nix/agenix, the service is a systemd unit, and CLI config commands are blocked. You manage thm the same way you manage any other NixOS service.
 :::
 
 ## Prerequisites
@@ -44,7 +44,7 @@ thm  setup
 thm  chat
 ```
 
-After `nix profile install`, `thm`, `teamhermes`, and `thm-acp` are on your PATH. From here, the workflow is identical to the [standard installation](./installation.md) — `thm setup` walks you through provider selection, `thm  gateway install` sets up a launchd (macOS) or systemd user service, and config lives in `~/.teamhermes/`.
+After `nix profile install`, `thm`, `teamthm`, and `thm-acp` are on your PATH. From here, the workflow is identical to the [standard installation](./installation.md) — `thm setup` walks you through provider selection, `thm  gateway install` sets up a launchd (macOS) or systemd user service, and config lives in `~/.teamhermes/`.
 
 :::warning Messaging platforms (Discord, Telegram, Slack)
 The default package doesn't include messaging platform libraries — they were moved to on-demand installation, which can't work in Nix's read-only environment. If you plan to connect the agent to Discord, Telegram, or Slack, install the `messaging` variant:
@@ -67,7 +67,7 @@ The `full` variant adds ~700 MB to the closure. If you only need messaging platf
 
 ```bash
 git clone https://github.com/NousResearch/hermes-agent.git
-cd teamhermes
+cd teamthm
 nix build
 ./result/bin/hermes setup
 ```
@@ -94,7 +94,7 @@ This module requires NixOS. For non-NixOS systems (macOS, other Linux distros), 
     teamhermes.url = "github:NousResearch/hermes-agent";
   };
 
-  outputs = { nixpkgs, teamhermes, ... }: {
+  outputs = { nixpkgs, teamthm, ... }: {
     nixosConfigurations.your-host = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -126,7 +126,7 @@ That's it. `nixos-rebuild switch` creates the `thm` user, generates `config.yaml
 The `environmentFiles` line above assumes you have [sops-nix](https://github.com/Mic92/sops-nix) or [agenix](https://github.com/ryantm/agenix) configured. The file should contain at least one LLM provider key (e.g., `OPENROUTER_API_KEY=sk-or-...`). See [Secrets Management](#secrets-management) for full setup. If you don't have a secrets manager yet, you can use a plain file as a starting point — just ensure it's not world-readable:
 
 ```bash
-echo "OPENROUTER_API_KEY=sk-or-your-key" | sudo install -m 0600 -o hermes /dev/stdin /var/lib/hermes/env
+echo "OPENROUTER_API_KEY=sk-or-your-key" | sudo install -m 0600 -o thm /dev/stdin /var/lib/hermes/env
 ```
 
 ```nix
@@ -148,7 +148,7 @@ When `container.enable = true` and `addToSystemPackages = true`, **every** `thm`
 - If the container isn't running, the CLI retries briefly (5s with a spinner for interactive use, 10s silently for scripts) then fails with a clear error — no silent fallback
 - For developers working on the thm  codebase, set `HERMES_DEV=1` to bypass container routing and run the local checkout directly
 
-Set `container.hostUsers` to create a `~/.teamhermes` symlink to the service state directory, so the host CLI and the container share sessions, config, and memories:
+Set `container.hostUsers` to create a `~/.teamthm` symlink to the service state directory, so the host CLI and the container share sessions, config, and memories:
 
 ```nix
 services.teamhermes-agent = {
@@ -181,10 +181,10 @@ After `nixos-rebuild switch`, check that the service is running:
 
 ```bash
 # Check service status
-systemctl status teamhermes
+systemctl status teamthm
 
 # Watch logs (Ctrl+C to stop)
-journalctl -u teamhermes -f
+journalctl -u teamthm -f
 
 # If addToSystemPackages is true, test the CLI
 thm  version
@@ -354,7 +354,7 @@ Quick reference for the most common things Nix users want to customize:
 Values in Nix expressions end up in `/nix/store`, which is world-readable. Always use `environmentFiles` with a secrets manager.
 :::
 
-Both `environment` (non-secret vars) and `environmentFiles` (secret files) are merged into `$HERMES_HOME/.env` at activation time (`nixos-rebuild switch`). TeamHermes reads this file on every startup, so changes take effect with a `systemctl restart teamhermes` — no container recreation needed.
+Both `environment` (non-secret vars) and `environmentFiles` (secret files) are merged into `$HERMES_HOME/.env` at activation time (`nixos-rebuild switch`). TeamHermes reads this file on every startup, so changes take effect with a `systemctl restart teamthm` — no container recreation needed.
 
 ### sops-nix
 
@@ -490,15 +490,15 @@ Tokens are stored in `$HERMES_HOME/mcp-tokens/<server-name>.json` and persist ac
 
 The first OAuth authorization requires a browser-based consent flow. In a headless deployment, TeamHermes prints the authorization URL to stdout/logs instead of opening a browser.
 
-**Option A: Interactive bootstrap** — run the flow once via `docker exec` (container) or `sudo -u hermes` (native):
+**Option A: Interactive bootstrap** — run the flow once via `docker exec` (container) or `sudo -u thm` (native):
 
 ```bash
 # Container mode
-docker exec -it teamhermes \
+docker exec -it teamthm \
   thm  mcp add my-oauth-server --url https://mcp.example.com/mcp --auth oauth
 
 # Native mode
-sudo -u hermes HERMES_HOME=/var/lib/hermes/.teamhermes \
+sudo -u thm HERMES_HOME=/var/lib/hermes/.teamthm \
   thm  mcp add my-oauth-server --url https://mcp.example.com/mcp --auth oauth
 ```
 
@@ -510,7 +510,7 @@ The container uses `--network=host`, so the OAuth callback listener on `127.0.0.
 thm  mcp add my-oauth-server --url https://mcp.example.com/mcp --auth oauth
 scp ~/.teamhermes/mcp-tokens/my-oauth-server{,.client}.json \
     server:/var/lib/hermes/.teamhermes/mcp-tokens/
-# Ensure: chown hermes:hermes, chmod 0600
+# Ensure: chown thm:thm, chmod 0600
 ```
 
 </details>
@@ -552,7 +552,7 @@ When thm  runs via the NixOS module, the following CLI commands are **blocked** 
 This prevents drift between what Nix declares and what's on disk. Detection uses two signals:
 
 1. **`HERMES_MANAGED=true`** environment variable — set by the systemd service, visible to the gateway process
-2. **`.managed` marker file** in `HERMES_HOME` — set by the activation script, visible to interactive shells (e.g., `docker exec -it teamhermes thm  config set ...` is also blocked)
+2. **`.managed` marker file** in `HERMES_HOME` — set by the activation script, visible to interactive shells (e.g., `docker exec -it teamthm thm  config set ...` is also blocked)
 
 To change configuration, edit your Nix config and run `sudo nixos-rebuild switch`.
 
@@ -570,7 +570,7 @@ When container mode is enabled, thm  runs inside a persistent Ubuntu container w
 Host                                    Container
 ────                                    ─────────
 /nix/store/...-teamhermes-0.1.0  ──►  /nix/store/... (ro)
-~/.teamhermes -> /var/lib/hermes/.teamhermes       (symlink bridge, per hostUsers)
+~/.teamthm -> /var/lib/hermes/.teamthm       (symlink bridge, per hostUsers)
 /var/lib/hermes/                    ──►  /data/          (rw)
   ├── current-package -> /nix/store/...    (symlink, updated each rebuild)
   ├── .gc-root -> /nix/store/...           (prevents nix-collect-garbage)
@@ -596,7 +596,7 @@ The Nix-built binary works inside the Ubuntu container because `/nix/store` is b
 
 | Event | Container recreated? | `/data` (state) | `/home/hermes` | Writable layer (`apt`/`pip`/`npm`) |
 |---|---|---|---|---|
-| `systemctl restart teamhermes` | No | Persists | Persists | Persists |
+| `systemctl restart teamthm` | No | Persists | Persists | Persists |
 | `nixos-rebuild switch` (code change) | No (symlink updated) | Persists | Persists | Persists |
 | Host reboot | No | Persists | Persists | Persists |
 | `nix-collect-garbage` | No (GC root) | Persists | Persists | Persists |
@@ -664,7 +664,7 @@ The package's `site-packages` is added to PYTHONPATH in the thm  wrapper. `impor
 
 ### Optional Dependency Groups (`extraDependencyGroups`)
 
-For optional extras declared in teamhermes's `pyproject.toml`, use `extraDependencyGroups` to include them in the sealed venv at build time. This is required for any extra not in the default `[all]` set — on Nix, runtime installation into the read-only store is not possible.
+For optional extras declared in teamthm's `pyproject.toml`, use `extraDependencyGroups` to include them in the sealed venv at build time. This is required for any extra not in the default `[all]` set — on Nix, runtime installation into the read-only store is not possible.
 
 ```nix
 # Enable Discord, Telegram, Slack
@@ -731,7 +731,7 @@ External flakes can override the package directly:
 ```nix
 {
   inputs.teamhermes-agent.url = "github:NousResearch/hermes-agent";
-  outputs = { teamhermes, nixpkgs, ... }: {
+  outputs = { teamthm, nixpkgs, ... }: {
     nixpkgs.overlays = [ teamhermes.overlays.default ];
     # Then:
     #   pkgs.teamhermes-agent.override { extraPythonPackages = [...]; }
@@ -764,7 +764,7 @@ A build-time collision check prevents plugin packages from shadowing core thm  d
 The flake provides a development shell with Python 3.12, uv, Node.js, and all runtime tools:
 
 ```bash
-cd teamhermes
+cd teamthm
 nix develop
 
 # Shell provides:
@@ -781,7 +781,7 @@ thm  chat
 The included `.envrc` activates the dev shell automatically:
 
 ```bash
-cd teamhermes
+cd teamthm
 direnv allow    # one-time
 # Subsequent entries are near-instant (stamp file skips dep install)
 ```
@@ -808,7 +808,7 @@ nix build .#checks.x86_64-linux.config-roundtrip    # merge script preserves use
 
 | Check | What it tests |
 |---|---|
-| `package-contents` | `thm` and `teamhermes` binaries exist and `thm version` runs |
+| `package-contents` | `thm` and `teamthm` binaries exist and `thm version` runs |
 | `entry-points-sync` | Every `[project.scripts]` entry in `pyproject.toml` has a wrapped binary in the Nix package |
 | `cli-commands` | `thm  --help` exposes `gateway` and `config` subcommands |
 | `managed-guard` | `HERMES_MANAGED=true thm  config set ...` prints the NixOS error |
@@ -825,10 +825,10 @@ nix build .#checks.x86_64-linux.config-roundtrip    # merge script preserves use
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `enable` | `bool` | `false` | Enable the teamhermes service |
-| `package` | `package` | `teamhermes` | The teamhermes package to use |
-| `user` | `str` | `"hermes"` | System user |
-| `group` | `str` | `"hermes"` | System group |
+| `enable` | `bool` | `false` | Enable the teamthm service |
+| `package` | `package` | `teamthm` | The teamthm package to use |
+| `user` | `str` | `"thm"` | System user |
+| `group` | `str` | `"thm"` | System group |
 | `createUser` | `bool` | `true` | Auto-create user/group |
 | `stateDir` | `str` | `"/var/lib/hermes"` | State directory (`HERMES_HOME` parent) |
 | `workingDirectory` | `str` | `"${stateDir}/workspace"` | Agent working directory (`MESSAGING_CWD`) |
@@ -894,7 +894,7 @@ nix build .#checks.x86_64-linux.config-roundtrip    # merge script preserves use
 | `container.image` | `str` | `"ubuntu:24.04"` | Base image (pulled at runtime) |
 | `container.extraVolumes` | `listOf str` | `[]` | Extra volume mounts (`host:container:mode`) |
 | `container.extraOptions` | `listOf str` | `[]` | Extra args passed to `docker create` |
-| `container.hostUsers` | `listOf str` | `[]` | Interactive users who get a `~/.teamhermes` symlink to the service stateDir and are auto-added to the `thm` group |
+| `container.hostUsers` | `listOf str` | `[]` | Interactive users who get a `~/.teamthm` symlink to the service stateDir and are auto-added to the `thm` group |
 
 ---
 
@@ -903,7 +903,7 @@ nix build .#checks.x86_64-linux.config-roundtrip    # merge script preserves use
 ### Native Mode
 
 ```
-/var/lib/hermes/                     # stateDir (owned by hermes:hermes, 0750)
+/var/lib/hermes/                     # stateDir (owned by thm:thm, 0750)
 ├── .teamhermes/                         # HERMES_HOME
 │   ├── config.yaml                  # Nix-generated (deep-merged each rebuild)
 │   ├── .managed                     # Marker: CLI config mutation blocked
@@ -940,7 +940,7 @@ Same layout, mounted into the container:
 
 ```bash
 # Update the flake input (run from the directory containing flake.nix)
-cd /etc/nixos && nix flake update teamhermes
+cd /etc/nixos && nix flake update teamthm
 
 # Rebuild
 sudo nixos-rebuild switch
@@ -960,21 +960,21 @@ All `docker` commands below work the same with `podman`. Substitute accordingly 
 
 ```bash
 # Both modes use the same systemd unit
-journalctl -u teamhermes -f
+journalctl -u teamthm -f
 
 # Container mode: also available directly
-docker logs -f teamhermes
+docker logs -f teamthm
 ```
 
 ### Container Inspection
 
 ```bash
-systemctl status teamhermes
-docker ps -a --filter name=teamhermes
-docker inspect teamhermes --format='{{.State.Status}}'
-docker exec -it teamhermes bash
-docker exec teamhermes readlink /data/current-package
-docker exec teamhermes cat /data/.container-identity
+systemctl status teamthm
+docker ps -a --filter name=teamthm
+docker inspect teamthm --format='{{.State.Status}}'
+docker exec -it teamthm bash
+docker exec teamthm readlink /data/current-package
+docker exec teamthm cat /data/.container-identity
 ```
 
 ### Force Container Recreation
@@ -982,10 +982,10 @@ docker exec teamhermes cat /data/.container-identity
 If you need to reset the writable layer (fresh Ubuntu):
 
 ```bash
-sudo systemctl stop teamhermes
-docker rm -f teamhermes
+sudo systemctl stop teamthm
+docker rm -f teamthm
 sudo rm /var/lib/hermes/.container-identity
-sudo systemctl start teamhermes
+sudo systemctl start teamthm
 ```
 
 ### Verify Secrets Are Loaded
@@ -994,16 +994,16 @@ If the agent starts but can't authenticate with the LLM provider, check that the
 
 ```bash
 # Native mode
-sudo -u hermes cat /var/lib/hermes/.teamhermes/.env
+sudo -u thm cat /var/lib/hermes/.teamhermes/.env
 
 # Container mode
-docker exec teamhermes cat /data/.teamhermes/.env
+docker exec teamthm cat /data/.teamhermes/.env
 ```
 
 ### GC Root Verification
 
 ```bash
-nix-store --query --roots $(docker exec teamhermes readlink /data/current-package)
+nix-store --query --roots $(docker exec teamthm readlink /data/current-package)
 ```
 
 ### Common Issues
@@ -1011,11 +1011,11 @@ nix-store --query --roots $(docker exec teamhermes readlink /data/current-packag
 | Symptom | Cause | Fix |
 |---|---|---|
 | `Cannot save configuration: managed by NixOS` | CLI guards active | Edit `configuration.nix` and `nixos-rebuild switch` |
-| `No adapter available for discord` (or telegram/slack) | Messaging deps missing from the sealed Nix venv | Install `#messaging` variant: `nix profile install ...#messaging`. For NixOS module: `extraDependencyGroups = [ "messaging" ]`. Check `journalctl -u teamhermes` for `FeatureUnavailable` or `requirements not met` for the underlying error. |
+| `No adapter available for discord` (or telegram/slack) | Messaging deps missing from the sealed Nix venv | Install `#messaging` variant: `nix profile install ...#messaging`. For NixOS module: `extraDependencyGroups = [ "messaging" ]`. Check `journalctl -u teamthm` for `FeatureUnavailable` or `requirements not met` for the underlying error. |
 | Container recreated unexpectedly | `extraVolumes`, `extraOptions`, or `image` changed | Expected — writable layer resets. Reinstall packages or use a custom image |
-| `thm version` shows old version | Container not restarted | `systemctl restart teamhermes` |
-| Permission denied on `/var/lib/hermes` | State dir is `0750 hermes:hermes` | Use `docker exec` or `sudo -u hermes` |
-| `nix-collect-garbage` removed hermes | GC root missing | Restart the service (preStart recreates the GC root) |
-| `no container with name or ID "teamhermes"` (Podman) | Podman rootful container not visible to regular user | Add passwordless sudo for podman (see [Container Mode](#container-mode) section) |
-| `unable to find user hermes` | Container still starting (entrypoint hasn't created user yet) | Wait a few seconds and retry — the CLI retries automatically |
-| Tool added via `extraPackages` not found in terminal | Requires `nixos-rebuild switch` to update the per-user profile | Rebuild and restart: `nixos-rebuild switch && systemctl restart teamhermes` |
+| `thm version` shows old version | Container not restarted | `systemctl restart teamthm` |
+| Permission denied on `/var/lib/hermes` | State dir is `0750 thm:thm` | Use `docker exec` or `sudo -u thm` |
+| `nix-collect-garbage` removed thm | GC root missing | Restart the service (preStart recreates the GC root) |
+| `no container with name or ID "teamthm"` (Podman) | Podman rootful container not visible to regular user | Add passwordless sudo for podman (see [Container Mode](#container-mode) section) |
+| `unable to find user thm` | Container still starting (entrypoint hasn't created user yet) | Wait a few seconds and retry — the CLI retries automatically |
+| Tool added via `extraPackages` not found in terminal | Requires `nixos-rebuild switch` to update the per-user profile | Rebuild and restart: `nixos-rebuild switch && systemctl restart teamthm` |

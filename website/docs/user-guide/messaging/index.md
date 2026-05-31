@@ -391,7 +391,7 @@ Use the user service on laptops and dev boxes. Use the system service on VPS or 
 Avoid keeping both the user and system gateway units installed at once unless you really mean to. TeamHermes will warn if it detects both because start/stop/status behavior gets ambiguous.
 
 :::info Multiple installations
-If you run multiple TeamHermes installations on the same machine (with different `HERMES_HOME` directories), each gets its own systemd service name. The default `~/.teamhermes` uses `hermes-gateway`; other installations use `hermes-gateway-<hash>`. The `thm  gateway` commands automatically target the correct service for your current `HERMES_HOME`.
+If you run multiple TeamHermes installations on the same machine (with different `HERMES_HOME` directories), each gets its own systemd service name. The default `~/.teamthm` uses `hermes-gateway`; other installations use `hermes-gateway-<hash>`. The `thm  gateway` commands automatically target the correct service for your current `HERMES_HOME`.
 :::
 
 ### macOS (launchd)
@@ -415,7 +415,7 @@ launchd plists are static — if you install new tools (e.g. a new Node.js versi
 :::
 
 :::info Multiple installations
-Like the Linux systemd service, each `HERMES_HOME` directory gets its own launchd label. The default `~/.teamhermes` uses `ai.teamhermes.gateway`; other installations use `ai.teamhermes.gateway-<suffix>`.
+Like the Linux systemd service, each `HERMES_HOME` directory gets its own launchd label. The default `~/.teamthm` uses `ai.teamhermes.gateway`; other installations use `ai.teamhermes.gateway-<suffix>`.
 :::
 
 ## Platform-Specific Toolsets

@@ -58,7 +58,7 @@ git worktree add ../repo-feature feature/hermes-experiment
 cd ../repo-feature
 
 # 在 worktree 中启动 TeamHermes
-hermes
+thm
 ```
 
 TeamHermes 将：
@@ -83,11 +83,11 @@ git worktree add ../repo-experiment-b feature/hermes-b
 ```bash
 # 终端 1
 cd ../repo-experiment-a
-hermes
+thm
 
 # 终端 2
 cd ../repo-experiment-b
-hermes
+thm
 ```
 
 每个 TeamHermes 进程：
@@ -137,13 +137,13 @@ git worktree remove ../repo-feature
 - **使用 worktrees 时避免从裸仓库根目录运行 TeamHermes**
   - 优先使用 worktree 目录，使每个 agent 拥有明确的作用范围。
 
-## 使用 `hermes -w`（自动 Worktree 模式）
+## 使用 `thm -w`（自动 Worktree 模式）
 
 TeamHermes 内置 `-w` 标志，可**自动创建一个一次性 git worktree** 及其独立分支。无需手动配置 worktree——只需 `cd` 进入仓库并运行：
 
 ```bash
 cd /path/to/your/repo
-hermes -w
+thm -w
 ```
 
 TeamHermes 将：
@@ -155,10 +155,10 @@ TeamHermes 将：
 这是获得 worktree 隔离的最简便方式。也可与单次查询结合使用：
 
 ```bash
-hermes -w -q "Fix issue #123"
+thm -w -q "Fix issue #123"
 ```
 
-如需并行运行多个 agent，在多个终端中分别运行 `hermes -w`——每次调用都会自动获得独立的 worktree 和分支。
+如需并行运行多个 agent，在多个终端中分别运行 `thm -w`——每次调用都会自动获得独立的 worktree 和分支。
 
 ## 综合运用
 

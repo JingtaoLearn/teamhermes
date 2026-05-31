@@ -152,7 +152,7 @@ You can define custom commands that run shell commands instantly without invokin
 quick_commands:
   status:
     type: exec
-    command: systemctl status teamhermes
+    command: systemctl status teamthm
   gpu:
     type: exec
     command: nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader

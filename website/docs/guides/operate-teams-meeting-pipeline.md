@@ -93,7 +93,7 @@ After=network-online.target
 
 [Service]
 Type=oneshot
-User=hermes
+User=thm
 EnvironmentFile=/etc/hermes/env
 ExecStart=/usr/local/bin/hermes teams-pipeline maintain-subscriptions
 ```

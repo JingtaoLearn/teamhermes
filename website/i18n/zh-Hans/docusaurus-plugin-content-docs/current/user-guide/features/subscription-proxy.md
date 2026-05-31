@@ -32,7 +32,7 @@ thm auth add nous
 ### 2. 启动代理
 
 ```bash
-hermes proxy start
+thm proxy start
 ```
 
 ```
@@ -59,7 +59,7 @@ Model:      Hermes-4-70B    # 或 Hermes-4.3-36B、Hermes-4-405B
 ## 可用提供商
 
 ```bash
-hermes proxy providers
+thm proxy providers
 ```
 
 当前已内置：`nous`（Nous Portal）。更多 OAuth 提供商可通过在 `hermes_cli/proxy/adapters/` 中实现 `UpstreamAdapter` 接口来添加。
@@ -67,7 +67,7 @@ hermes proxy providers
 ## 检查状态
 
 ```bash
-hermes proxy status
+thm proxy status
 ```
 
 ```
@@ -112,7 +112,7 @@ TeamHermes proxy upstream adapters
 
 ```bash
 # 终端 1
-hermes proxy start
+thm proxy start
 
 # 终端 2
 openviking-server
@@ -138,7 +138,7 @@ INFERENCE_TEXT_MODEL=Hermes-4-70B
 默认情况下，代理绑定 `127.0.0.1`（仅限本机）。若要让网络中的其他机器使用：
 
 ```bash
-hermes proxy start --host 0.0.0.0 --port 8645
+thm proxy start --host 0.0.0.0 --port 8645
 ```
 
 ⚠ **注意：** 你网络中的任何人现在都可以使用你的 Portal 订阅。代理本身没有认证机制——它接受任意 bearer。如果你将其暴露在可信网络之外，请使用防火墙、VPN 或带有适当认证的反向代理。

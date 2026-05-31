@@ -20,7 +20,7 @@ description: "在仓库中编写 SKILL.md"
 | 作者 | TeamHermes Agent |
 | 许可证 | MIT |
 | 平台 | linux, macos, windows |
-| 标签 | `skills`, `authoring`, `teamhermes`, `conventions`, `skill-md` |
+| 标签 | `skills`, `authoring`, `teamthm`, `conventions`, `skill-md` |
 | 相关 skill | [`writing-plans`](/user-guide/skills/bundled/software-development/software-development-writing-plans), [`requesting-code-review`](/user-guide/skills/bundled/software-development/software-development-requesting-code-review) |
 
 ## 参考：完整 SKILL.md
@@ -41,7 +41,7 @@ SKILL.md 可以存放在两个位置：
 ## 使用时机
 
 - 用户要求你"在此分支 / 仓库 / 提交中"添加一个 skill
-- 你正在提交一个应随 teamhermes 一起发布的可复用工作流
+- 你正在提交一个应随 teamthm 一起发布的可复用工作流
 - 你正在编辑 `/home/bb/hermes-agent/skills/` 下的现有 skill（小改动用 `patch`，重写用 `write_file`；`skill_manage` 对仓库内 skill 的 `patch` 仍有效，但 `create` 无效）
 
 ## 必需的 Frontmatter
@@ -65,7 +65,7 @@ version: 1.0.0
 author: TeamHermes Agent
 license: MIT
 metadata:
-  hermes:
+  thm:
     tags: [short, descriptive, tags]
     related_skills: [other-skill, another-skill]
 ---

@@ -55,7 +55,7 @@ TeamHermes 的差异化特性：
 curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash
 
 # 交互式聊天（默认）
-hermes
+thm
 
 # 单次查询
 thm chat -q "What is the capital of France?"
@@ -67,7 +67,7 @@ thm setup
 thm model
 
 # 健康检查
-hermes doctor
+thm doctor
 ```
 
 ---
@@ -77,7 +77,7 @@ hermes doctor
 ### 全局标志
 
 ```
-hermes [flags] [command]
+thm [flags] [command]
 
   --version, -V             Show version
   --resume, -r SESSION      Resume session by ID or title
@@ -121,7 +121,7 @@ thm auth                 交互式凭据管理器
 thm auth add PROVIDER    添加 OAuth 或 API key 凭据（例如 nous、openai-codex、qwen-oauth）
 thm auth list            列出已存储的凭据
 thm auth remove PROVIDER 移除已存储的凭据
-hermes doctor [--fix]       Check dependencies and config
+thm doctor [--fix]       Check dependencies and config
 thm status [--all]       Show component status
 ```
 
@@ -199,10 +199,10 @@ thm cron status          Scheduler status
 ### Webhook
 
 ```
-hermes webhook subscribe N  Create route at /webhooks/<name>
-hermes webhook list         List subscriptions
-hermes webhook remove NAME  Remove a subscription
-hermes webhook test NAME    Send a test POST
+thm webhook subscribe N  Create route at /webhooks/<name>
+thm webhook list         List subscriptions
+thm webhook remove NAME  Remove a subscription
+thm webhook test NAME    Send a test POST
 ```
 
 ### Profiles
@@ -231,16 +231,16 @@ thm auth reset PROVIDER  Clear exhaustion status
 ### 其他
 
 ```
-hermes insights [--days N]  Usage analytics
+thm insights [--days N]  Usage analytics
 thm update               Update to latest version
-hermes pairing list/approve/revoke  DM authorization
-hermes plugins list/install/remove  Plugin management
-hermes honcho setup/status  Honcho memory integration (requires honcho plugin)
+thm pairing list/approve/revoke  DM authorization
+thm plugins list/install/remove  Plugin management
+thm honcho setup/status  Honcho memory integration (requires honcho plugin)
 thm memory setup/status/off  Memory provider config
-hermes completion bash|zsh  Shell completions
-hermes acp                  ACP server (IDE integration)
-hermes claw migrate         Migrate from OpenClaw
-hermes uninstall            Uninstall TeamHermes
+thm completion bash|zsh  Shell completions
+thm acp                  ACP server (IDE integration)
+thm claw migrate         Migrate from OpenClaw
+thm uninstall            Uninstall TeamHermes
 ```
 
 ---
@@ -494,7 +494,7 @@ thm config set approvals.mode off         # 绕过一切（不推荐）
 ```
 
 单次调用绕过（不更改配置）：
-- `hermes --yolo …`
+- `thm --yolo …`
 - `export HERMES_YOLO_MODE=1`
 
 注意：YOLO / `approvals.mode: off` **不会**关闭密钥脱敏。两者相互独立。
@@ -574,7 +574,7 @@ TeamHermes 使用 prompt_toolkit，需要真实终端。使用 tmux 进行交互
 
 ```
 # 启动
-terminal(command="tmux new-session -d -s agent1 -x 120 -y 40 'hermes'", timeout=10)
+terminal(command="tmux new-session -d -s agent1 -x 120 -y 40 'thm'", timeout=10)
 
 # 等待启动，然后发送消息
 terminal(command="sleep 8 && tmux send-keys -t agent1 'Build a FastAPI auth service' Enter", timeout=15)
@@ -593,11 +593,11 @@ terminal(command="tmux send-keys -t agent1 '/exit' Enter && sleep 2 && tmux kill
 
 ```
 # Agent A：后端
-terminal(command="tmux new-session -d -s backend -x 120 -y 40 'hermes -w'", timeout=10)
+terminal(command="tmux new-session -d -s backend -x 120 -y 40 'thm -w'", timeout=10)
 terminal(command="sleep 8 && tmux send-keys -t backend 'Build REST API for user management' Enter", timeout=15)
 
 # Agent B：前端
-terminal(command="tmux new-session -d -s frontend -x 120 -y 40 'hermes -w'", timeout=10)
+terminal(command="tmux new-session -d -s frontend -x 120 -y 40 'thm -w'", timeout=10)
 terminal(command="sleep 8 && tmux send-keys -t frontend 'Build React dashboard for user management' Enter", timeout=15)
 
 # 检查进度，在两者之间传递上下文
@@ -609,10 +609,10 @@ terminal(command="tmux send-keys -t frontend 'Here is the API schema from the ba
 
 ```
 # 恢复最近的会话
-terminal(command="tmux new-session -d -s resumed 'hermes --continue'", timeout=10)
+terminal(command="tmux new-session -d -s resumed 'thm --continue'", timeout=10)
 
 # 恢复特定会话
-terminal(command="tmux new-session -d -s resumed 'hermes --resume 20260225_143052_a1b2c3'", timeout=10)
+terminal(command="tmux new-session -d -s resumed 'thm --resume 20260225_143052_a1b2c3'", timeout=10)
 ```
 
 ### 提示
@@ -750,7 +750,7 @@ export PYTHONPATH="$(pwd)"
 ### Skill 未显示
 1. `thm skills list` — 验证已安装
 2. `thm skills config` — 检查平台启用状态
-3. 显式加载：`/skill name` 或 `hermes -s name`
+3. 显式加载：`/skill name` 或 `thm -s name`
 
 ### Gateway 问题
 首先检查日志：
@@ -858,7 +858,7 @@ registry.register(
 
 自动发现：任何包含顶层 `registry.register()` 调用的 `tools/*.py` 文件都会自动导入——无需手动列出。
 
-所有处理器必须返回 JSON 字符串。路径使用 `get_hermes_home()`，永远不要硬编码 `~/.teamhermes`。
+所有处理器必须返回 JSON 字符串。路径使用 `get_hermes_home()`，永远不要硬编码 `~/.teamthm`。
 
 ### 添加斜杠命令
 

@@ -48,7 +48,7 @@ approvals:
 
 YOLO 模式会绕过当前会话中**所有**危险命令审批提示。可通过以下三种方式激活：
 
-1. **CLI 标志**：使用 `hermes --yolo` 或 `thm chat --yolo` 启动会话
+1. **CLI 标志**：使用 `thm --yolo` 或 `thm chat --yolo` 启动会话
 2. **斜杠命令**：在会话中输入 `/yolo` 以切换开/关
 3. **环境变量**：设置 `HERMES_YOLO_MODE=1`
 
@@ -140,7 +140,7 @@ approvals:
 | `find -exec rm` / `find -delete` | find 配合破坏性操作 |
 | `cp`/`mv`/`install` 写入 `/etc/` | 复制/移动文件到系统配置目录 |
 | `sed -i` / `sed --in-place` 作用于 `/etc/` | 就地编辑系统配置 |
-| `pkill`/`killall` hermes/gateway | 防止自我终止 |
+| `pkill`/`killall` thm/gateway | 防止自我终止 |
 | `gateway run` 配合 `&`/`disown`/`nohup`/`setsid` | 防止在服务管理器外启动 gateway |
 
 :::info
@@ -247,7 +247,7 @@ or configure platform allowlists (e.g., TELEGRAM_ALLOWED_USERS=your_id).
 
 1. 未知用户向机器人发送 DM
 2. 机器人回复一个 8 位配对码
-3. 机器人所有者在 CLI 上运行 `hermes pairing approve <platform> <code>`
+3. 机器人所有者在 CLI 上运行 `thm pairing approve <platform> <code>`
 4. 该用户在该平台上获得永久批准
 
 在 `~/.teamhermes/config.yaml` 中控制未授权私信的处理方式：
@@ -280,16 +280,16 @@ whatsapp:
 
 ```bash
 # 列出待处理和已批准的用户
-hermes pairing list
+thm pairing list
 
 # 批准配对码
-hermes pairing approve telegram ABC12DEF
+thm pairing approve telegram ABC12DEF
 
 # 撤销用户访问权限
-hermes pairing revoke telegram 123456789
+thm pairing revoke telegram 123456789
 
 # 清除所有待处理验证码
-hermes pairing clear-pending
+thm pairing clear-pending
 ```
 
 **存储：** 配对数据存储于 `~/.teamhermes/pairing/`，按平台分为独立的 JSON 文件：
@@ -601,7 +601,7 @@ terminal:
 ```bash
 # ~/.teamhermes/.env
 TERMINAL_SSH_HOST=agent-worker.local
-TERMINAL_SSH_USER=hermes
+TERMINAL_SSH_USER=thm
 TERMINAL_SSH_KEY=~/.ssh/hermes_agent_key
 ```
 
@@ -620,7 +620,7 @@ TeamHermes 内置了一个公告扫描器，用于标记活跃 venv 中与已知
 每条公告都有一个稳定 ID。阅读并处理后，可以永久忽略它：
 
 ```bash
-hermes doctor --ack <advisory-id>
+thm doctor --ack <advisory-id>
 ```
 
 确认信息持久化到 `config.security.acked_advisories`，重启后仍有效。旧公告**不会**从目录中删除——保留它们可以确保新安装的用户收到关于历史受损版本的警告，这些版本可能仍缓存在私有镜像中。
@@ -629,7 +629,7 @@ hermes doctor --ack <advisory-id>
 
 ### 可选依赖的懒加载安装
 
-许多功能（Mistral TTS、ElevenLabs、Honcho 记忆、Bedrock、Slack、Matrix 等）依赖并非每个用户都需要的 Python 包。TeamHermes 在首次使用时**懒加载**安装这些包，而非在 `teamhermes[all]` 下急切安装。实现位于 `tools/lazy_deps.py`。
+许多功能（Mistral TTS、ElevenLabs、Honcho 记忆、Bedrock、Slack、Matrix 等）依赖并非每个用户都需要的 Python 包。TeamHermes 在首次使用时**懒加载**安装这些包，而非在 `teamthm[all]` 下急切安装。实现位于 `tools/lazy_deps.py`。
 
 此方案解决的权衡问题：
 

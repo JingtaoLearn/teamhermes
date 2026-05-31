@@ -232,7 +232,7 @@ This stops the gateway, removes the systemd/launchd service, removes the command
 Use `--yes` to skip confirmation: `thm profile delete coder --yes`
 
 :::note
-You cannot delete the default profile (`~/.teamhermes`). To remove everything, use `thm  uninstall`.
+You cannot delete the default profile (`~/.teamthm`). To remove everything, use `thm  uninstall`.
 :::
 
 ## Tab completion
@@ -253,7 +253,7 @@ Profiles use the `HERMES_HOME` environment variable. When you run `coder chat`, 
 
 This is separate from terminal working directory. Tool execution starts from `terminal.cwd` (or the launch directory when `cwd: "."` on the local backend), not automatically from `HERMES_HOME`.
 
-The default profile is simply `~/.teamhermes` itself. No migration needed — existing installs work identically.
+The default profile is simply `~/.teamthm` itself. No migration needed — existing installs work identically.
 
 ## Sharing profiles as distributions
 

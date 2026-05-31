@@ -51,7 +51,7 @@ Pick the row that matches your goal:
 **Option A — pip (simplest):**
 
 ```bash
-pip install teamhermes
+pip install teamthm
 thm  postinstall     # optional: installs Node.js, browser, ripgrep, ffmpeg + runs setup
 ```
 
@@ -271,7 +271,7 @@ thm  config set terminal.backend ssh       # Remote server
 
 ```bash
 # From the TeamHermes install directory (the curl installer placed it at
-# ~/.teamhermes/hermes-agent on Linux/macOS or %LOCALAPPDATA%\hermes\teamhermes on Windows):
+# ~/.teamhermes/hermes-agent on Linux/macOS or %LOCALAPPDATA%\hermes\teamthm on Windows):
 cd ~/.teamhermes/hermes-agent
 uv pip install -e ".[voice]"
 # Includes faster-whisper for free local speech-to-text

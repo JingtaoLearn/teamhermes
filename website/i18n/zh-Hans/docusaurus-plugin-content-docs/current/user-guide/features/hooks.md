@@ -51,7 +51,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-LOG_FILE = Path.home() / ".teamhermes" / "hooks" / "my-hook" / "activity.log"
+LOG_FILE = Path.home() / ".teamthm" / "hooks" / "my-hook" / "activity.log"
 
 async def handle(event_type: str, context: dict):
     """Called for each subscribed event. Must be named 'handle'."""
@@ -140,7 +140,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-LOG = Path.home() / ".teamhermes" / "logs" / "command_usage.jsonl"
+LOG = Path.home() / ".teamthm" / "logs" / "command_usage.jsonl"
 
 def handle(event_type: str, context: dict):
     LOG.parent.mkdir(parents=True, exist_ok=True)
@@ -237,7 +237,7 @@ from pathlib import Path
 
 logger = logging.getLogger("hooks.boot-md")
 
-BOOT_FILE = Path.home() / ".teamhermes" / "BOOT.md"
+BOOT_FILE = Path.home() / ".teamthm" / "BOOT.md"
 
 
 def _build_prompt(content: str) -> str:
@@ -320,7 +320,7 @@ thm gateway restart
 查看日志：
 
 ```bash
-hermes logs --follow --level INFO | grep boot-md
+thm logs --follow --level INFO | grep boot-md
 ```
 
 你应该看到 `Running BOOT.md (N chars)`，随后是 `boot-md completed: ...`（agent 执行内容的摘要）或 `boot-md completed (nothing to report)`（agent 回复了 `[SILENT]`）。
@@ -527,7 +527,7 @@ def my_callback(session_id: str, user_message: str, conversation_history: list,
 
 ```python
 # 注入上下文
-return {"context": "Recalled memories:\n- User likes Python\n- Working on teamhermes"}
+return {"context": "Recalled memories:\n- User likes Python\n- Working on teamthm"}
 
 # 普通字符串（等效）
 return "Recalled memories:\n- User likes Python"
@@ -1301,7 +1301,7 @@ printf '{}\n'
 
 三种方式可绕过交互式提示——满足其一即可：
 
-1. CLI 上的 `--accept-hooks` 标志（如 `hermes --accept-hooks chat`）
+1. CLI 上的 `--accept-hooks` 标志（如 `thm --accept-hooks chat`）
 2. `HERMES_ACCEPT_HOOKS=1` 环境变量
 3. `cli-config.yaml` 中的 `hooks_auto_accept: true`
 

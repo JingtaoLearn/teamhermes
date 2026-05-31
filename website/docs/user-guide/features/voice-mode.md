@@ -14,7 +14,7 @@ If you want a practical setup walkthrough with recommended configurations and re
 
 Before using voice features, make sure you have:
 
-1. **TeamHermes Agent installed** — `pip install teamhermes` (see [Installation](/getting-started/installation))
+1. **TeamHermes Agent installed** — `pip install teamthm` (see [Installation](/getting-started/installation))
 2. **An LLM provider configured** — run `thm model` or set your preferred provider credentials in `~/.teamhermes/.env`
 3. **A working base setup** — run `thm` to verify the agent responds to text before enabling voice
 
@@ -40,19 +40,19 @@ A paid [Nous Portal](/user-guide/features/tool-gateway) subscription supplies th
 
 ```bash
 # CLI voice mode (microphone + audio playback)
-pip install "teamhermes[voice]"
+pip install "teamthm[voice]"
 
 # Discord + Telegram messaging (includes discord.py[voice] for VC support)
-pip install "teamhermes[messaging]"
+pip install "teamthm[messaging]"
 
 # Premium TTS (ElevenLabs)
-pip install "teamhermes[tts-premium]"
+pip install "teamthm[tts-premium]"
 
 # Local TTS (NeuTTS, optional)
 python -m pip install -U neutts[all]
 
 # Everything at once
-pip install "teamhermes[all]"
+pip install "teamthm[all]"
 ```
 
 | Extra | Packages | Required For |

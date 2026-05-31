@@ -1,12 +1,12 @@
 ---
 sidebar_position: 9
 title: "Optional Skills Catalog"
-description: "Official optional skills shipped with teamhermes — install via thm  skills install official/<category>/<skill>"
+description: "Official optional skills shipped with teamthm — install via thm  skills install official/<category>/<skill>"
 ---
 
 # Optional Skills Catalog
 
-Optional skills ship with teamhermes under `optional-skills/` but are **not active by default**. Install them explicitly:
+Optional skills ship with teamthm under `optional-skills/` but are **not active by default**. Install them explicitly:
 
 ```bash
 thm  skills install official/<category>/<skill>

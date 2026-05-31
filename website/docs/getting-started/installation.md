@@ -30,7 +30,7 @@ Open PowerShell and run:
 iex (irm https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.ps1)
 ```
 
-The installer handles **everything**: `uv`, Python 3.11, Node.js 22, `ripgrep`, `ffmpeg`, **and a portable Git Bash** (PortableGit — a self-contained Git-for-Windows distribution that ships `bash.exe` and the full POSIX toolchain TeamHermes uses for shell commands; on 32-bit Windows the installer falls back to MinGit, which lacks bash and disables terminal-tool / agent-browser features).  It clones the repo under `%LOCALAPPDATA%\hermes\teamhermes`, creates a virtualenv, and adds `thm` to your **User PATH**.  Restart your terminal (or open a new PowerShell window) after the install so PATH picks up.
+The installer handles **everything**: `uv`, Python 3.11, Node.js 22, `ripgrep`, `ffmpeg`, **and a portable Git Bash** (PortableGit — a self-contained Git-for-Windows distribution that ships `bash.exe` and the full POSIX toolchain TeamHermes uses for shell commands; on 32-bit Windows the installer falls back to MinGit, which lacks bash and disables terminal-tool / agent-browser features).  It clones the repo under `%LOCALAPPDATA%\hermes\teamthm`, creates a virtualenv, and adds `thm` to your **User PATH**.  Restart your terminal (or open a new PowerShell window) after the install so PATH picks up.
 
 **How Git is handled:**
 1. If `git` is already on your PATH, the installer uses your existing install.
@@ -40,7 +40,7 @@ The installer handles **everything**: `uv`, Python 3.11, Node.js 22, `ripgrep`, 
 
 The installer also sets `HERMES_GIT_BASH_PATH` to the located `bash.exe` so TeamHermes resolves it deterministically in fresh shells.
 
-If you prefer WSL2, the Linux installer above works inside it; both native and WSL installs can coexist without conflict (native data lives under `%LOCALAPPDATA%\hermes`, WSL data lives under `~/.teamhermes`).
+If you prefer WSL2, the Linux installer above works inside it; both native and WSL installs can coexist without conflict (native data lives under `%LOCALAPPDATA%\hermes`, WSL data lives under `~/.teamthm`).
 
 **Desktop installer (alternative):** A thin GUI installer is also available — download TeamHermes Desktop, run the `.exe`, and on first launch it calls `install.ps1` under the hood to provision Python (via `uv`), Node, PortableGit, and the rest of the dependencies. The desktop app and the PowerShell-installed CLI share the same install and data directories, so you can use either or both. See the [Windows (Native) guide](../user-guide/windows-native#desktop-installer-alternative) for details.
 
@@ -190,7 +190,7 @@ The same pattern works on Arch (the installer uses pacman with the same sudo-det
 
 | Problem | Solution |
 |---------|----------|
-| `hermes: command not found` | Reload your shell (`source ~/.bashrc`) or check PATH |
+| `thm: command not found` | Reload your shell (`source ~/.bashrc`) or check PATH |
 | `API key not set` | Run `thm model` to configure your provider, or `thm config set OPENROUTER_API_KEY your_key` |
 | Missing config after update | Run `thm config check` then `thm config migrate` |
 

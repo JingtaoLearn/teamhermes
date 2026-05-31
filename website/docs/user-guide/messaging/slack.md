@@ -374,8 +374,8 @@ slack:
   # Custom mention patterns that trigger the bot
   # (in addition to the default @mention detection)
   mention_patterns:
-    - "hey hermes"
-    - "hermes,"
+    - "hey thm"
+    - "thm,"
 
   # Text prepended to every outgoing message
   reply_prefix: ""

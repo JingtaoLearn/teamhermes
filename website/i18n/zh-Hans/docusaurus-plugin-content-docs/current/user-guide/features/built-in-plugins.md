@@ -29,7 +29,7 @@ TeamHermes 随仓库附带了一小组插件。它们位于 `<repo>/plugins/<nam
 内置插件随附时处于禁用状态。发现机制会找到它们（它们会出现在 `thm plugins list` 和交互式 `thm plugins` UI 中），但在你明确启用之前不会加载：
 
 ```bash
-hermes plugins enable disk-cleanup
+thm plugins enable disk-cleanup
 ```
 
 或通过 `~/.teamhermes/config.yaml`：
@@ -45,7 +45,7 @@ plugins:
 要再次关闭内置插件：
 
 ```bash
-hermes plugins disable disk-cleanup
+thm plugins disable disk-cleanup
 # 或：从 config.yaml 的 plugins.enabled 中移除它
 ```
 
@@ -117,7 +117,7 @@ hermes plugins disable disk-cleanup
 
 ### observability/langfuse
 
-将 TeamHermes 的轮次、LLM 调用和工具调用追踪到 [Langfuse](https://langfuse.com)——一个开源 LLM 可观测性平台。每轮一个 span，每次 API 调用一个 generation，每次工具调用一个 tool observation。用量总计、各类型 token 数量和成本估算来自 TeamHermes 的标准 `agent.usage_pricing` 数据，因此 Langfuse 仪表盘看到的分类（input / output / `cache_read_input_tokens` / `cache_creation_input_tokens` / `reasoning_tokens`）与 `hermes logs` 中显示的一致。
+将 TeamHermes 的轮次、LLM 调用和工具调用追踪到 [Langfuse](https://langfuse.com)——一个开源 LLM 可观测性平台。每轮一个 span，每次 API 调用一个 generation，每次工具调用一个 tool observation。用量总计、各类型 token 数量和成本估算来自 TeamHermes 的标准 `agent.usage_pricing` 数据，因此 Langfuse 仪表盘看到的分类（input / output / `cache_read_input_tokens` / `cache_creation_input_tokens` / `reasoning_tokens`）与 `thm logs` 中显示的一致。
 
 该插件采用失败开放（fail-open）策略：未安装 SDK、无凭据或 Langfuse 出现瞬时错误——所有情况都会在 hook 中静默处理为无操作。agent 循环不受任何影响。
 
@@ -125,7 +125,7 @@ hermes plugins disable disk-cleanup
 
 ```bash
 pip install langfuse
-hermes plugins enable observability/langfuse
+thm plugins enable observability/langfuse
 ```
 
 或在交互式 `thm plugins` UI 中勾选复选框。然后将凭据写入 `~/.teamhermes/.env`：
@@ -150,7 +150,7 @@ HERMES_LANGFUSE_BASE_URL=https://cloud.langfuse.com   # 或你的自托管 URL
 **验证：**
 
 ```bash
-hermes plugins list                 # observability/langfuse 应显示 "enabled"
+thm plugins list                 # observability/langfuse 应显示 "enabled"
 thm chat -q "hello"              # 在 Langfuse UI 中检查是否有 "TeamHermes turn" trace
 ```
 
@@ -184,7 +184,7 @@ TeamHermes 前缀的环境变量和标准 SDK 环境变量（`LANGFUSE_PUBLIC_KE
 **设置：**
 
 ```bash
-hermes plugins enable google_meet
+thm plugins enable google_meet
 # 首次使用时会提示你通过插件的 OAuth 流程登录——
 # 需要有 Meet 访问权限的 Google 账号。如果会议强制要求
 # "仅受邀参与者可加入"，可能需要主持人批准。

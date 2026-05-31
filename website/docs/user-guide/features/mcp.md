@@ -74,7 +74,7 @@ github       installed (disabled)   GitHub repo + PR tools
 
 Hit `Enter` on a row to install (and walk through any required credentials),
 enable, disable, or uninstall. Catalog entries are stored under
-`optional-mcps/` in the teamhermes repo — presence in that directory means
+`optional-mcps/` in the teamthm repo — presence in that directory means
 Nous approval. There is no community submission tier; entries are added by
 merging a PR.
 
@@ -124,7 +124,7 @@ reachable to refine.
 Installing a catalog entry runs whatever the manifest specifies — `git clone`,
 the entry's `bootstrap` commands (`pip install`, `npm install`, etc.), and
 ultimately the MCP server's own code. Manifests are gated by PR review into
-the teamhermes repo, so Nous has reviewed each entry before it shipped —
+the teamthm repo, so Nous has reviewed each entry before it shipped —
 **but you should still read the manifest before installing**, especially the
 `source:` field's repository, the `install.bootstrap:` commands, and any
 `transport.command:` invocation.
@@ -651,8 +651,8 @@ Add TeamHermes to your MCP client config. For example, in Claude Code's `~/.clau
 ```json
 {
   "mcpServers": {
-    "hermes": {
-      "command": "hermes",
+    "thm": {
+      "command": "thm",
       "args": ["mcp", "serve"]
     }
   }
@@ -664,7 +664,7 @@ Or if you installed TeamHermes in a specific location:
 ```json
 {
   "mcpServers": {
-    "hermes": {
+    "thm": {
       "command": "/home/user/.teamhermes/hermes-agent/venv/bin/hermes",
       "args": ["mcp", "serve"]
     }

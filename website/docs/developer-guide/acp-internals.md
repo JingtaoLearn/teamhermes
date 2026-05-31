@@ -31,7 +31,7 @@ thm  acp / thm-acp / python -m acp_adapter
   -> acp.run_agent(agent, use_unstable_protocol=True)
 ```
 
-The Zed ACP Registry path launches the same adapter through `uvx --from 'teamhermes[acp]==<version>' thm-acp`, pointed at the `teamhermes` PyPI release.
+The Zed ACP Registry path launches the same adapter through `uvx --from 'teamthm[acp]==<version>' thm-acp`, pointed at the `teamthm` PyPI release.
 
 Stdout is reserved for ACP JSON-RPC transport. Human-readable logs go to stderr.
 

@@ -21,7 +21,7 @@ Configure and use Honcho memory with TeamHermes -- cross-session user modeling, 
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `Honcho`, `Memory`, `Profiles`, `Observation`, `Dialectic`, `User-Modeling`, `Session-Summary` |
-| Related skills | [`teamhermes`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-teamhermes) |
+| Related skills | [`teamthm`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-teamthm) |
 
 ## Reference: full SKILL.md
 

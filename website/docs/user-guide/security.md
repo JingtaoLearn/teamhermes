@@ -153,7 +153,7 @@ The following patterns trigger approval prompts (defined in `tools/approval.py`)
 | `find -exec rm` / `find -delete` | Find with destructive actions |
 | `cp`/`mv`/`install` to `/etc/` | Copy/move file into system config |
 | `sed -i` / `sed --in-place` on `/etc/` | In-place edit of system config |
-| `pkill`/`killall` hermes/gateway | Self-termination prevention |
+| `pkill`/`killall` thm/gateway | Self-termination prevention |
 | `gateway run` with `&`/`disown`/`nohup`/`setsid` | Prevents starting gateway outside service manager |
 
 :::info
@@ -614,7 +614,7 @@ terminal:
 ```bash
 # ~/.teamhermes/.env
 TERMINAL_SSH_HOST=agent-worker.local
-TERMINAL_SSH_USER=hermes
+TERMINAL_SSH_USER=thm
 TERMINAL_SSH_KEY=~/.ssh/hermes_agent_key
 ```
 
@@ -642,7 +642,7 @@ The check itself is stdlib-only and runs from one `importlib.metadata.version()`
 
 ### Lazy install of optional dependencies
 
-Many features (Mistral TTS, ElevenLabs, Honcho memory, Bedrock, Slack, Matrix, …) depend on Python packages that not every user needs. TeamHermes installs these **lazily** on first use rather than eagerly under `teamhermes[all]`. The implementation lives in `tools/lazy_deps.py`.
+Many features (Mistral TTS, ElevenLabs, Honcho memory, Bedrock, Slack, Matrix, …) depend on Python packages that not every user needs. TeamHermes installs these **lazily** on first use rather than eagerly under `teamthm[all]`. The implementation lives in `tools/lazy_deps.py`.
 
 The trade-off this fixes:
 

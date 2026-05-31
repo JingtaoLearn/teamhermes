@@ -21,7 +21,7 @@ Migrate a user's OpenClaw customization footprint into TeamHermes Agent. Imports
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `Migration`, `OpenClaw`, `TeamHermes`, `Memory`, `Persona`, `Import` |
-| Related skills | [`teamhermes`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-teamhermes) |
+| Related skills | [`teamthm`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-teamthm) |
 
 ## Reference: full SKILL.md
 

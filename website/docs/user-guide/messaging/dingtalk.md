@@ -44,7 +44,7 @@ This guide walks you through the full setup process — from creating your DingT
 Install the required Python packages:
 
 ```bash
-pip install "teamhermes[dingtalk]"
+pip install "teamthm[dingtalk]"
 ```
 
 Or individually:

@@ -107,7 +107,7 @@ def get_config_schema(self):
         {
             "key": "project",
             "description": "Project identifier",
-            "default": "hermes",
+            "default": "thm",
         },
     ]
 ```
@@ -169,7 +169,7 @@ def sync_turn(self, user_content, assistant_content):
 
 ## Profile 隔离
 
-所有存储路径**必须**使用 `initialize()` 中的 `hermes_home` kwarg，而不是硬编码的 `~/.teamhermes`：
+所有存储路径**必须**使用 `initialize()` 中的 `hermes_home` kwarg，而不是硬编码的 `~/.teamthm`：
 
 ```python
 # 正确 — 按 profile 隔离
@@ -209,7 +209,7 @@ Memory provider 插件可以注册自己的 CLI 子命令树（例如 `thm my-pr
 1. 在插件目录中添加 `cli.py` 文件
 2. 定义 `register_cli(subparser)` 函数来构建 argparse 树
 3. memory 插件系统在启动时通过 `discover_plugin_cli_commands()` 自动发现
-4. 你的命令以 `hermes <provider-name> <subcommand>` 的形式出现
+4. 你的命令以 `thm <provider-name> <subcommand>` 的形式出现
 
 **仅对活跃 provider 开放：** 你的 CLI 命令只在你的 provider 是配置中活跃的 `memory.provider` 时才会出现。如果用户尚未配置你的 provider，你的命令不会显示在 `thm --help` 中。
 

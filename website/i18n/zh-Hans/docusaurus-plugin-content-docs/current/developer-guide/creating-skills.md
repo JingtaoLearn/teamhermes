@@ -54,7 +54,7 @@ platforms: [macos, linux]          # Optional — restrict to specific OS platfo
                                    #   Valid: macos, linux, windows
                                    #   Omit to load on all platforms (default)
 metadata:
-  hermes:
+  thm:
     tags: [Category, Subcategory, Keywords]
     related_skills: [other-skill-name]
     requires_toolsets: [web]            # Optional — only show when these toolsets are active
@@ -111,7 +111,7 @@ Skill 可声明对特定 tool 或 toolset 的依赖，以控制该 skill 是否�
 
 ```yaml
 metadata:
-  hermes:
+  thm:
     requires_toolsets: [web]           # 若 web toolset 未激活则隐藏
     requires_tools: [web_search]       # 若 web_search tool 不可用则隐藏
     fallback_for_toolsets: [browser]   # 若 browser toolset 已激活则隐藏
@@ -184,7 +184,7 @@ Skill 可声明非密钥配置项，这些配置项存储在 `config.yaml` 的 `
 
 ```yaml
 metadata:
-  hermes:
+  thm:
     config:
       - key: myplugin.path
         description: Path to the plugin data directory

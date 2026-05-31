@@ -579,7 +579,7 @@ TeamHermes uses prompt_toolkit, which requires a real terminal. Use tmux for int
 
 ```
 # Start
-terminal(command="tmux new-session -d -s agent1 -x 120 -y 40 'hermes'", timeout=10)
+terminal(command="tmux new-session -d -s agent1 -x 120 -y 40 'thm'", timeout=10)
 
 # Wait for startup, then send a message
 terminal(command="sleep 8 && tmux send-keys -t agent1 'Build a FastAPI auth service' Enter", timeout=15)
@@ -950,7 +950,7 @@ registry.register(
 
 Auto-discovery: any `tools/*.py` file with a top-level `registry.register()` call is imported automatically — no manual list needed.
 
-All handlers must return JSON strings. Use `get_hermes_home()` for paths, never hardcode `~/.teamhermes`.
+All handlers must return JSON strings. Use `get_hermes_home()` for paths, never hardcode `~/.teamthm`.
 
 ### Adding a Slash Command
 

@@ -310,7 +310,7 @@ thm profile install <source> [--name <name>] [--alias] [--force] [--yes]
 |--------|-------------|
 | `<source>` | Git URL（`github.com/user/repo`、`https://...`、`git@...`、`ssh://`、`git://`）或包含 `distribution.yaml` 的本地目录根路径。 |
 | `--name NAME` | 覆盖 manifest 中的 profile 名称。 |
-| `--alias` | 同时创建 shell wrapper（例如 `telemetry` → `hermes -p telemetry`）。 |
+| `--alias` | 同时创建 shell wrapper（例如 `telemetry` → `thm -p telemetry`）。 |
 | `--force` | 覆盖同名的已有 profile。用户数据仍会保留。 |
 | `-y`, `--yes` | 跳过 manifest 预览确认提示。 |
 
@@ -406,11 +406,11 @@ distribution_owned:   # optional; defaults to SOUL.md, config.yaml,
 
 使用 git tag 进行版本化发布 — 克隆 `HEAD` 的接收方将获得最新状态，你也可以随时在 manifest 中更新 `version:`。
 
-## `hermes -p` / `hermes --profile`
+## `thm -p` / `thm --profile`
 
 ```bash
-hermes -p <name> <command> [options]
-hermes --profile <name> <command> [options]
+thm -p <name> <command> [options]
+thm --profile <name> <command> [options]
 ```
 
 全局标志，用于在不更改默认 profile 的情况下，在指定 profile 下运行任意 TeamHermes 命令。仅在该命令执行期间覆盖活跃 profile。
@@ -422,16 +422,16 @@ hermes --profile <name> <command> [options]
 **示例：**
 
 ```bash
-hermes -p work chat -q "Check the server status"
-hermes --profile dev gateway start
-hermes -p personal skills list
-hermes -p work config edit
+thm -p work chat -q "Check the server status"
+thm --profile dev gateway start
+thm -p personal skills list
+thm -p work config edit
 ```
 
-## `hermes completion`
+## `thm completion`
 
 ```bash
-hermes completion <shell>
+thm completion <shell>
 ```
 
 生成 shell 补全脚本。包含对 profile 名称和 profile 子命令的补全。
@@ -444,9 +444,9 @@ hermes completion <shell>
 
 ```bash
 # 安装补全脚本
-hermes completion bash >> ~/.bashrc
-hermes completion zsh >> ~/.zshrc
-hermes completion fish > ~/.config/fish/completions/hermes.fish
+thm completion bash >> ~/.bashrc
+thm completion zsh >> ~/.zshrc
+thm completion fish > ~/.config/fish/completions/hermes.fish
 
 # 重新加载 shell
 source ~/.bashrc
@@ -455,7 +455,7 @@ source ~/.bashrc
 安装后，Tab 补全适用于：
 - `thm profile <TAB>` — 子命令（list、use、create 等）
 - `thm profile use <TAB>` — profile 名称
-- `hermes -p <TAB>` — profile 名称
+- `thm -p <TAB>` — profile 名称
 
 ## 另请参阅
 

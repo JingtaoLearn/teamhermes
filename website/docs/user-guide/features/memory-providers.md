@@ -105,11 +105,11 @@ The legacy `thm  honcho setup` command still works (it now redirects to `thm  me
 {
   "apiKey": "your-key-from-app.honcho.dev",
   "hosts": {
-    "hermes": {
+    "thm": {
       "enabled": true,
-      "aiPeer": "hermes",
+      "aiPeer": "thm",
       "peerName": "your-name",
-      "workspace": "hermes"
+      "workspace": "thm"
     }
   }
 }
@@ -124,11 +124,11 @@ The legacy `thm  honcho setup` command still works (it now redirects to `thm  me
 {
   "baseUrl": "http://localhost:8000",
   "hosts": {
-    "hermes": {
+    "thm": {
       "enabled": true,
-      "aiPeer": "hermes",
+      "aiPeer": "thm",
       "peerName": "your-name",
-      "workspace": "hermes"
+      "workspace": "thm"
     }
   }
 }
@@ -205,13 +205,13 @@ See the [Honcho page](./honcho.md#observation-directional-vs-unified) for the fu
 ```json
 {
   "apiKey": "your-key",
-  "workspace": "hermes",
+  "workspace": "thm",
   "peerName": "eri",
   "hosts": {
-    "hermes": {
+    "thm": {
       "enabled": true,
-      "aiPeer": "hermes",
-      "workspace": "hermes",
+      "aiPeer": "thm",
+      "workspace": "thm",
       "peerName": "eri",
       "recallMode": "hybrid",
       "writeFrequency": "async",
@@ -232,7 +232,7 @@ See the [Honcho page](./honcho.md#observation-directional-vs-unified) for the fu
     "hermes.coder": {
       "enabled": true,
       "aiPeer": "coder",
-      "workspace": "hermes",
+      "workspace": "thm",
       "peerName": "eri",
       "recallMode": "tools",
       "observation": {
@@ -243,7 +243,7 @@ See the [Honcho page](./honcho.md#observation-directional-vs-unified) for the fu
     "hermes.writer": {
       "enabled": true,
       "aiPeer": "writer",
-      "workspace": "hermes",
+      "workspace": "thm",
       "peerName": "eri"
     }
   },
@@ -509,7 +509,7 @@ echo 'SUPERMEMORY_API_KEY=***' >> ~/.teamhermes/.env
 
 ```json
 {
-  "container_tag": "hermes",
+  "container_tag": "thm",
   "enable_custom_container_tags": true,
   "custom_containers": ["project-alpha", "shared-knowledge"],
   "custom_container_instructions": "Use project-alpha for coding context."

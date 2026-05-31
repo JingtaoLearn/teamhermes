@@ -51,7 +51,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-LOG_FILE = Path.home() / ".teamhermes" / "hooks" / "my-hook" / "activity.log"
+LOG_FILE = Path.home() / ".teamthm" / "hooks" / "my-hook" / "activity.log"
 
 async def handle(event_type: str, context: dict):
     """Called for each subscribed event. Must be named 'handle'."""
@@ -140,7 +140,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-LOG = Path.home() / ".teamhermes" / "logs" / "command_usage.jsonl"
+LOG = Path.home() / ".teamthm" / "logs" / "command_usage.jsonl"
 
 def handle(event_type: str, context: dict):
     LOG.parent.mkdir(parents=True, exist_ok=True)
@@ -237,7 +237,7 @@ from pathlib import Path
 
 logger = logging.getLogger("hooks.boot-md")
 
-BOOT_FILE = Path.home() / ".teamhermes" / "BOOT.md"
+BOOT_FILE = Path.home() / ".teamthm" / "BOOT.md"
 
 
 def _build_prompt(content: str) -> str:
@@ -527,7 +527,7 @@ def my_callback(session_id: str, user_message: str, conversation_history: list,
 
 ```python
 # Inject context
-return {"context": "Recalled memories:\n- User likes Python\n- Working on teamhermes"}
+return {"context": "Recalled memories:\n- User likes Python\n- Working on teamthm"}
 
 # Plain string (equivalent)
 return "Recalled memories:\n- User likes Python"

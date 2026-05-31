@@ -220,7 +220,7 @@ thm gateway stop && thm gateway start
 
 3. **你在服务器上审批**：
    ```bash
-   hermes pairing approve telegram XKGH5N7P
+   thm pairing approve telegram XKGH5N7P
    ```
 
 4. **他们即可使用**——机器人立即开始响应他们的消息
@@ -229,13 +229,13 @@ thm gateway stop && thm gateway start
 
 ```bash
 # 查看所有待审批和已审批用户
-hermes pairing list
+thm pairing list
 
 # 撤销某人的访问权限
-hermes pairing revoke telegram 987654321
+thm pairing revoke telegram 987654321
 
 # 清除已过期的待审批码
-hermes pairing clear-pending
+thm pairing clear-pending
 ```
 
 :::tip

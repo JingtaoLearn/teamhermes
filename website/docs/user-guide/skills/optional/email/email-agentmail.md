@@ -88,7 +88,7 @@ All 11 AgentMail tools are now available automatically.
 
 ### Create an inbox and send an email
 1. Create a dedicated inbox:
-   - Use `create_inbox` with a username (e.g. `teamhermes`)
+   - Use `create_inbox` with a username (e.g. `teamthm`)
    - The agent gets address: `teamhermes@agentmail.to`
 2. Send an email:
    - Use `send_message` with `inbox_id`, `to`, `subject`, `text`

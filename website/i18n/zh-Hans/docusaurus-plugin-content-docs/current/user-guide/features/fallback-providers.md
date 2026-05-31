@@ -24,10 +24,10 @@ TeamHermes Agent 具备三层弹性机制，在提供商出现问题时保持会
 最简便的方式是使用交互式管理器：
 
 ```bash
-hermes fallback
+thm fallback
 ```
 
-`hermes fallback` 复用 `thm model` 的提供商选择器——相同的提供商列表、相同的凭据提示、相同的验证流程。使用子命令 `add`、`list`（别名 `ls`）、`remove`（别名 `rm`）和 `clear` 来管理备用链。更改会持久化到 `config.yaml` 顶层的 `fallback_providers:` 列表中。
+`thm fallback` 复用 `thm model` 的提供商选择器——相同的提供商列表、相同的凭据提示、相同的验证流程。使用子命令 `add`、`list`（别名 `ls`）、`remove`（别名 `rm`）和 `clear` 来管理备用链。更改会持久化到 `config.yaml` 顶层的 `fallback_providers:` 列表中。
 
 如果你更倾向于直接编辑 YAML，可在 `~/.teamhermes/config.yaml` 中添加 `fallback_model` 部分：
 
@@ -40,7 +40,7 @@ fallback_model:
 `provider` 和 `model` 均为**必填项**。若任一缺失，备用功能将被禁用。
 
 :::note `fallback_model` 与 `fallback_providers`
-`fallback_model`（单数）是旧版单备用键——TeamHermes 仍支持以保持向后兼容。`fallback_providers`（复数，列表）支持按顺序尝试多个备用；`hermes fallback` 写入此键。当两者同时设置时，TeamHermes 会合并它们，`fallback_providers` 优先。
+`fallback_model`（单数）是旧版单备用键——TeamHermes 仍支持以保持向后兼容。`fallback_providers`（复数，列表）支持按顺序尝试多个备用；`thm fallback` 写入此键。当两者同时设置时，TeamHermes 会合并它们，`fallback_providers` 优先。
 :::
 
 ### 支持的提供商

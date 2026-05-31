@@ -48,7 +48,7 @@ This installs the `agent-client-protocol` dependency and enables:
 For Zed registry installs, Zed launches TeamHermes through the official ACP Registry entry. That entry uses a `uvx` distribution that runs:
 
 ```bash
-uvx --from 'teamhermes[acp]==<version>' thm-acp
+uvx --from 'teamthm[acp]==<version>' thm-acp
 ```
 
 Make sure `uv` is available on `PATH` before using the registry install path.
@@ -117,7 +117,7 @@ If you want to define TeamHermes manually, add it through VS Code settings under
 {
   "acp.agents": {
     "TeamHermes Agent": {
-      "command": "hermes",
+      "command": "thm",
       "args": ["acp"]
     }
   }
@@ -136,16 +136,16 @@ Zed v0.221.x and newer installs external agents through the official ACP Registr
 Prerequisites:
 
 - Configure TeamHermes provider credentials first with `thm model`, or set them in `~/.teamhermes/.env` / `~/.teamhermes/config.yaml`.
-- Install `uv` so the registry launcher can run `uvx --from 'teamhermes[acp]==<version>' thm-acp`.
+- Install `uv` so the registry launcher can run `uvx --from 'teamthm[acp]==<version>' thm-acp`.
 
 For local development before the registry entry is available, use a custom agent server in Zed settings:
 
 ```json
 {
   "agent_servers": {
-    "teamhermes": {
+    "teamthm": {
       "type": "custom",
-      "command": "hermes",
+      "command": "thm",
       "args": ["acp"]
     }
   }
@@ -171,10 +171,10 @@ acp_registry/icon.svg
 
 The upstream registry PR copies those files into the top-level `teamhermes/` directory in `agentclientprotocol/registry`.
 
-The registry entry uses a `uvx` distribution that points directly at the `teamhermes` PyPI release:
+The registry entry uses a `uvx` distribution that points directly at the `teamthm` PyPI release:
 
 ```text
-uvx --from 'teamhermes[acp]==<version>' thm-acp
+uvx --from 'teamthm[acp]==<version>' thm-acp
 ```
 
 The registry CI verifies that the pinned version exists on PyPI, so the manifest's `version` and uvx `package` pin must always match `pyproject.toml`. `scripts/release.py` keeps them in lockstep automatically.

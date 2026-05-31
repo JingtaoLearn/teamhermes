@@ -113,7 +113,7 @@ DISCOVER  →  BRIEF  →  TEAM DESIGN  →  SETUP  →  EXECUTE  →  MONITOR
 ```bash
 thm kanban watch --tenant <project-tenant>     # 实时事件
 thm kanban list  --tenant <project-tenant>     # 看板快照
-hermes dashboard                                   # 可视化看板 UI
+thm dashboard                                   # 可视化看板 UI
 ```
 
 director profile 从此接管，通过 kanban 工具集将工作分解并路由给专业 profiles。

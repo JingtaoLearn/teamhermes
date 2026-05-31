@@ -107,7 +107,7 @@ def get_config_schema(self):
         {
             "key": "project",
             "description": "Project identifier",
-            "default": "hermes",
+            "default": "thm",
         },
     ]
 ```
@@ -179,7 +179,7 @@ workspace data.
 
 ## Profile Isolation
 
-All storage paths **must** use the `hermes_home` kwarg from `initialize()`, not hardcoded `~/.teamhermes`:
+All storage paths **must** use the `hermes_home` kwarg from `initialize()`, not hardcoded `~/.teamthm`:
 
 ```python
 # CORRECT — profile-scoped

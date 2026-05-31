@@ -1,7 +1,7 @@
 ---
 sidebar_position: 8
 title: "Programmatic Integration"
-description: "Three protocols for driving teamhermes from external programs: ACP, the TUI gateway JSON-RPC, and the OpenAI-compatible HTTP API"
+description: "Three protocols for driving teamthm from external programs: ACP, the TUI gateway JSON-RPC, and the OpenAI-compatible HTTP API"
 ---
 
 # Programmatic Integration
@@ -81,7 +81,7 @@ Every command in the Pi-mono RPC spec ([issue #360](https://github.com/NousResea
 
 ## OpenAI-Compatible API Server
 
-`gateway/platforms/api_server.py` exposes hermes over HTTP for any client that already speaks the OpenAI format. Useful when you want a web frontend, a curl-driven CI runner, or a non-Python consumer.
+`gateway/platforms/api_server.py` exposes thm over HTTP for any client that already speaks the OpenAI format. Useful when you want a web frontend, a curl-driven CI runner, or a non-Python consumer.
 
 Endpoints:
 
@@ -94,7 +94,7 @@ GET  /v1/runs/{id}/events        SSE stream of lifecycle events
 POST /v1/runs/{id}/approval      Resolve a pending approval
 POST /v1/runs/{id}/stop          Interrupt the run
 GET  /v1/capabilities            Machine-readable feature flags
-GET  /v1/models                  Lists teamhermes
+GET  /v1/models                  Lists teamthm
 GET  /health, /health/detailed
 ```
 

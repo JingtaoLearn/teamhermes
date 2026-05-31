@@ -242,7 +242,7 @@ description: "TeamHermes 内置工具权威参考，按工具集分组"
 
 ## `spotify` 工具集
 
-由内置 `spotify` 插件注册。需要 OAuth token——运行一次 `hermes spotify setup` 进行授权。
+由内置 `spotify` 插件注册。需要 OAuth token——运行一次 `thm spotify setup` 进行授权。
 
 | 工具 | 描述 | 所需环境 |
 |------|------|----------|

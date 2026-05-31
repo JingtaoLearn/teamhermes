@@ -28,7 +28,7 @@ If a skill is missing from this list but present in the repo, the catalog is reg
 |-------|-------------|------|
 | [`claude-code`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-claude-code) | Delegate coding to Claude Code CLI (features, PRs). | `autonomous-ai-agents/claude-code` |
 | [`codex`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-codex) | Delegate coding to OpenAI Codex CLI (features, PRs). | `autonomous-ai-agents/codex` |
-| [`teamhermes`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-teamhermes) | Configure, extend, or contribute to TeamHermes Agent. | `autonomous-ai-agents/hermes-agent` |
+| [`teamthm`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-teamthm) | Configure, extend, or contribute to TeamHermes Agent. | `autonomous-ai-agents/hermes-agent` |
 | [`kanban-codex-lane`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-kanban-codex-lane) | Use when a TeamHermes Kanban worker wants to run Codex CLI as an isolated implementation lane while TeamHermes keeps ownership of task lifecycle, reconciliation, testing, and handoff. | `autonomous-ai-agents/kanban-codex-lane` |
 | [`opencode`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-opencode) | Delegate coding to OpenCode CLI (features, PR review). | `autonomous-ai-agents/opencode` |
 

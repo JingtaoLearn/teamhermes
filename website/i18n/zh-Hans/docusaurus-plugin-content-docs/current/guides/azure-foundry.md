@@ -147,7 +147,7 @@ Entra 模式下不会将任何密钥写入 `~/.teamhermes/.env`——`azure-iden
 ```bash
 az login
 thm model   # 选择 Azure Foundry → Entra ID
-hermes         # 使用你的 az login 令牌
+thm         # 使用你的 az login 令牌
 ```
 
 **Azure VM / Functions / App Service / Container Apps（系统分配的托管标识）：**

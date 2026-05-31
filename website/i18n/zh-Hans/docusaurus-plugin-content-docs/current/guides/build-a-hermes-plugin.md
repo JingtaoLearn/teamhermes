@@ -288,7 +288,7 @@ def register(ctx):
 启动 TeamHermes：
 
 ```bash
-hermes
+thm
 ```
 
 你应该在启动横幅的工具列表中看到 `calculator: calculate, unit_convert`。
@@ -317,7 +317,7 @@ Plugins (1):
 如果你的插件没有出现，或出现了但未加载——设置 `HERMES_PLUGINS_DEBUG=1` 可在 stderr 获取详细的发现日志：
 
 ```bash
-HERMES_PLUGINS_DEBUG=1 hermes plugins list
+HERMES_PLUGINS_DEBUG=1 thm plugins list
 ```
 
 你将看到每个插件来源（内置、用户、项目、entry-points）的以下信息：
@@ -332,7 +332,7 @@ HERMES_PLUGINS_DEBUG=1 hermes plugins list
 同样的日志始终写入 `~/.teamhermes/logs/agent.log`，失败时为 WARNING 级别，设置环境变量时为 DEBUG 级别（全部内容）。如果无法使用环境变量运行（例如从网关内部），可以改为追踪日志文件：
 
 ```bash
-hermes logs --level WARNING | grep -i plugin
+thm logs --level WARNING | grep -i plugin
 ```
 
 插件未出现的常见原因：
@@ -549,7 +549,7 @@ def register(ctx):
 
 ```python
 # 包含 context 键的字典
-return {"context": "Recalled memories:\n- User prefers dark mode\n- Last project: teamhermes"}
+return {"context": "Recalled memories:\n- User prefers dark mode\n- Last project: teamthm"}
 
 # 纯字符串（等同于上面的字典形式）
 return "Recalled memories:\n- User prefers dark mode"
@@ -640,7 +640,7 @@ def register(ctx):
 
 ### 注册 CLI 命令
 
-插件可以添加自己的 `hermes <plugin>` 子命令树：
+插件可以添加自己的 `thm <plugin>` 子命令树：
 
 ```python
 def _my_command(args):
@@ -709,7 +709,7 @@ def register(ctx):
 
 | | `register_command()` | `register_cli_command()` |
 |---|---|---|
-| 调用方式 | 会话中的 `/name` | 终端中的 `hermes name` |
+| 调用方式 | 会话中的 `/name` | 终端中的 `thm name` |
 | 适用范围 | CLI 会话、Telegram、Discord 等 | 仅终端 |
 | 处理器接收 | 原始参数字符串 | argparse `Namespace` |
 | 使用场景 | 诊断、状态查询、快速操作 | 复杂子命令树、设置向导 |
@@ -1063,7 +1063,7 @@ my-plugin = "my_plugin_package"
 
 ```bash
 pip install hermes-plugin-calculator
-# 下次 hermes 启动时自动发现插件
+# 下次 thm 启动时自动发现插件
 ```
 
 ## 为 NixOS 分发

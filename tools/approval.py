@@ -371,10 +371,10 @@ DANGEROUS_PATTERNS = [
     (r'gateway\s+run\b.*(&\s*$|&\s*;|\bdisown\b|\bsetsid\b)', "start gateway outside systemd (use 'systemctl --user restart hermes-gateway')"),
     (r'\bnohup\b.*gateway\s+run\b', "start gateway outside systemd (use 'systemctl --user restart hermes-gateway')"),
     # Self-termination protection: prevent agent from killing its own process
-    (r'\b(pkill|killall)\b.*\b(hermes|gateway|cli\.py)\b', "kill hermes/gateway process (self-termination)"),
+    (r'\b(pkill|killall)\b.*\b(thm|gateway|cli\.py)\b', "kill thm/gateway process (self-termination)"),
     # Self-termination via kill + command substitution (pgrep/pidof).
-    # The name-based pattern above catches `pkill hermes` but not
-    # `kill -9 $(pgrep -f hermes)` because the substitution is opaque
+    # The name-based pattern above catches `pkill thm` but not
+    # `kill -9 $(pgrep -f thm)` because the substitution is opaque
     # to regex at detection time. Catch the structural pattern instead.
     (r'\bkill\b.*\$\(\s*pgrep\b', "kill process via pgrep expansion (self-termination)"),
     (r'\bkill\b.*`\s*pgrep\b', "kill process via backtick pgrep expansion (self-termination)"),

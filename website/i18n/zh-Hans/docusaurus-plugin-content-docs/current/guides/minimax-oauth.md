@@ -41,7 +41,7 @@ thm model
 # → 选择模型（MiniMax-M2.7 或 MiniMax-M2.7-highspeed）
 # → 开始对话
 
-hermes
+thm
 ```
 
 首次登录后，凭据将存储在 `~/.teamhermes/auth.json` 下，并在每次会话前自动刷新。
@@ -89,7 +89,7 @@ TeamHermes 针对 MiniMax OAuth 端点实现了 PKCE 设备码流程：
 ## 检查登录状态
 
 ```bash
-hermes doctor
+thm doctor
 ```
 
 `◆ Auth Providers` 部分将显示：
@@ -142,10 +142,10 @@ model:
 以下所有别名均解析为 `minimax-oauth`：
 
 ```bash
-hermes --provider minimax-oauth    # 规范名称
-hermes --provider minimax-portal   # 别名
-hermes --provider minimax-global   # 别名
-hermes --provider minimax_oauth    # 别名（下划线形式）
+thm --provider minimax-oauth    # 规范名称
+thm --provider minimax-portal   # 别名
+thm --provider minimax-global   # 别名
+thm --provider minimax_oauth    # 别名（下划线形式）
 ```
 
 ## 环境变量
@@ -160,7 +160,7 @@ hermes --provider minimax_oauth    # 别名（下划线形式）
 要将 `minimax-oauth` 设为活跃 provider，请在 `config.yaml` 中设置 `model.provider: minimax-oauth`（使用 `thm setup` 进行引导式配置），或在单次调用时传入 `--provider minimax-oauth`：
 
 ```bash
-hermes --provider minimax-oauth
+thm --provider minimax-oauth
 ```
 
 ## 模型
@@ -225,4 +225,4 @@ thm auth remove minimax-oauth
 - [AI Providers 参考](../integrations/providers.md)
 - [环境变量](../reference/environment-variables.md)
 - [配置](../user-guide/configuration.md)
-- [hermes doctor](../reference/cli-commands.md)
+- [thm doctor](../reference/cli-commands.md)

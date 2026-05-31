@@ -18,16 +18,16 @@ This page covers option 1. The container stores all user data (config, API keys,
 If this is your first time running TeamHermes Agent, create a data directory on the host and start the container interactively to run the setup wizard:
 
 ```sh
-mkdir -p ~/.teamhermes
+mkdir -p ~/.teamthm
 docker run -it --rm \
-  -v ~/.teamhermes:/opt/data \
+  -v ~/.teamthm:/opt/data \
   nousresearch/hermes-agent setup
 ```
 
 This drops you into the setup wizard, which will prompt you for your API keys and write them to `~/.teamhermes/.env`. You only need to do this once. It is highly recommended to set up a chat system for the gateway to work with at this point.
 
 :::tip
-Inside the container, run `thm setup --portal` once — the refresh token persists in the mounted `~/.teamhermes` volume. See [Nous Portal](/integrations/nous-portal).
+Inside the container, run `thm setup --portal` once — the refresh token persists in the mounted `~/.teamthm` volume. See [Nous Portal](/integrations/nous-portal).
 :::
 
 ## Running in gateway mode
@@ -36,9 +36,9 @@ Once configured, run the container in the background as a persistent gateway (Te
 
 ```sh
 docker run -d \
-  --name hermes \
+  --name thm \
   --restart unless-stopped \
-  -v ~/.teamhermes:/opt/data \
+  -v ~/.teamthm:/opt/data \
   -p 8642:8642 \
   nousresearch/hermes-agent gateway run
 ```
@@ -66,9 +66,9 @@ Note: the API server is gated on `API_SERVER_ENABLED=true`. To expose it beyond 
 
 ```sh
 docker run -d \
-  --name hermes \
+  --name thm \
   --restart unless-stopped \
-  -v ~/.teamhermes:/opt/data \
+  -v ~/.teamthm:/opt/data \
   -p 8642:8642 \
   -e API_SERVER_ENABLED=true \
   -e API_SERVER_HOST=0.0.0.0 \
@@ -85,9 +85,9 @@ The built-in web dashboard runs as an optional side-process inside the same cont
 
 ```sh
 docker run -d \
-  --name hermes \
+  --name thm \
   --restart unless-stopped \
-  -v ~/.teamhermes:/opt/data \
+  -v ~/.teamthm:/opt/data \
   -p 8642:8642 \
   -e HERMES_DASHBOARD=1 \
   nousresearch/hermes-agent gateway run
@@ -143,7 +143,7 @@ To open an interactive chat session against a running data directory:
 
 ```sh
 docker run -it --rm \
-  -v ~/.teamhermes:/opt/data \
+  -v ~/.teamthm:/opt/data \
   nousresearch/hermes-agent
 ```
 
@@ -240,7 +240,7 @@ API keys are read from `/opt/data/.env` inside the container. You can also pass 
 
 ```sh
 docker run -it --rm \
-  -v ~/.teamhermes:/opt/data \
+  -v ~/.teamthm:/opt/data \
   -e ANTHROPIC_API_KEY="sk-ant-..." \
   -e OPENAI_API_KEY="sk-..." \
   nousresearch/hermes-agent
@@ -258,7 +258,7 @@ For persistent deployment with both the gateway and dashboard, a `docker-compose
 
 ```yaml
 services:
-  hermes:
+  thm:
     image: nousresearch/hermes-agent:latest
     container_name: thm 
     restart: unless-stopped
@@ -267,7 +267,7 @@ services:
       - "8642:8642"   # gateway API
       - "9119:9119"   # dashboard (only reached when HERMES_DASHBOARD=1)
     volumes:
-      - ~/.teamhermes:/opt/data
+      - ~/.teamthm:/opt/data
     environment:
       - HERMES_DASHBOARD=1
       # Uncomment to forward specific env vars instead of using .env file:
@@ -326,7 +326,7 @@ Use that image in Compose and pass through the host user's PulseAudio socket and
 
 ```yaml
 services:
-  hermes:
+  thm:
     build:
       context: .
       dockerfile: Dockerfile.audio
@@ -335,7 +335,7 @@ services:
     restart: unless-stopped
     command: gateway run
     volumes:
-      - ~/.teamhermes:/opt/data
+      - ~/.teamthm:/opt/data
       - /run/user/${HERMES_UID}/pulse:/run/user/${HERMES_UID}/pulse
       - ~/.config/pulse/cookie:/tmp/pulse-cookie:ro
       - ./asound.conf:/etc/asound.conf:ro
@@ -358,7 +358,7 @@ docker compose up -d --build
 To verify what PortAudio sees inside the container:
 
 ```sh
-docker exec hermes /opt/hermes/.venv/bin/python -c "import sounddevice as sd; print(sd.query_devices())"
+docker exec thm /opt/hermes/.venv/bin/python -c "import sounddevice as sd; print(sd.query_devices())"
 ```
 
 ## Resource limits
@@ -377,10 +377,10 @@ Set limits in Docker:
 
 ```sh
 docker run -d \
-  --name hermes \
+  --name thm \
   --restart unless-stopped \
   --memory=4g --cpus=2 \
-  -v ~/.teamhermes:/opt/data \
+  -v ~/.teamthm:/opt/data \
   nousresearch/hermes-agent gateway run
 ```
 
@@ -444,9 +444,9 @@ Pull the latest image and recreate the container. Your data directory is untouch
 docker pull nousresearch/hermes-agent:latest
 docker rm -f thm 
 docker run -d \
-  --name hermes \
+  --name thm \
   --restart unless-stopped \
-  -v ~/.teamhermes:/opt/data \
+  -v ~/.teamthm:/opt/data \
   nousresearch/hermes-agent gateway run
 ```
 
@@ -490,7 +490,7 @@ USER root
 RUN apt-get update \
     && apt-get install -y --no-install-recommends <your-package> \
     && rm -rf /var/lib/apt/lists/*
-USER hermes
+USER thm
 ```
 
 Build it and use it in place of the official image:
@@ -498,9 +498,9 @@ Build it and use it in place of the official image:
 ```sh
 docker build -t my-hermes:latest .
 docker run -d \
-  --name hermes \
+  --name thm \
   --restart unless-stopped \
-  -v ~/.teamhermes:/opt/data \
+  -v ~/.teamthm:/opt/data \
   -p 8642:8642 \
   my-hermes:latest gateway run
 ```
@@ -513,7 +513,7 @@ For tools that bring their own service (a database, a web server, a queue, a hea
 
 ```yaml
 services:
-  hermes:
+  thm:
     image: nousresearch/hermes-agent:latest
     container_name: thm 
     restart: unless-stopped
@@ -521,7 +521,7 @@ services:
     ports:
       - "8642:8642"
     volumes:
-      - ~/.teamhermes:/opt/data
+      - ~/.teamthm:/opt/data
     networks:
       - hermes-net
 
@@ -541,7 +541,7 @@ From inside the TeamHermes container, the sidecar is reachable at `http://my-too
 
 ### Broadly useful tools — open an issue or pull request
 
-If a tool is likely to be useful to most TeamHermes Agent users, consider contributing it upstream rather than carrying it in a private derived image. Open an issue or pull request on the [teamhermes repository](https://github.com/NousResearch/hermes-agent) describing the tool and its use case. Tools that get bundled into the official image benefit every user and avoid the maintenance overhead of a downstream fork.
+If a tool is likely to be useful to most TeamHermes Agent users, consider contributing it upstream rather than carrying it in a private derived image. Open an issue or pull request on the [teamthm repository](https://github.com/NousResearch/hermes-agent) describing the tool and its use case. Tools that get bundled into the official image benefit every user and avoid the maintenance overhead of a downstream fork.
 
 ## Connecting to local inference servers (vLLM, Ollama, etc.)
 
@@ -571,7 +571,7 @@ services:
           devices:
             - capabilities: [gpu]
 
-  hermes:
+  thm:
     image: nousresearch/hermes-agent:latest
     container_name: thm 
     restart: unless-stopped
@@ -579,7 +579,7 @@ services:
     ports:
       - "8642:8642"
     volumes:
-      - ~/.teamhermes:/opt/data
+      - ~/.teamthm:/opt/data
     networks:
       - hermes-net
 
@@ -613,8 +613,8 @@ If your inference server runs directly on the host (not in Docker), use `host.do
 
 ```sh
 docker run -d \
-  --name hermes \
-  -v ~/.teamhermes:/opt/data \
+  --name thm \
+  -v ~/.teamthm:/opt/data \
   -p 8642:8642 \
   nousresearch/hermes-agent gateway run
 ```
@@ -632,9 +632,9 @@ model:
 
 ```sh
 docker run -d \
-  --name hermes \
+  --name thm \
   --network host \
-  -v ~/.teamhermes:/opt/data \
+  -v ~/.teamthm:/opt/data \
   nousresearch/hermes-agent gateway run
 ```
 
@@ -680,7 +680,7 @@ model:
 
 ### Container exits immediately
 
-Check logs: `docker logs hermes`. Common causes:
+Check logs: `docker logs thm`. Common causes:
 - Missing or invalid `.env` file — run interactively first to complete setup
 - Port conflicts if running with exposed ports
 
@@ -689,7 +689,7 @@ Check logs: `docker logs hermes`. Common causes:
 The container's stage2 hook drops privileges to the non-root `thm` user (UID 10000) via `s6-setuidgid` inside each supervised service. If your host `~/.teamhermes/` is owned by a different UID, set `HERMES_UID`/`HERMES_GID` to match your host user, or ensure the data directory is writable:
 
 ```sh
-chmod -R 755 ~/.teamhermes
+chmod -R 755 ~/.teamthm
 ```
 
 ### Browser tools not working
@@ -698,9 +698,9 @@ Playwright needs shared memory. Add `--shm-size=1g` to your Docker run command:
 
 ```sh
 docker run -d \
-  --name hermes \
+  --name thm \
   --shm-size=1g \
-  -v ~/.teamhermes:/opt/data \
+  -v ~/.teamthm:/opt/data \
   nousresearch/hermes-agent gateway run
 ```
 
@@ -709,7 +709,7 @@ docker run -d \
 The `--restart unless-stopped` flag handles most transient failures. If the gateway is stuck, restart the container:
 
 ```sh
-docker restart hermes
+docker restart thm
 ```
 
 ### Checking container health

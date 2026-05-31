@@ -3637,7 +3637,7 @@ def _kill_orphaned_mcp_children(include_active: bool = False) -> None:
     sessions are not disrupted.
 
     Sends SIGTERM, waits 2 seconds, then escalates to SIGKILL for any
-    survivors, avoiding shared-resource collisions when multiple hermes
+    survivors, avoiding shared-resource collisions when multiple TeamHermes
     processes run on the same host (each has its own ``_stdio_pids`` dict).
 
     With ``include_active=True`` also kills every PID in ``_stdio_pids`` —

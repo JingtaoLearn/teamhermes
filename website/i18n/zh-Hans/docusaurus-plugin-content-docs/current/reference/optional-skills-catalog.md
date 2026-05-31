@@ -1,12 +1,12 @@
 ---
 sidebar_position: 9
 title: "可选技能目录"
-description: "teamhermes 附带的官方可选技能 — 通过 thm skills install official/<category>/<skill> 安装"
+description: "teamthm 附带的官方可选技能 — 通过 thm skills install official/<category>/<skill> 安装"
 ---
 
 # 可选技能目录
 
-可选技能随 teamhermes 一起发布，位于 `optional-skills/` 目录下，但**默认未激活**。请显式安装：
+可选技能随 teamthm 一起发布，位于 `optional-skills/` 目录下，但**默认未激活**。请显式安装：
 
 ```bash
 thm skills install official/<category>/<skill>

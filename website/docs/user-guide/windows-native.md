@@ -16,7 +16,7 @@ TeamHermes runs natively on Windows 10 and Windows 11 — no WSL, no Cygwin, no 
 If you just want to install, the one-liner on the [landing page](/) or [Installation page](../getting-started/installation#windows-native-powershell--early-beta) is all you need. Come back here when something surprises you.
 
 :::tip Want WSL instead?
-If you prefer a real POSIX environment (for the dashboard's embedded terminal, `fork` semantics, Linux-style file watchers, etc.), see the **[Windows (WSL2) Guide](./windows-wsl-quickstart.md)**. Both coexist cleanly: native data lives under `%LOCALAPPDATA%\hermes`, WSL data lives under `~/.teamhermes`.
+If you prefer a real POSIX environment (for the dashboard's embedded terminal, `fork` semantics, Linux-style file watchers, etc.), see the **[Windows (WSL2) Guide](./windows-wsl-quickstart.md)**. Both coexist cleanly: native data lives under `%LOCALAPPDATA%\hermes`, WSL data lives under `~/.teamthm`.
 :::
 
 ## Quick install
@@ -43,13 +43,13 @@ No admin rights required. The installer goes to `%LOCALAPPDATA%\hermes\` and add
 | `-NoVenv` | off | Skip venv creation (advanced — you manage Python yourself) |
 | `-SkipSetup` | off | Skip the post-install `thm setup` wizard |
 | `-HermesHome` | `%LOCALAPPDATA%\hermes` | Override data directory |
-| `-InstallDir` | `%LOCALAPPDATA%\hermes\teamhermes` | Override code location |
+| `-InstallDir` | `%LOCALAPPDATA%\hermes\teamthm` | Override code location |
 
 The installer auto-retries flaky git fetches and strips BOM from any downloaded `install.ps1` payload, so a UTF-8 BOM picked up during HTTP transit no longer breaks the `[scriptblock]::Create((irm ...))` form.
 
 ### Desktop installer (alternative)
 
-A thin GUI installer is also available — useful if you'd rather double-click an `.exe` than open PowerShell. Download TeamHermes Desktop, run the installer, and on first launch the GUI calls `install.ps1` under the hood to provision Python (via `uv`), Node, PortableGit, and the rest of the dependency bootstrap described below. After the first run, the desktop app and the PowerShell-installed `thm` CLI share the same `%LOCALAPPDATA%\hermes\teamhermes` install and `%USERPROFILE%\.teamhermes` data directory — switch between the GUI and the CLI freely.
+A thin GUI installer is also available — useful if you'd rather double-click an `.exe` than open PowerShell. Download TeamHermes Desktop, run the installer, and on first launch the GUI calls `install.ps1` under the hood to provision Python (via `uv`), Node, PortableGit, and the rest of the dependency bootstrap described below. After the first run, the desktop app and the PowerShell-installed `thm` CLI share the same `%LOCALAPPDATA%\hermes\teamthm` install and `%USERPROFILE%\.teamthm` data directory — switch between the GUI and the CLI freely.
 
 Use the desktop installer when you want a familiar Windows install experience or you're handing TeamHermes to a non-developer; use the PowerShell one-liner when you're already in a terminal.
 
@@ -75,7 +75,7 @@ Top-to-bottom, in order:
 2. **Installs Python 3.11** via `uv`. No existing Python needed.
 3. **Installs Node.js 22** (winget if available, else a portable Node tarball unpacked under `%LOCALAPPDATA%\hermes\node`). Used for the browser tool and the WhatsApp bridge.
 4. **Installs portable Git** — if `git` is already on PATH the installer uses it; otherwise it downloads a trimmed, self-contained **PortableGit** (~45 MB, from the official `git-for-windows` release) to `%LOCALAPPDATA%\hermes\git`. No admin, no Windows installer registry, no interference with anything else on the box.
-5. **Clones the repo** to `%LOCALAPPDATA%\hermes\teamhermes` and creates a virtualenv inside it.
+5. **Clones the repo** to `%LOCALAPPDATA%\hermes\teamthm` and creates a virtualenv inside it.
 6. **Tiered `uv pip install`** — tries `.[all]` first, falls back to progressively smaller sets (`[messaging,dashboard,ext]` → `[messaging]` → `.`) if a `git+https` dep flakes on rate-limited GitHub. Prevents "single flake drops you to a bare install" failure mode.
 7. **Auto-installs messaging SDKs** keyed off `.env` — if `TELEGRAM_BOT_TOKEN` / `DISCORD_BOT_TOKEN` / `SLACK_BOT_TOKEN` / `SLACK_APP_TOKEN` / `WHATSAPP_ENABLED` are present, runs `python -m ensurepip --upgrade` and targeted `pip install` calls so each platform's SDK is actually importable.
 8. **Sets `HERMES_GIT_BASH_PATH`** to the resolved `bash.exe` so TeamHermes finds it deterministically in fresh shells.
@@ -206,13 +206,13 @@ Services require admin rights to install and tie the gateway's lifecycle to mach
 
 | Path | Contents |
 |---|---|
-| `%LOCALAPPDATA%\hermes\teamhermes\` | Git checkout + venv. Safe to `Remove-Item -Recurse` and reinstall. |
+| `%LOCALAPPDATA%\hermes\teamthm\` | Git checkout + venv. Safe to `Remove-Item -Recurse` and reinstall. |
 | `%LOCALAPPDATA%\hermes\git\` | PortableGit (only if the installer provisioned it). |
 | `%LOCALAPPDATA%\hermes\node\` | Portable Node.js (only if the installer provisioned it). |
 | `%LOCALAPPDATA%\hermes\bin\` | `hermes.cmd` shim, added to User PATH. |
-| `%USERPROFILE%\.teamhermes\` | Your config, auth, skills, sessions, logs. **Survives reinstalls.** |
+| `%USERPROFILE%\.teamthm\` | Your config, auth, skills, sessions, logs. **Survives reinstalls.** |
 
-The split is deliberate: `%LOCALAPPDATA%\hermes` is disposable infrastructure (you can blow it away and the one-liner restores it). `%USERPROFILE%\.teamhermes` is your data — config, memory, skills, session history — and is identical in shape to a Linux install. Mirror it between machines and your TeamHermes moves with you.
+The split is deliberate: `%LOCALAPPDATA%\hermes` is disposable infrastructure (you can blow it away and the one-liner restores it). `%USERPROFILE%\.teamthm` is your data — config, memory, skills, session history — and is identical in shape to a Linux install. Mirror it between machines and your TeamHermes moves with you.
 
 **Override `HERMES_HOME`:** set the environment variable to point at a different data dir. Works the same as on Linux.
 
@@ -239,7 +239,7 @@ thm  --version
 
 ### Environment variables
 
-TeamHermes honors both `$env:X` (process-scope) and User environment variables (permanent, set in System Properties → Environment Variables). Setting API keys in `%USERPROFILE%\.teamhermes\.env` is the normal path — same as Linux:
+TeamHermes honors both `$env:X` (process-scope) and User environment variables (permanent, set in System Properties → Environment Variables). Setting API keys in `%USERPROFILE%\.teamthm\.env` is the normal path — same as Linux:
 
 ```
 OPENROUTER_API_KEY=sk-or-...
@@ -266,13 +266,13 @@ From PowerShell:
 thm  uninstall
 ```
 
-That's the clean path — removes the schtasks entry, Startup folder shortcut, `hermes.cmd` shim, deletes `%LOCALAPPDATA%\hermes\teamhermes\`, and trims the User PATH. It leaves `%USERPROFILE%\.teamhermes\` alone (your config, auth, skills, sessions, logs) in case you're reinstalling.
+That's the clean path — removes the schtasks entry, Startup folder shortcut, `hermes.cmd` shim, deletes `%LOCALAPPDATA%\hermes\teamthm\`, and trims the User PATH. It leaves `%USERPROFILE%\.teamthm\` alone (your config, auth, skills, sessions, logs) in case you're reinstalling.
 
 To nuke everything:
 
 ```powershell
 thm  uninstall
-Remove-Item -Recurse -Force "$env:USERPROFILE\.teamhermes"
+Remove-Item -Recurse -Force "$env:USERPROFILE\.teamthm"
 Remove-Item -Recurse -Force "$env:LOCALAPPDATA\hermes"
 ```
 
@@ -290,7 +290,7 @@ Consequence: any codepath that said "check if this PID is alive" via `os.kill(pi
 
 ## Common pitfalls
 
-**`hermes: command not found` right after install.**
+**`thm: command not found` right after install.**
 Open a new PowerShell window. The installer added `%LOCALAPPDATA%\hermes\bin` to User PATH, but existing shells need to be restarted to pick it up. In the meantime you can run `& "$env:LOCALAPPDATA\hermes\bin\hermes.cmd"`.
 
 **`WinError 193: %1 is not a valid Win32 application` when running a tool.**

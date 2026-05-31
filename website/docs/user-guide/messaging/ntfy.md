@@ -110,7 +110,7 @@ Then point TeamHermes at it:
 
 ```
 NTFY_SERVER_URL=https://ntfy.mydomain.com
-NTFY_TOPIC=hermes
+NTFY_TOPIC=thm
 NTFY_TOKEN=tk_abc123  # if you've set up access control
 ```
 

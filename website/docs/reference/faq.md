@@ -140,7 +140,7 @@ See the [Python Library guide](../user-guide/features/code-execution.md) for ful
 
 ### Installation Issues
 
-#### `hermes: command not found` after installation
+#### `thm: command not found` after installation
 
 **Cause:** Your shell hasn't reloaded the updated PATH.
 
@@ -437,7 +437,7 @@ Configure in `~/.teamhermes/config.yaml` under your gateway's settings. See the 
 **Solution:**
 ```bash
 # Install core messaging gateway dependencies
-pip install "teamhermes[messaging]"  # Telegram, Discord, Slack, and shared gateway deps
+pip install "teamthm[messaging]"  # Telegram, Discord, Slack, and shared gateway deps
 
 # Check for port conflicts
 lsof -i :8080
@@ -457,7 +457,7 @@ thm  config show
 thm  gateway run
 
 # Option 2: Persistent via tmux (survives terminal close)
-tmux new -s hermes 'thm  gateway run'
+tmux new -s thm 'thm  gateway run'
 # Reattach later: tmux attach -t thm
 
 # Option 3: Background via nohup
@@ -790,14 +790,14 @@ The imported profile will have all config, memories, sessions, and skills from t
 | Feature | `thm backup` | `thm profile export` |
 | :--- | :--- | :--- |
 | **Use Case** | **Full machine migration** | **Porting/sharing a specific profile** |
-| **Scope** | Global (entire `~/.teamhermes` directory) | Local (single profile directory) |
+| **Scope** | Global (entire `~/.teamthm` directory) | Local (single profile directory) |
 | **Includes** | All profiles, global config, API keys, sessions | Single profile: SOUL.md, memories, sessions, skills |
 | **Credentials** | **Included** (`.env` and `auth.json`) | **Excluded** (stripped for safe sharing) |
 | **Format** | `.zip` | `.tar.gz` |
 
 **Manual fallback (rsync):** If you prefer to copy files directly, exclude the code repo:
 ```bash
-rsync -av --exclude='teamhermes' ~/.teamhermes/ newmachine:~/.teamhermes/
+rsync -av --exclude='teamthm' ~/.teamhermes/ newmachine:~/.teamhermes/
 ```
 
 :::tip

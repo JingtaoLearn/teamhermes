@@ -206,7 +206,7 @@ register_provider(ProviderProfile(
 提供商发现是**懒加载**的——由进程中首次调用 `get_provider_profile()` 或 `list_providers()` 触发。实际上这在启动早期就会发生（`auth.py` 模块加载时会主动扩展 `PROVIDER_REGISTRY`）。若需验证插件是否已加载，运行：
 
 ```bash
-hermes doctor
+thm doctor
 ```
 
 ——成功的 `auth_type="api_key"` profile 会出现在 Provider Connectivity 部分，并附带 `/models` 探测结果。
@@ -238,7 +238,7 @@ register_provider(ProviderProfile(
 EOF
 
 export MY_API_KEY=your-test-key
-hermes -z "hello" --provider my-provider -m some-model
+thm -z "hello" --provider my-provider -m some-model
 ```
 
 ## 通用 PluginManager 集成

@@ -15,7 +15,7 @@ TeamHermes Agent supports Amazon Bedrock as a native provider using the **Conver
   - `AWS_ACCESS_KEY_ID` + `AWS_SECRET_ACCESS_KEY` environment variables
   - `AWS_PROFILE` for SSO or named profiles
   - `aws configure` for local development
-- **boto3** — install with `pip install teamhermes[bedrock]`
+- **boto3** — install with `pip install teamthm[bedrock]`
 - **IAM permissions** — at minimum:
   - `bedrock:InvokeModel` and `bedrock:InvokeModelWithResponseStream` (for inference)
   - `bedrock:ListFoundationModels` and `bedrock:ListInferenceProfiles` (for model discovery)
@@ -28,7 +28,7 @@ On AWS compute, attach an IAM role with `AmazonBedrockFullAccess` and you're don
 
 ```bash
 # Install with Bedrock support
-pip install teamhermes[bedrock]
+pip install teamthm[bedrock]
 
 # Select Bedrock as your provider
 thm  model

@@ -246,7 +246,7 @@ E2EE requires the `mautrix` library with encryption extras and the `libolm` C li
 pip install 'mautrix[encryption]'
 
 # Or install with thm  extras
-pip install 'teamhermes[matrix]'
+pip install 'teamthm[matrix]'
 ```
 
 You also need `libolm` installed on your system:
@@ -312,14 +312,14 @@ TeamHermes detects this condition on startup and refuses to enable E2EE, logging
    Or via the Synapse admin API (note the URL-encoded user ID):
    ```bash
    curl -X DELETE -H "Authorization: Bearer ADMIN_TOKEN" \
-     'https://your-server/_synapse/admin/v2/users/%40hermes%3Ayour-server/devices/DEVICE_ID'
+     'https://your-server/_synapse/admin/v2/users/%40thm%3Ayour-server/devices/DEVICE_ID'
    ```
    Note: deleting a device via the admin API may also invalidate the associated access token. You may need to generate a new token afterward.
 
 2. Delete the local crypto store and restart TeamHermes:
    ```bash
    rm -f ~/.teamhermes/platforms/matrix/store/crypto.db*
-   # restart hermes
+   # restart thm
    ```
 
 Other Matrix clients (Element, matrix-commander) may cache the old device keys. After recovery, type `/discardsession` in Element to force a new encryption session with the bot.
@@ -428,7 +428,7 @@ pip install 'mautrix[encryption]'
 Or with TeamHermes extras:
 
 ```bash
-pip install 'teamhermes[matrix]'
+pip install 'teamthm[matrix]'
 ```
 
 ### Encryption errors / "could not decrypt event"
@@ -527,7 +527,7 @@ history, so other clients trust it immediately.
 
 ## Proxy Mode (E2EE on macOS)
 
-Matrix E2EE requires `libolm`, which doesn't compile on macOS ARM64 (Apple Silicon). The `teamhermes[matrix]` extra is gated to Linux only. If you're on macOS, proxy mode lets you run E2EE in a Docker container on a Linux VM while the actual agent runs natively on macOS with full access to your local files, memory, and skills.
+Matrix E2EE requires `libolm`, which doesn't compile on macOS ARM64 (Apple Silicon). The `teamthm[matrix]` extra is gated to Linux only. If you're on macOS, proxy mode lets you run E2EE in a Docker container on a Linux VM while the actual agent runs natively on macOS with full access to your local files, memory, and skills.
 
 ### How It Works
 
@@ -608,9 +608,9 @@ services:
 FROM python:3.11-slim
 
 RUN apt-get update && apt-get install -y libolm-dev && rm -rf /var/lib/apt/lists/*
-RUN pip install 'teamhermes[matrix]'
+RUN pip install 'teamthm[matrix]'
 
-CMD ["hermes", "gateway"]
+CMD ["thm", "gateway"]
 ```
 
 That's the entire container. No API keys for OpenRouter, Anthropic, or any inference provider.

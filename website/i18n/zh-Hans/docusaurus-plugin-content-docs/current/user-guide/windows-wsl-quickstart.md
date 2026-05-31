@@ -102,7 +102,7 @@ wsl --shutdown
 ```bash
 curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash
 source ~/.bashrc
-hermes
+thm
 ```
 
 安装程序将 WSL2 视为普通 Linux —— 无需任何 WSL 专属配置。完整目录结构请参阅[安装说明](/getting-started/installation)。

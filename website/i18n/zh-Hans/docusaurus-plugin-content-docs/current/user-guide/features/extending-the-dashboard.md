@@ -731,7 +731,7 @@ async def do_action(body: dict):
 
 #### 访问 TeamHermes 内部模块
 
-后端路由在 dashboard 进程内运行，因此可以直接从 teamhermes 代码库导入：
+后端路由在 dashboard 进程内运行，因此可以直接从 teamthm 代码库导入：
 
 ```python
 from fastapi import APIRouter

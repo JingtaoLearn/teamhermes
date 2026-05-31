@@ -6,19 +6,19 @@ description: "将 OpenClaw / Clawdbot 配置迁移到 TeamHermes Agent 的完整
 
 # 从 OpenClaw 迁移
 
-`hermes claw migrate` 将你的 OpenClaw（或旧版 Clawdbot/Moldbot）配置导入 TeamHermes。本指南详细说明迁移内容、配置键映射以及迁移后的验证步骤。
+`thm claw migrate` 将你的 OpenClaw（或旧版 Clawdbot/Moldbot）配置导入 TeamHermes。本指南详细说明迁移内容、配置键映射以及迁移后的验证步骤。
 
 ## 快速开始
 
 ```bash
 # 预览后迁移（始终先显示预览，再要求确认）
-hermes claw migrate
+thm claw migrate
 
 # 仅预览，不做任何更改
-hermes claw migrate --dry-run
+thm claw migrate --dry-run
 
 # 完整迁移，包含 API 密钥，跳过确认
-hermes claw migrate --preset full --migrate-secrets --yes
+thm claw migrate --preset full --migrate-secrets --yes
 ```
 
 迁移操作在执行任何更改前，始终会显示完整的导入预览。请检查列表后确认继续。
@@ -170,8 +170,8 @@ TTS 设置从 OpenClaw 配置的**两个**位置读取，优先级如下：
 | `BOOTSTRAP.md` | `archive/workspace/BOOTSTRAP.md` | 使用上下文文件或 skills |
 | Cron 作业 | `archive/cron-config.json` | 通过 `thm cron create` 重建 |
 | 插件 | `archive/plugins-config.json` | 参见 [插件指南](/user-guide/features/hooks) |
-| Hooks/webhooks | `archive/hooks-config.json` | 使用 `hermes webhook` 或 gateway hooks |
-| 记忆后端 | `archive/memory-backend-config.json` | 通过 `hermes honcho` 配置 |
+| Hooks/webhooks | `archive/hooks-config.json` | 使用 `thm webhook` 或 gateway hooks |
+| 记忆后端 | `archive/memory-backend-config.json` | 通过 `thm honcho` 配置 |
 | Skills 注册表 | `archive/skills-registry-config.json` | 使用 `thm skills config` |
 | UI/身份 | `archive/ui-identity-config.json` | 使用 `/skin` 命令 |
 | 日志 | `archive/logging-diagnostics-config.json` | 在 `config.yaml` 日志部分设置 |
@@ -227,9 +227,9 @@ OpenClaw 配置中 token 和 API 密钥的值支持三种格式：
 
 6. **检查会话策略** — 验证 `thm config get session_reset` 是否符合预期。
 
-7. **重新配对 WhatsApp** — WhatsApp 使用二维码配对（Baileys），不支持 token 迁移。运行 `hermes whatsapp` 进行配对。
+7. **重新配对 WhatsApp** — WhatsApp 使用二维码配对（Baileys），不支持 token 迁移。运行 `thm whatsapp` 进行配对。
 
-8. **清理归档** — 确认一切正常后，运行 `hermes claw cleanup` 将残留的 OpenClaw 目录重命名为 `.pre-migration/`（防止状态混淆）。
+8. **清理归档** — 确认一切正常后，运行 `thm claw cleanup` 将残留的 OpenClaw 目录重命名为 `.pre-migration/`（防止状态混淆）。
 
 ## 故障排查
 

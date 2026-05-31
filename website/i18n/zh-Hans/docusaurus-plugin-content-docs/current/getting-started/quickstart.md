@@ -51,8 +51,8 @@ description: "与 TeamHermes Agent 的第一次对话——从安装到开始聊
 **方式 A — pip（最简单）：**
 
 ```bash
-pip install teamhermes
-hermes postinstall     # 可选：安装 Node.js、浏览器、ripgrep、ffmpeg 并运行 setup
+pip install teamthm
+thm postinstall     # 可选：安装 Node.js、浏览器、ripgrep、ffmpeg 并运行 setup
 ```
 
 PyPI 发布版本跟踪带标签的版本（主/次版本发布），而非 `main` 分支上的每次提交。如需最新代码，请使用方式 B。
@@ -154,14 +154,14 @@ thm config set OPENROUTER_API_KEY sk-or-...
 ## 3. 运行第一次对话
 
 ```bash
-hermes            # 经典 CLI
-hermes --tui      # 现代 TUI（推荐）
+thm            # 经典 CLI
+thm --tui      # 现代 TUI（推荐）
 ```
 
 你会看到一个欢迎横幅，显示你的模型、可用工具和 skills。使用一个具体且易于验证的 prompt（提示词）：
 
 :::tip 选择你的界面
-TeamHermes 提供两种终端界面：经典的 `prompt_toolkit` CLI，以及更新的 [TUI](../user-guide/tui.md)（支持模态覆盖层、鼠标选择和非阻塞输入）。两者共享相同的会话、斜杠命令和配置——分别用 `thm` 和 `hermes --tui` 试试看。
+TeamHermes 提供两种终端界面：经典的 `prompt_toolkit` CLI，以及更新的 [TUI](../user-guide/tui.md)（支持模态覆盖层、鼠标选择和非阻塞输入）。两者共享相同的会话、斜杠命令和配置——分别用 `thm` 和 `thm --tui` 试试看。
 :::
 
 ```
@@ -190,8 +190,8 @@ Help me set up a clean GitHub PR workflow for this codebase.
 继续之前，确认恢复功能正常：
 
 ```bash
-hermes --continue    # 恢复最近的会话
-hermes -c            # 简写形式
+thm --continue    # 恢复最近的会话
+thm -c            # 简写形式
 ```
 
 这应该会带你回到刚才的会话。如果不行，检查你是否在同一个 profile 下，以及会话是否实际已保存。当你同时管理多个配置或多台机器时，这一点很重要。
@@ -257,7 +257,7 @@ thm config set terminal.backend ssh       # 远程服务器
 
 ```bash
 # 在 TeamHermes 安装目录下运行（curl 安装器在 Linux/macOS 上将其放置于
-# ~/.teamhermes/hermes-agent，在 Windows 上为 %LOCALAPPDATA%\hermes\teamhermes）：
+# ~/.teamhermes/hermes-agent，在 Windows 上为 %LOCALAPPDATA%\hermes\teamthm）：
 cd ~/.teamhermes/hermes-agent
 uv pip install -e ".[voice]"
 # 包含 faster-whisper，用于免费的本地语音转文字
@@ -291,7 +291,7 @@ mcp_servers:
 ACP 支持已包含在标准 `[all]` 扩展中，因此 curl 安装器已默认包含。直接运行：
 
 ```bash
-hermes acp
+thm acp
 ```
 
 （如果安装时未包含 `[all]`，请先运行 `cd ~/.teamhermes/hermes-agent && uv pip install -e ".[acp]"`。）
@@ -309,7 +309,7 @@ hermes acp
 | TeamHermes 启动但回复为空或异常 | Provider 认证或模型选择有误 | 重新运行 `thm model`，确认 provider、模型和认证信息 |
 | 自定义 endpoint "可用"但返回乱码 | base URL、模型名称有误，或实际上不兼容 OpenAI | 先用独立客户端验证该 endpoint |
 | Gateway 启动但无法收到消息 | Bot token、白名单或平台配置不完整 | 重新运行 `thm gateway setup` 并检查 `thm gateway status` |
-| `hermes --continue` 找不到旧会话 | 切换了 profile 或会话从未保存 | 检查 `thm sessions list`，确认你在正确的 profile 下 |
+| `thm --continue` 找不到旧会话 | 切换了 profile 或会话从未保存 | 检查 `thm sessions list`，确认你在正确的 profile 下 |
 | 模型不可用或出现异常的故障转移行为 | Provider 路由或故障转移设置过于激进 | 在基础 provider 稳定之前关闭路由 |
 | `thm doctor` 标记配置问题 | 配置值缺失或已过期 | 修复配置，在添加功能前重新测试普通对话 |
 
@@ -321,7 +321,7 @@ hermes acp
 2. `thm model`
 3. `thm setup`
 4. `thm sessions list`
-5. `hermes --continue`
+5. `thm --continue`
 6. `thm gateway status`
 
 这个顺序能让你快速从"感觉哪里不对"回到已知的正常状态。
@@ -339,7 +339,7 @@ hermes acp
 | `thm doctor` | 诊断问题 |
 | `thm update` | 更新到最新版本 |
 | `thm gateway` | 启动消息 gateway |
-| `hermes --continue` | 恢复上次会话 |
+| `thm --continue` | 恢复上次会话 |
 
 ## 下一步
 

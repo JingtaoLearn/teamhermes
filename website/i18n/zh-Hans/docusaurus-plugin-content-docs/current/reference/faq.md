@@ -140,7 +140,7 @@ response = agent.chat("Explain quantum computing briefly")
 
 ### 安装问题
 
-#### 安装后出现 `hermes: command not found`
+#### 安装后出现 `thm: command not found`
 
 **原因：** Shell 未重新加载更新后的 PATH。
 
@@ -155,7 +155,7 @@ source ~/.zshrc     # zsh
 
 如果仍然无效，请验证安装位置：
 ```bash
-which hermes
+which thm
 ls ~/.local/bin/hermes
 ```
 
@@ -437,7 +437,7 @@ cat ~/.teamhermes/logs/gateway.log | tail -50
 **解决方案：**
 ```bash
 # 安装核心消息网关依赖项
-pip install "teamhermes[messaging]"  # Telegram、Discord、Slack 及共享网关依赖
+pip install "teamthm[messaging]"  # Telegram、Discord、Slack 及共享网关依赖
 
 # 检查端口冲突
 lsof -i :8080
@@ -457,8 +457,8 @@ thm config show
 thm gateway run
 
 # 方案二：通过 tmux 持久运行（关闭终端后仍存活）
-tmux new -s hermes 'thm gateway run'
-# 稍后重新连接：tmux attach -t hermes
+tmux new -s thm 'thm gateway run'
+# 稍后重新连接：tmux attach -t thm
 
 # 方案三：通过 nohup 后台运行
 nohup thm gateway run > ~/.teamhermes/logs/gateway.log 2>&1 &
@@ -755,7 +755,7 @@ skills:
 
 2. 在**源机器**上创建完整备份：
    ```bash
-   hermes backup
+   thm backup
    ```
    这会将您整个 `~/.teamhermes/` 目录（配置、API key、记忆、技能、会话和 profiles）打包为 zip 文件，保存到主目录 `~/hermes-backup-<timestamp>.zip`。
 
@@ -789,14 +789,14 @@ thm profile import ./work-backup.tar.gz work
 | 功能 | `thm backup` | `thm profile export` |
 | :--- | :--- | :--- |
 | **使用场景** | **整机迁移** | **移植/共享特定 profile** |
-| **范围** | 全局（整个 `~/.teamhermes` 目录） | 局部（单个 profile 目录） |
+| **范围** | 全局（整个 `~/.teamthm` 目录） | 局部（单个 profile 目录） |
 | **包含内容** | 所有 profiles、全局配置、API key、会话 | 单个 profile：SOUL.md、记忆、会话、技能 |
 | **凭据** | **包含**（`.env` 和 `auth.json`） | **排除**（为安全共享而剥离） |
 | **格式** | `.zip` | `.tar.gz` |
 
 **手动备选方案（rsync）：** 如果您倾向于直接复制文件，请排除代码仓库：
 ```bash
-rsync -av --exclude='teamhermes' ~/.teamhermes/ newmachine:~/.teamhermes/
+rsync -av --exclude='teamthm' ~/.teamhermes/ newmachine:~/.teamhermes/
 ```
 
 :::tip

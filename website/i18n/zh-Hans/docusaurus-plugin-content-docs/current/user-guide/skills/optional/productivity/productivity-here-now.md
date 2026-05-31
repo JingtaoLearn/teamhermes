@@ -81,7 +81,7 @@ here.now 适用于两类任务：
 
 ```bash
 PUBLISH="${HERMES_SKILL_DIR}/scripts/publish.sh"
-bash "$PUBLISH" {file-or-dir} --client hermes
+bash "$PUBLISH" {file-or-dir} --client thm
 ```
 
 输出实时 URL（例如 `https://bright-canvas-a7k2.here.now/`）。
@@ -99,7 +99,7 @@ bash "$PUBLISH" {file-or-dir} --client hermes
 
 ```bash
 PUBLISH="${HERMES_SKILL_DIR}/scripts/publish.sh"
-bash "$PUBLISH" {file-or-dir} --slug {slug} --client hermes
+bash "$PUBLISH" {file-or-dir} --slug {slug} --client thm
 ```
 
 更新匿名站点时，脚本会自动从 `.herenow/state.json` 加载 `claimToken`。传入 `--claim-token {token}` 可覆盖此值。

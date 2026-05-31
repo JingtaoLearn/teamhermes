@@ -1373,7 +1373,7 @@ Define custom commands that either run shell commands without invoking the LLM, 
 quick_commands:
   status:
     type: exec
-    command: systemctl status teamhermes
+    command: systemctl status teamthm
   disk:
     type: exec
     command: df -h /

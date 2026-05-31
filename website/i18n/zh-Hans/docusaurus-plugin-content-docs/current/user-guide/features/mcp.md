@@ -509,8 +509,8 @@ thm mcp serve
 ```json
 {
   "mcpServers": {
-    "hermes": {
-      "command": "hermes",
+    "thm": {
+      "command": "thm",
       "args": ["mcp", "serve"]
     }
   }
@@ -522,7 +522,7 @@ thm mcp serve
 ```json
 {
   "mcpServers": {
-    "hermes": {
+    "thm": {
       "command": "/home/user/.teamhermes/hermes-agent/venv/bin/hermes",
       "args": ["mcp", "serve"]
     }

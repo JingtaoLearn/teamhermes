@@ -145,7 +145,7 @@ skill_view("writing-plans")
 
 ```yaml
 metadata:
-  hermes:
+  thm:
     config:
       - key: tenor.api_key
         description: "Tenor API key for GIF search"
@@ -185,7 +185,7 @@ name: my-skill
 description: Brief description of what this skill does
 version: 1.0.0
 metadata:
-  hermes:
+  thm:
     tags: [my-tag, automation]
     category: my-category
 ---

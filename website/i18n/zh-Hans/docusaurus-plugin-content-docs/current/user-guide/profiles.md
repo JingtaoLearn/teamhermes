@@ -81,15 +81,15 @@ coder skills list             # 列出 coder 的技能
 coder config set model.default anthropic/claude-sonnet-4
 ```
 
-别名支持所有 hermes 子命令——底层实际上是 `hermes -p <name>`。
+别名支持所有 thm 子命令——底层实际上是 `thm -p <name>`。
 
 ### `-p` 标志
 
 你也可以通过任意命令显式指定 profile：
 
 ```bash
-hermes -p coder chat
-hermes --profile=coder doctor
+thm -p coder chat
+thm --profile=coder doctor
 thm chat -p coder -q "hello"    # 可在任意位置使用
 ```
 
@@ -173,7 +173,7 @@ assistant gateway install     # 创建 hermes-gateway-assistant 服务
 每个 profile 拥有独立的服务名称，各自独立运行。
 
 :::note 在官方 Docker 镜像中
-各 profile 的 gateway 由 [s6-overlay](https://github.com/just-containers/s6-overlay)（容器中的 PID 1）监管，因此 `thm profile create <name>` 会自动在 `/run/service/gateway-<name>/` 注册 s6 服务槽。`hermes -p <name> gateway start/stop/restart` 会调度到 `s6-svc` 而非直接启动裸进程——崩溃后自动重启，`docker restart` 会保留之前运行的 gateway 集合。详见 [各 profile gateway 监管](/user-guide/docker#per-profile-gateway-supervision)。
+各 profile 的 gateway 由 [s6-overlay](https://github.com/just-containers/s6-overlay)（容器中的 PID 1）监管，因此 `thm profile create <name>` 会自动在 `/run/service/gateway-<name>/` 注册 s6 服务槽。`thm -p <name> gateway start/stop/restart` 会调度到 `s6-svc` 而非直接启动裸进程——崩溃后自动重启，`docker restart` 会保留之前运行的 gateway 集合。详见 [各 profile gateway 监管](/user-guide/docker#per-profile-gateway-supervision)。
 :::
 
 ## 配置 profile
@@ -228,28 +228,28 @@ thm profile delete coder
 使用 `--yes` 跳过确认：`thm profile delete coder --yes`
 
 :::note
-你无法删除默认 profile（`~/.teamhermes`）。如需删除所有内容，请使用 `hermes uninstall`。
+你无法删除默认 profile（`~/.teamthm`）。如需删除所有内容，请使用 `thm uninstall`。
 :::
 
 ## Tab 补全
 
 ```bash
 # Bash
-eval "$(hermes completion bash)"
+eval "$(thm completion bash)"
 
 # Zsh
-eval "$(hermes completion zsh)"
+eval "$(thm completion zsh)"
 ```
 
 将该行添加到 `~/.bashrc` 或 `~/.zshrc` 以启用持久补全。支持补全 `-p` 后的 profile 名称、profile 子命令及顶级命令。
 
 ## 工作原理
 
-profile 使用 `HERMES_HOME` 环境变量。运行 `coder chat` 时，包装脚本在启动 hermes 前将 `HERMES_HOME` 设置为 `~/.teamhermes/profiles/coder`。由于代码库中 119+ 个文件通过 `get_hermes_home()` 解析路径，TeamHermes 状态会自动限定在 profile 目录范围内——包括配置、会话、记忆、技能、状态数据库、gateway PID、日志和 cron 任务。
+profile 使用 `HERMES_HOME` 环境变量。运行 `coder chat` 时，包装脚本在启动 thm 前将 `HERMES_HOME` 设置为 `~/.teamhermes/profiles/coder`。由于代码库中 119+ 个文件通过 `get_hermes_home()` 解析路径，TeamHermes 状态会自动限定在 profile 目录范围内——包括配置、会话、记忆、技能、状态数据库、gateway PID、日志和 cron 任务。
 
 这与终端工作目录是分开的。工具执行从 `terminal.cwd` 开始（或在 local 后端使用 `cwd: "."` 时从启动目录开始），而非自动从 `HERMES_HOME` 开始。
 
-默认 profile 就是 `~/.teamhermes` 本身。无需迁移——现有安装的工作方式完全不变。
+默认 profile 就是 `~/.teamthm` 本身。无需迁移——现有安装的工作方式完全不变。
 
 ## 将 profile 作为发行版共享
 

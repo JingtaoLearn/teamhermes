@@ -294,13 +294,13 @@ kanban_complete(summary="decomposed into 2 research tasks + 1 writer; linked dep
 `kanban-worker` 是一个内置 skill，在安装和更新期间同步到每个配置文件 —— 无需单独的 Skills Hub 安装步骤。验证它是否存在于你用于 kanban worker 的配置文件中（`researcher`、`writer`、`ops` 等）：
 
 ```bash
-hermes -p <your-worker-profile> skills list | grep kanban-worker
+thm -p <your-worker-profile> skills list | grep kanban-worker
 ```
 
 如果内置副本丢失，为该配置文件恢复它：
 
 ```bash
-hermes -p <your-worker-profile> skills reset kanban-worker --restore
+thm -p <your-worker-profile> skills reset kanban-worker --restore
 ```
 
 调度器在启动每个 worker 时也会自动传递 `--skills kanban-worker`，因此即使配置文件的默认 skills 配置不包含它，worker 也始终拥有该模式库。
@@ -368,13 +368,13 @@ kanban_complete(
 `kanban-orchestrator` 是一个内置 skill。它在安装和更新期间同步到每个配置文件，因此无需单独的 Skills Hub 安装步骤。验证它是否存在于你的编排器配置文件中：
 
 ```bash
-hermes -p orchestrator skills list | grep kanban-orchestrator
+thm -p orchestrator skills list | grep kanban-orchestrator
 ```
 
 如果内置副本丢失，为该配置文件恢复它：
 
 ```bash
-hermes -p orchestrator skills reset kanban-orchestrator --restore
+thm -p orchestrator skills reset kanban-orchestrator --restore
 ```
 
 为获得最佳效果，将其与工具集限制为看板操作（`kanban`、`gateway`、`memory`）的配置文件配对，这样编排器即使尝试也无法执行实现任务。
@@ -387,7 +387,7 @@ hermes -p orchestrator skills reset kanban-orchestrator --restore
 
 ```bash
 thm kanban init      # 一次性：如果尚未创建 kanban.db
-hermes dashboard        # 导航栏中出现 "Kanban" 标签页，位于 "Skills" 之后
+thm dashboard        # 导航栏中出现 "Kanban" 标签页，位于 "Skills" 之后
 ```
 
 ### 插件提供的功能
@@ -515,7 +515,7 @@ WebSocket 额外增加了一步：它要求仪表盘的临时会话 token 作为
 
 如果你运行 `thm dashboard --host 0.0.0.0`，每个插件路由 —— 包括 kanban —— 都可以从网络访问。**不要在共享主机上这样做。** 看板包含任务正文、评论和工作区路径；攻击者访问这些路由可以读取你整个协作界面，还可以创建 / 重新分配 / 归档任务。
 
-`~/.teamhermes/kanban.db` 中的任务是有意与配置文件无关的（这是协调原语）。如果你用 `hermes -p <profile> dashboard` 打开仪表盘，看板仍然显示主机上任何其他配置文件创建的任务。同一用户拥有所有配置文件，但如果多个角色共存，这一点值得了解。
+`~/.teamhermes/kanban.db` 中的任务是有意与配置文件无关的（这是协调原语）。如果你用 `thm -p <profile> dashboard` 打开仪表盘，看板仍然显示主机上任何其他配置文件创建的任务。同一用户拥有所有配置文件，但如果多个角色共存，这一点值得了解。
 
 ### 实时更新
 

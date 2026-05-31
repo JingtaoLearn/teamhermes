@@ -50,7 +50,7 @@ thm model
 # → 选择模型（grok-4.3 在列表顶部）
 # → 开始对话
 
-hermes
+thm
 ```
 
 首次登录后，凭据存储在 `~/.teamhermes/auth.json` 中，并在过期前自动刷新。
@@ -104,7 +104,7 @@ thm model --manual-paste
 ## 检查登录状态
 
 ```bash
-hermes doctor
+thm doctor
 ```
 
 `◆ Auth Providers` 部分将显示每个 provider 的当前状态，包括 `xai-oauth`。
@@ -140,10 +140,10 @@ model:
 以下所有别名均解析为 `xai-oauth`：
 
 ```bash
-hermes --provider xai-oauth        # 规范名称
-hermes --provider grok-oauth       # 别名
-hermes --provider x-ai-oauth       # 别名
-hermes --provider xai-grok-oauth   # 别名
+thm --provider xai-oauth        # 规范名称
+thm --provider grok-oauth       # 别名
+thm --provider x-ai-oauth       # 别名
+thm --provider xai-grok-oauth   # 别名
 ```
 
 ## 直连 xAI 工具（TTS / 图像 / 视频 / 转录 / X 搜索）

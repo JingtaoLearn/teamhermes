@@ -1221,9 +1221,9 @@ def _emergency_cleanup_all_sessions():
                 _session_last_activity.clear()
                 _recording_sessions.clear()
 
-    # Sweep orphans from other crashed hermes processes.  Safe even if we
+    # Sweep orphans from other crashed TeamHermes processes.  Safe even if we
     # never used the browser — uses owner_pid liveness to avoid reaping
-    # daemons owned by other live hermes processes.
+    # daemons owned by other live TeamHermes processes.
     try:
         _reap_orphaned_browser_sessions()
     except Exception as e:
@@ -1272,10 +1272,10 @@ def _cleanup_inactive_browser_sessions():
 
 
 def _write_owner_pid(socket_dir: str, session_name: str) -> None:
-    """Record the current hermes PID as the owner of a browser socket dir.
+    """Record the current TeamHermes PID as the owner of a browser socket dir.
 
     Written atomically to ``<socket_dir>/<session_name>.owner_pid`` so the
-    orphan reaper can distinguish daemons owned by a live hermes process
+    orphan reaper can distinguish daemons owned by a live TeamHermes process
     (don't reap) from daemons whose owner crashed (reap).  Best-effort —
     an OSError here just falls back to the legacy ``tracked_names``
     heuristic in the reaper.
@@ -1298,13 +1298,13 @@ def _reap_orphaned_browser_sessions():
 
     This function scans the tmp directory for ``agent-browser-*`` socket dirs
     left behind by previous runs, reads the daemon PID files, and kills any
-    daemons whose owning hermes process is no longer alive.
+    daemons whose owning TeamHermes process is no longer alive.
 
     Ownership detection priority:
       1. ``<session>.owner_pid`` file (written by current code) — if the
-         referenced hermes PID is alive, leave the daemon alone regardless
+         referenced TeamHermes PID is alive, leave the daemon alone regardless
          of whether it's in *this* process's ``_active_sessions``.  This is
-         cross-process safe: two concurrent hermes instances won't reap each
+         cross-process safe: two concurrent TeamHermes instances won't reap each
          other's daemons.
       2. Fallback for daemons that predate owner_pid: check
          ``_active_sessions`` in the current process.  If not tracked here,
@@ -1355,7 +1355,7 @@ def _reap_orphaned_browser_sessions():
                 owner_alive = None  # corrupt file — fall through
 
         if owner_alive is True:
-            # Owner is alive — this session belongs to a live hermes process.
+            # Owner is alive — this session belongs to a live TeamHermes process.
             continue
 
         if owner_alive is None:
@@ -1986,7 +1986,7 @@ def _run_browser_command(
             f"agent-browser-{session_info['session_name']}"
         )
         os.makedirs(task_socket_dir, mode=0o700, exist_ok=True)
-        # Record this hermes PID as the session owner (cross-process safe
+        # Record this TeamHermes PID as the session owner (cross-process safe
         # orphan detection — see _write_owner_pid).
         _write_owner_pid(task_socket_dir, session_info['session_name'])
         logger.debug("browser cmd=%s task=%s socket_dir=%s (%d chars)",
