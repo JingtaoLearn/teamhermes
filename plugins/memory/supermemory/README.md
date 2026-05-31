@@ -10,7 +10,7 @@ Semantic long-term memory with profile recall, semantic search, explicit memory 
 ## Setup
 
 ```bash
-hermes memory setup    # select "supermemory"
+thm memory setup    # select "supermemory"
 ```
 
 Or manually:

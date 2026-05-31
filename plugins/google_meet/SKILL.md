@@ -6,7 +6,7 @@ platforms:
   - linux
   - macos
 metadata:
-  hermes:
+  thm:
     tags: [meetings, google-meet, transcription, realtime-voice]
 ---
 
@@ -44,13 +44,13 @@ Easiest path — run the built-in installer:
 
 ```bash
 thm plugins enable google_meet
-hermes meet install                 # pip deps + Chromium (transcribe only)
-hermes meet install --realtime      # + pulseaudio-utils / brew blackhole+ffmpeg
-hermes meet auth                    # optional; skips guest-lobby wait
-hermes meet setup                   # preflight checks
+thm meet install                 # pip deps + Chromium (transcribe only)
+thm meet install --realtime      # + pulseaudio-utils / brew blackhole+ffmpeg
+thm meet auth                    # optional; skips guest-lobby wait
+thm meet setup                   # preflight checks
 ```
 
-`hermes meet install --realtime` prompts before running `sudo apt-get` (Linux)
+`thm meet install --realtime` prompts before running `sudo apt-get` (Linux)
 or `brew install` (macOS). Pass `--yes` to skip the prompt. It will NOT touch
 your macOS default-input setting — you have to select BlackHole 2ch in
 System Settings yourself before starting a realtime meeting.
@@ -71,15 +71,15 @@ For a remote node:
 # on the user's Mac (where Chrome is signed in):
 pip install playwright websockets && python -m playwright install chromium
 thm plugins enable google_meet
-hermes meet node run --display-name my-mac    # persistent server
+thm meet node run --display-name my-mac    # persistent server
 # copy the printed token
 
 # on the gateway:
-hermes meet node approve my-mac ws://<mac-ip>:18789 <token>
-hermes meet node ping my-mac                   # confirm reachable
+thm meet node approve my-mac ws://<mac-ip>:18789 <token>
+thm meet node ping my-mac                   # confirm reachable
 ```
 
-Run `hermes meet setup` to preflight local prereqs.
+Run `thm meet setup` to preflight local prereqs.
 
 ## Flow
 
@@ -105,7 +105,7 @@ Run `hermes meet setup` to preflight local prereqs.
 ## Important limits
 
 - Captions are only as good as Google Meet's live captions. English-biased, lossy on overlapping speakers.
-- Guest mode sits in the lobby until a host admits. Warn the user; `hermes meet auth` avoids this.
+- Guest mode sits in the lobby until a host admits. Warn the user; `thm meet auth` avoids this.
 - **Lobby timeout**: if the host doesn't admit the bot within 5 minutes (configurable via `HERMES_MEET_LOBBY_TIMEOUT` env), the bot leaves and `meet_status` reports `leaveReason: "lobby_timeout"`.
 - **One active meeting per install per location.** A second `meet_join` leaves the first.
 - **Windows not supported.**
@@ -144,5 +144,5 @@ Remote node: transcript lives on the node host's disk. Use `meet_transcript(node
 
 - URL regex: only `https://meet.google.com/...` URLs pass.
 - No calendar scanning. No auto-dial.
-- Remote nodes use bearer-token auth; tokens are generated on the node (32 hex chars, persisted in `$HERMES_HOME/workspace/meetings/node_token.json`) and must be copied to the gateway via `hermes meet node approve`.
+- Remote nodes use bearer-token auth; tokens are generated on the node (32 hex chars, persisted in `$HERMES_HOME/workspace/meetings/node_token.json`) and must be copied to the gateway via `thm meet node approve`.
 - `meet_say` text is rate-limited by the OpenAI Realtime session; spam-protection is the bot's problem, not yours, but still — don't queue hundreds of lines.

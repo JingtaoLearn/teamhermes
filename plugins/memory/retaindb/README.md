@@ -10,7 +10,7 @@ Cloud memory API with hybrid search (Vector + BM25 + Reranking) and 7 memory typ
 ## Setup
 
 ```bash
-hermes memory setup    # select "retaindb"
+thm memory setup    # select "retaindb"
 ```
 
 Or manually:

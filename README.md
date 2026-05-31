@@ -58,7 +58,7 @@ After installation:
 
 ```bash
 source ~/.bashrc    # reload shell (or: source ~/.zshrc)
-hermes              # start chatting!
+thm              # start chatting!
 ```
 
 ---
@@ -66,15 +66,15 @@ hermes              # start chatting!
 ## Getting Started
 
 ```bash
-hermes              # Interactive CLI — start a conversation
+thm              # Interactive CLI — start a conversation
 thm model        # Choose your LLM provider and model
 thm tools        # Configure which tools are enabled
 thm config set   # Set individual config values
 thm gateway      # Start the messaging gateway (Telegram, Discord, etc.)
 thm setup        # Run the full setup wizard (configures everything at once)
-hermes claw migrate # Migrate from OpenClaw (if coming from OpenClaw)
+thm claw migrate # Migrate from OpenClaw (if coming from OpenClaw)
 thm update       # Update to the latest version
-hermes doctor       # Diagnose any issues
+thm doctor       # Diagnose any issues
 ```
 
 📖 **[Full documentation →](https://hermes-agent.nousresearch.com/docs/)**
@@ -94,7 +94,7 @@ One command from a fresh install:
 thm setup --portal
 ```
 
-That logs you in via OAuth, sets Nous as your provider, and turns on the Tool Gateway. Check what's wired up any time with `hermes portal status`. Full details on the [Tool Gateway docs page](https://hermes-agent.nousresearch.com/docs/user-guide/features/tool-gateway).
+That logs you in via OAuth, sets Nous as your provider, and turns on the Tool Gateway. Check what's wired up any time with `thm portal status`. Full details on the [Tool Gateway docs page](https://hermes-agent.nousresearch.com/docs/user-guide/features/tool-gateway).
 
 You can still bring your own keys per-tool whenever you want — the gateway is per-backend, not all-or-nothing.
 
@@ -153,10 +153,10 @@ If you're coming from OpenClaw, TeamHermes can automatically import your setting
 **Anytime after install:**
 
 ```bash
-hermes claw migrate              # Interactive migration (full preset)
-hermes claw migrate --dry-run    # Preview what would be migrated
-hermes claw migrate --preset user-data   # Migrate without secrets
-hermes claw migrate --overwrite  # Overwrite existing conflicts
+thm claw migrate              # Interactive migration (full preset)
+thm claw migrate --dry-run    # Preview what would be migrated
+thm claw migrate --preset user-data   # Migrate without secrets
+thm claw migrate --overwrite  # Overwrite existing conflicts
 ```
 
 What gets imported:
@@ -169,7 +169,7 @@ What gets imported:
 - **TTS assets** — workspace audio files
 - **Workspace instructions** — AGENTS.md (with `--workspace-target`)
 
-See `hermes claw migrate --help` for all options, or use the `openclaw-migration` skill for an interactive agent-guided migration with dry-run previews.
+See `thm claw migrate --help` for all options, or use the `openclaw-migration` skill for an interactive agent-guided migration with dry-run previews.
 
 ---
 

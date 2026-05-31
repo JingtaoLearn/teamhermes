@@ -12,8 +12,8 @@ AI-native cross-session user modeling with multi-pass dialectic reasoning, sessi
 ## Setup
 
 ```bash
-hermes honcho setup    # full interactive wizard (cloud or local)
-hermes memory setup    # generic picker, also works
+thm honcho setup    # full interactive wizard (cloud or local)
+thm memory setup    # generic picker, also works
 ```
 
 Or manually:
@@ -154,7 +154,7 @@ In gateway deployments (Telegram, Discord, Slack, etc.) each user arrives with a
 
 **Host vs root semantics.** All three keys are accepted at both root and `hosts.<host>` levels. Host-level wins. For maps and prefixes, host-level *replaces* the root value as a whole (not merge), so a host can intentionally own its identity universe or wipe it with `userPeerAliases: {}` / `runtimePeerPrefix: ""`.
 
-**Deployment shapes** (`hermes honcho setup` asks one prompt to set these):
+**Deployment shapes** (`thm honcho setup` asks one prompt to set these):
 
 - **Single-operator** — `pinUserPeer: true`. All gateway users → `peerName`. Recommended for personal use where you connect TeamHermes to your own Telegram/Discord/etc.
 - **Multi-user gateway** — `pinUserPeer: false`, optional `runtimePeerPrefix`. Each runtime user → own peer. Recommended for bots serving many humans.
@@ -205,7 +205,7 @@ If `sessionPeerPrefix` is `true`, the peer name is prepended: `eri-hermes-agent`
 
 #### What each strategy produces
 
-- **`per-directory`** — basename of `$PWD`. Opening hermes in `~/code/myapp` and `~/code/other` gives two separate sessions. Same directory = same session across runs.
+- **`per-directory`** — basename of `$PWD`. Opening thm in `~/code/myapp` and `~/code/other` gives two separate sessions. Same directory = same session across runs.
 - **`per-repo`** — git root directory name. All subdirectories within a repo share one session. Falls back to `per-directory` if not inside a git repo.
 - **`per-session`** — TeamHermes session ID (timestamp + hex). Every `thm` invocation starts a fresh Honcho session. Falls back to `per-directory` if no session ID is available.
 - **`global`** — workspace name. One session for everything. Memory accumulates across all directories and runs.
@@ -307,16 +307,16 @@ Presets:
 
 | Command | Description |
 |---------|-------------|
-| `hermes honcho setup` | Full interactive setup wizard |
-| `hermes honcho status` | Show resolved config for active profile |
-| `hermes honcho enable` / `disable` | Toggle Honcho for active profile |
-| `hermes honcho mode <mode>` | Change recall or observation mode |
-| `hermes honcho peer --user <name>` | Update user peer name |
-| `hermes honcho peer --ai <name>` | Update AI peer name |
-| `hermes honcho tokens --context <N>` | Set context token budget |
-| `hermes honcho tokens --dialectic <N>` | Set dialectic max chars |
-| `hermes honcho map <name>` | Map current directory to a session name |
-| `hermes honcho sync` | Create host blocks for all TeamHermes profiles |
+| `thm honcho setup` | Full interactive setup wizard |
+| `thm honcho status` | Show resolved config for active profile |
+| `thm honcho enable` / `disable` | Toggle Honcho for active profile |
+| `thm honcho mode <mode>` | Change recall or observation mode |
+| `thm honcho peer --user <name>` | Update user peer name |
+| `thm honcho peer --ai <name>` | Update AI peer name |
+| `thm honcho tokens --context <N>` | Set context token budget |
+| `thm honcho tokens --dialectic <N>` | Set dialectic max chars |
+| `thm honcho map <name>` | Map current directory to a session name |
+| `thm honcho sync` | Create host blocks for all TeamHermes profiles |
 
 ## Example Config
 
