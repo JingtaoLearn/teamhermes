@@ -48,11 +48,47 @@ const AUDIT_SCHEMA = {
   },
 }
 
+// --- runAudit: autonomous loop with classification rules + mid-loop whitelist commits ---
+
+const CLASSIFICATION_RULES = `
+FIX/WHITELIST CLASSIFICATION (apply autonomously per residual, no orchestrator ping needed):
+
+WHITELIST (keep hermes/Hermes — renaming would break something existing):
+1. Code identifiers: Python module/class/function/variable names (hermes_*, Hermes*).
+2. Env vars: HERMES_*.
+3. Protocol identifiers: HTTP headers (X-Hermes-*), JSON wire fields (owned_by=hermes, error.hermes), URL query params registered with external services (source=hermes, from=hermes&tp=hermes), MCP/ACP server/method names.
+4. Deploy-configured integrations: systemd unit names (hermes-gateway), Slack /hermes slash command, OAuth redirect URL fragments (#hermes), logger names (hermes.lint.lsp — users have log-filter rules), git branch naming conventions (hermes-{id}/hermes/*).
+5. Filesystem identity: Docker user hermes (UID 10000), /opt/hermes, ~/.local/state/hermes, %LOCALAPPDATA%\\\\hermes, docker/s6-rc.d/main-hermes/, plugins/hermes-*/, container/sandbox naming (hermes-{uuid}), tmp prefixes (/tmp/hermes-*, hermes-ssh, hermes-cmd-stt-).
+6. External backend tags: Nous portal tags (product=hermes-agent, hermes-client-v*).
+7. Upstream attribution: NousResearch URLs, nousresearch/hermes-agent Docker image, model names (Hermes-3/4, Nous Hermes), LICENSE, NOTICE, RELEASE_v*.md.
+8. Verbatim contributor quotes (website/src/data/userStories.json).
+9. User-configurable naming patterns: hermes-config-*, hermes-dashboard-*, hermes-security profile.
+10. Test fixtures testing the old brand: test_openclaw_migration.py, test_dingtalk.py, test_matrix_mention.py.
+
+FIX (change to TeamHermes/thm/teamhermes — text users read or our outward identifier):
+1. User-facing brand strings in docs, READMEs, i18n locale yaml, CLI help, banners, error messages.
+2. Standalone CLI command in text: hermes <subcmd> → thm <subcmd>.
+3. Install commands: pip install hermes-agent → teamhermes; brew/uv same. EXCEPT upstream attribution Docker image and git+URL.
+4. Code comments and docstrings citing "Hermes" as the product (visible via pydoc/help).
+5. Argparse prog/description/help.
+6. Outgoing User-Agent headers (Hermes-Agent/... → TeamHermes-Agent/..., gl-python/hermes → gl-python/teamhermes).
+7. Process protection patterns: pkill hermes / pgrep -f hermes in our own scripts → thm.
+8. Website build config: projectName: 'hermes-agent' → 'teamhermes'.
+9. Shell scripts and shim names: setup-hermes.sh → setup-thm.sh, ./hermes → ./thm.
+
+Heuristic when in doubt: persistent state / wire-protocol / deploy-registered → WHITELIST. Ambiguous → WHITELIST conservatively + mark deferred in audit report (do NOT stop the loop).
+
+When fixing, you may add new WHITELIST entries to CLAUDE.md with a separate commit "contract: whitelist <thing> (matches rule <N>: <rule name>)" before the fix commit so future audits classify consistently.
+`
+
 async function runAudit(phaseLabel, phaseDescription) {
-  for (let cycle = 1; cycle <= 3; cycle++) {
+  const MAX_CYCLES = 15
+  let lastResiduals = -1
+  let sameResidualStreak = 0
+  for (let cycle = 1; cycle <= MAX_CYCLES; cycle++) {
     const audit = await agent(
-      `${CONTRACT}\n\nRun the rebrand-auditor procedure for phase: ${phaseDescription}.\n` +
-      `Focus the audit on this phase's contract (see CLAUDE.md). Write .claude/state/audit-report.md as specified.\n` +
+      `${CONTRACT}\n\n${CLASSIFICATION_RULES}\n\nRun the rebrand-auditor procedure for phase: ${phaseDescription}.\n` +
+      `Apply the FIX/WHITELIST classification rules above when judging each residual. Write .claude/state/audit-report.md with each residual classified.\n` +
       `Return JSON via StructuredOutput: { verdict: "PASS"|"FAIL", residuals: <int>, notes: "<short>" }.`,
       { label: `audit:${phaseLabel}:cycle${cycle}`, phase: `${phaseLabel} audit`, schema: AUDIT_SCHEMA, agentType: 'rebrand-auditor' }
     )
@@ -60,16 +96,34 @@ async function runAudit(phaseLabel, phaseDescription) {
       log(`${phaseLabel} audit PASS on cycle ${cycle}`)
       return audit
     }
-    log(`${phaseLabel} audit FAIL cycle ${cycle}: ${audit?.residuals} residuals — applying mechanical fixes`)
-    if (cycle === 3) {
-      throw new Error(`${phaseLabel} audit failed after 3 cycles: ${audit?.notes}`)
+    log(`${phaseLabel} audit FAIL cycle ${cycle}: ${audit?.residuals} residuals`)
+
+    // Stall detection: if same residual count persists 3 cycles, escalate
+    if (audit?.residuals === lastResiduals) {
+      sameResidualStreak++
+      if (sameResidualStreak >= 3) {
+        throw new Error(`${phaseLabel} audit stalled: ${audit.residuals} residuals unchanged across 3 cycles (fix agent can't converge). Notes: ${audit?.notes}`)
+      }
+    } else {
+      sameResidualStreak = 0
+      lastResiduals = audit?.residuals ?? -1
     }
+
+    if (cycle === MAX_CYCLES) {
+      throw new Error(`${phaseLabel} audit failed after ${MAX_CYCLES} cycles: ${audit?.notes}`)
+    }
+
     await agent(
-      `${CONTRACT}\n\nThe ${phaseLabel} audit reported ${audit?.residuals} residuals. Read .claude/state/audit-report.md and apply ONLY the mechanical fixes listed there. Do not introduce new edits beyond what the report lists. Commit with message: "rebrand: ${phaseLabel} audit fixes (cycle ${cycle})". Return JSON {filesChanged, commitSha, summary}.`,
+      `${CONTRACT}\n\n${CLASSIFICATION_RULES}\n\nThe ${phaseLabel} audit reported ${audit?.residuals} residuals. Read .claude/state/audit-report.md.\n` +
+      `For each residual, apply the FIX/WHITELIST classification rules autonomously:\n` +
+      `- If WHITELIST: edit CLAUDE.md to add the entry under the existing whitelist section, commit as "contract: whitelist <thing> (matches rule <N>)".\n` +
+      `- If FIX: apply the mechanical substitution per the rule.\n` +
+      `Then commit the fix batch as: "rebrand: ${phaseLabel} audit fixes (cycle ${cycle})". Return JSON {filesChanged, commitSha, summary}.`,
       { label: `fix:${phaseLabel}:cycle${cycle}`, phase: `${phaseLabel} audit`, schema: PHASE_RESULT_SCHEMA }
     )
   }
 }
+
 
 // ---------------- Phase 1 ----------------
 phase('P1 metadata')
