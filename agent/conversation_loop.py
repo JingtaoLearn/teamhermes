@@ -3165,7 +3165,7 @@ def run_conversation(
                             force=True,
                         )
                         agent._vprint(
-                            f"{agent.log_prefix}        hermes fallback add   (interactive picker — same as `thm model`)",
+                            f"{agent.log_prefix}        thm fallback add   (interactive picker — same as `thm model`)",
                             force=True,
                         )
                     logger.error(f"{agent.log_prefix}Non-retryable client error: {api_error}")
@@ -3189,7 +3189,7 @@ def run_conversation(
                             f"(not a TeamHermes/gateway failure).\n\n"
                             f"Provider message: {_summary}\n\n"
                             f"Try rephrasing the request, narrowing the context, or "
-                            f"adding a fallback provider with `hermes fallback add`."
+                            f"adding a fallback provider with `thm fallback add`."
                         )
                         return {
                             "final_response": _policy_response,

@@ -44,7 +44,7 @@ curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scri
 
 ```bash
 source ~/.bashrc    # 重新加载 shell（或: source ~/.zshrc）
-hermes              # 开始对话！
+thm              # 开始对话！
 ```
 
 ---
@@ -52,15 +52,15 @@ hermes              # 开始对话！
 ## 快速入门
 
 ```bash
-hermes              # 交互式 CLI — 开始对话
+thm              # 交互式 CLI — 开始对话
 thm model        # 选择 LLM 提供商和模型
 thm tools        # 配置启用的工具
 thm config set   # 设置单个配置项
 thm gateway      # 启动消息网关（Telegram、Discord 等）
 thm setup        # 运行完整设置向导（一次性配置所有内容）
-hermes claw migrate # 从 OpenClaw 迁移（如果来自 OpenClaw）
+thm claw migrate # 从 OpenClaw 迁移（如果来自 OpenClaw）
 thm update       # 更新到最新版本
-hermes doctor       # 诊断问题
+thm doctor       # 诊断问题
 ```
 
 📖 **[完整文档 →](https://hermes-agent.nousresearch.com/docs/)**
@@ -139,10 +139,10 @@ TeamHermes 有两种入口：用 `thm` 启动终端 UI，或运行网关从 Tele
 **安装后任意时间：**
 
 ```bash
-hermes claw migrate              # 交互式迁移（完整预设）
-hermes claw migrate --dry-run    # 预览将要迁移的内容
-hermes claw migrate --preset user-data   # 仅迁移用户数据，不含密钥
-hermes claw migrate --overwrite  # 覆盖已有冲突
+thm claw migrate              # 交互式迁移（完整预设）
+thm claw migrate --dry-run    # 预览将要迁移的内容
+thm claw migrate --preset user-data   # 仅迁移用户数据，不含密钥
+thm claw migrate --overwrite  # 覆盖已有冲突
 ```
 
 导入内容：
@@ -155,7 +155,7 @@ hermes claw migrate --overwrite  # 覆盖已有冲突
 - **TTS 资产** — 工作区音频文件
 - **工作区指令** — AGENTS.md（使用 `--workspace-target`）
 
-使用 `hermes claw migrate --help` 查看所有选项，或使用 `openclaw-migration` 技能进行交互式代理引导迁移（含干运行预览）。
+使用 `thm claw migrate --help` 查看所有选项，或使用 `openclaw-migration` 技能进行交互式代理引导迁移（含干运行预览）。
 
 ---
 

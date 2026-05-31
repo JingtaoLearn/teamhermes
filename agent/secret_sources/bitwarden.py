@@ -292,7 +292,7 @@ def install_bws(*, force: bool = False) -> Path:
 
     Returns the path to the installed executable.  Raises on any
     failure (network, checksum, extraction) — callers in the auto-install
-    path catch these; the user-facing ``hermes secrets bitwarden setup``
+    path catch these; the user-facing ``thm secrets bitwarden setup``
     surface lets them propagate so the wizard can show a clear error.
     """
     bin_dir = _hermes_bin_dir()
@@ -462,7 +462,7 @@ def fetch_bitwarden_secrets(
             "bws binary not available — auto-install failed and `bws` is "
             "not on PATH.  Install manually from "
             "https://github.com/bitwarden/sdk-sm/releases or re-run "
-            "`hermes secrets bitwarden setup`."
+            "`thm secrets bitwarden setup`."
         )
 
     secrets, warnings = _run_bws_list(bws, access_token, project_id, server_url)
@@ -590,14 +590,14 @@ def apply_bitwarden_secrets(
     if not access_token:
         result.error = (
             f"secrets.bitwarden.enabled is true but {access_token_env} is "
-            "not set.  Run `hermes secrets bitwarden setup`."
+            "not set.  Run `thm secrets bitwarden setup`."
         )
         return result
 
     if not project_id:
         result.error = (
             "secrets.bitwarden.project_id is empty.  "
-            "Run `hermes secrets bitwarden setup`."
+            "Run `thm secrets bitwarden setup`."
         )
         return result
 
@@ -606,7 +606,7 @@ def apply_bitwarden_secrets(
     if binary is None:
         result.error = (
             "bws binary not available and auto-install is disabled.  "
-            "Run `hermes secrets bitwarden setup` to install."
+            "Run `thm secrets bitwarden setup` to install."
         )
         return result
 

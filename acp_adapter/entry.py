@@ -8,7 +8,7 @@ Usage::
 
     python -m acp_adapter.entry
     # or
-    hermes acp
+    thm acp
     # or
     thm-acp
 """
@@ -185,7 +185,7 @@ def _run_setup_browser(assume_yes: bool = False) -> int:
     """Bootstrap agent-browser + Chromium.
 
     Routes through dep_ensure -> install.{sh,ps1} --ensure, sharing code
-    with ``hermes postinstall`` and the runtime lazy installer.
+    with ``thm postinstall`` and the runtime lazy installer.
 
     Returns 0 on success, 1 on failure.
     """

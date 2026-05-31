@@ -157,10 +157,10 @@ class TestHandleUpdateCommand:
         """_resolve_hermes_bin returns argv parts from shutil.which when available."""
         from gateway.run import _resolve_hermes_bin
 
-        with patch("shutil.which", return_value="/custom/path/hermes"):
+        with patch("shutil.which", return_value="/custom/path/thm"):
             result = _resolve_hermes_bin()
 
-        assert result == ["/custom/path/hermes"]
+        assert result == ["/custom/path/thm"]
 
     @pytest.mark.asyncio
     async def test_resolve_hermes_bin_fallback(self):
@@ -203,7 +203,7 @@ class TestHandleUpdateCommand:
 
         with patch("gateway.run._hermes_home", hermes_home), \
              patch("gateway.run.__file__", fake_file), \
-             patch("shutil.which", side_effect=lambda x: "/usr/bin/hermes" if x == "hermes" else "/usr/bin/setsid"), \
+             patch("shutil.which", side_effect=lambda x: "/usr/bin/thm" if x == "thm" else "/usr/bin/setsid"), \
              patch("subprocess.Popen"):
             result = await runner._handle_update_command(event)
 
@@ -236,7 +236,7 @@ class TestHandleUpdateCommand:
 
         with patch("gateway.run._hermes_home", hermes_home), \
              patch("gateway.run.__file__", fake_file), \
-             patch("shutil.which", side_effect=lambda x: "/usr/bin/hermes" if x == "hermes" else "/usr/bin/setsid"), \
+             patch("shutil.which", side_effect=lambda x: "/usr/bin/thm" if x == "thm" else "/usr/bin/setsid"), \
              patch("subprocess.Popen"):
             await runner._handle_update_command(event)
 
@@ -290,8 +290,8 @@ class TestHandleUpdateCommand:
         mock_popen = MagicMock()
 
         def which_no_setsid(x):
-            if x == "hermes":
-                return "/usr/bin/hermes"
+            if x == "thm":
+                return "/usr/bin/thm"
             if x == "setsid":
                 return None
             return None

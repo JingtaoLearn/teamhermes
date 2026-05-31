@@ -575,7 +575,7 @@ def test_cli_register_includes_node_subcommand():
     import argparse
     from plugins.google_meet.cli import register_cli
 
-    parser = argparse.ArgumentParser(prog="hermes meet")
+    parser = argparse.ArgumentParser(prog="thm meet")
     register_cli(parser)
 
     # Parse a known-good node invocation to prove the subtree is wired.
@@ -588,7 +588,7 @@ def test_cli_join_accepts_mode_and_node_flags():
     import argparse
     from plugins.google_meet.cli import register_cli
 
-    parser = argparse.ArgumentParser(prog="hermes meet")
+    parser = argparse.ArgumentParser(prog="thm meet")
     register_cli(parser)
 
     ns = parser.parse_args([
@@ -603,7 +603,7 @@ def test_cli_say_subcommand_exists():
     import argparse
     from plugins.google_meet.cli import register_cli
 
-    parser = argparse.ArgumentParser(prog="hermes meet")
+    parser = argparse.ArgumentParser(prog="thm meet")
     register_cli(parser)
 
     ns = parser.parse_args(["say", "hello team", "--node", "my-mac"])
@@ -729,7 +729,7 @@ def test_cli_install_subcommand_is_registered():
     import argparse
     from plugins.google_meet.cli import register_cli
 
-    parser = argparse.ArgumentParser(prog="hermes meet")
+    parser = argparse.ArgumentParser(prog="thm meet")
     register_cli(parser)
 
     ns = parser.parse_args(["install"])
@@ -742,7 +742,7 @@ def test_cli_install_flags_parse():
     import argparse
     from plugins.google_meet.cli import register_cli
 
-    parser = argparse.ArgumentParser(prog="hermes meet")
+    parser = argparse.ArgumentParser(prog="thm meet")
     register_cli(parser)
 
     ns = parser.parse_args(["install", "--realtime", "--yes"])

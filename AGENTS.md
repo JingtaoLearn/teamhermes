@@ -157,7 +157,7 @@ All slash commands are defined in a central `COMMAND_REGISTRY` list of `CommandD
 - **Gateway** — `GATEWAY_KNOWN_COMMANDS` frozenset for hook emission, `resolve_command()` for dispatch
 - **Gateway help** — `gateway_help_lines()` generates `/help` output
 - **Telegram** — `telegram_bot_commands()` generates the BotCommand menu
-- **Slack** — `slack_subcommand_map()` generates `/hermes` subcommand routing
+- **Slack** — `slack_subcommand_map()` generates `/thm` subcommand routing
 - **Autocomplete** — `COMMANDS` flat dict feeds `SlashCommandCompleter`
 - **CLI help** — `COMMANDS_BY_CATEGORY` dict feeds `show_help()`
 
@@ -502,7 +502,7 @@ can:
 - Register new tools via `ctx.register_tool(...)`
 - Register CLI subcommands via `ctx.register_cli_command(...)` — the
   plugin's argparse tree is wired into `thm` at startup so
-  `hermes <pluginname> <subcmd>` works with no change to `main.py`
+  `thm <pluginname> <subcmd>` works with no change to `main.py`
 
 Hooks are invoked from `model_tools.py` (pre/post tool) and `run_agent.py`
 (lifecycle). **Discovery timing pitfall:** `discover_plugins()` only runs
@@ -523,7 +523,7 @@ and is orchestrated by `agent/memory_manager.py`. Lifecycle hooks include
 
 **CLI commands via `plugins/memory/<name>/cli.py`:** if a memory plugin
 defines `register_cli(subparser)`, `discover_plugin_cli_commands()` finds
-it at argparse setup time and wires it into `hermes <plugin>`. The
+it at argparse setup time and wires it into `thm <plugin>`. The
 framework only exposes CLI commands for the **currently active** memory
 provider (read from `memory.provider` in config.yaml), so disabled
 providers don't clutter `thm --help`.
@@ -540,7 +540,7 @@ built-in memory providers under `plugins/memory/` is closed. New memory
 backends must ship as **standalone plugin repos** that users install
 into `~/.teamhermes/plugins/` (or via pip entry points) — they implement
 the same `MemoryProvider` ABC, register through the same discovery
-path, and integrate via `hermes memory setup` / `post_setup()` without
+path, and integrate via `thm memory setup` / `post_setup()` without
 landing in this tree. PRs that add a new directory under
 `plugins/memory/` will be closed with a pointer to publish the
 provider as its own repo. Existing in-tree providers stay; bug fixes

@@ -209,7 +209,7 @@ def mask_secret(
     """Mask a secret for display, preserving ``head`` and ``tail`` characters.
 
     Canonical helper for display-time redaction across TeamHermes — used by
-    ``thm config``, ``thm status``, ``hermes dump``, and anywhere
+    ``thm config``, ``thm status``, ``thm dump``, and anywhere
     a secret needs to be shown truncated for debuggability while still
     keeping the bulk hidden.
 

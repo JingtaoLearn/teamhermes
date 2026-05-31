@@ -3534,7 +3534,7 @@ def resolve_provider_client(
         if client is None:
             logger.warning(
                 "resolve_provider_client: azure-foundry requested but "
-                "runtime resolution failed (run: hermes doctor for "
+                "runtime resolution failed (run: thm doctor for "
                 "diagnostics)"
             )
             return None, None

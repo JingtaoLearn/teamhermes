@@ -57,7 +57,7 @@ Standalone memory plugins:
 
 - Implement the same `MemoryProvider` ABC (`agent/memory_provider.py`) — `sync_turn`, `prefetch`, `shutdown`, and optionally `post_setup(hermes_home, config)` for setup-wizard integration
 - Use the same discovery system — `discover_memory_providers()` picks them up from user/project plugin directories and pip entry points
-- Integrate with `hermes memory setup` via `post_setup()` — no need to touch core code
+- Integrate with `thm memory setup` via `post_setup()` — no need to touch core code
 - Can register their own CLI subcommands via `register_cli(subparser)` in a `cli.py` file
 - Get all the same lifecycle hooks and config plumbing as in-tree providers
 
@@ -111,10 +111,10 @@ echo "OPENROUTER_API_KEY=***" >> ~/.teamhermes/.env
 ```bash
 # Symlink for global access
 mkdir -p ~/.local/bin
-ln -sf "$(pwd)/venv/bin/hermes" ~/.local/bin/hermes
+ln -sf "$(pwd)/venv/bin/thm" ~/.local/bin/thm
 
 # Verify
-hermes doctor
+thm doctor
 thm chat -q "Hello"
 ```
 
@@ -360,7 +360,7 @@ prerequisites:                     # Optional legacy runtime requirements
   env_vars: [MY_API_KEY]           #   Backward-compatible alias for required env vars
   commands: [curl, jq]             #   Advisory only; does not hide the skill
 metadata:
-  hermes:
+  thm:
     tags: [Category, Subcategory, Keywords]
     related_skills: [other-skill-name]
     fallback_for_toolsets: [web]       # Optional — show only when toolset is unavailable
@@ -403,11 +403,11 @@ If the field is omitted or empty, the skill loads on all platforms (backward com
 
 Skills can declare conditions that control when they appear in the system prompt, based on which tools and toolsets are available in the current session. This is primarily used for **fallback skills** — alternatives that should only be shown when a primary tool is unavailable.
 
-Four fields are supported under `metadata.teamhermes`:
+Four fields are supported under `metadata.thm`:
 
 ```yaml
 metadata:
-  hermes:
+  thm:
     fallback_for_toolsets: [web]      # Show ONLY when these toolsets are unavailable
     requires_toolsets: [terminal]     # Show ONLY when these toolsets are available
     fallback_for_tools: [web_search]  # Show ONLY when these specific tools are unavailable
@@ -425,17 +425,17 @@ metadata:
 ```yaml
 # DuckDuckGo search — shown when Firecrawl (web toolset) is unavailable
 metadata:
-  hermes:
+  thm:
     fallback_for_toolsets: [web]
 
 # Smart home skill — only useful when terminal is available
 metadata:
-  hermes:
+  thm:
     requires_toolsets: [terminal]
 
 # Local browser fallback — shown when Browserbase is unavailable
 metadata:
-  hermes:
+  thm:
     fallback_for_toolsets: [browser]
 ```
 
@@ -616,7 +616,7 @@ that touches the OS, assume *any* platform can hit your code path.
        ...
    ```
 
-   If you specifically need the hermes wrapper (it has a stdlib fallback
+   If you specifically need the thm wrapper (it has a stdlib fallback
    for scaffold-phase imports before pip install finishes), use
    `gateway.status._pid_exists(pid)`. It calls `psutil.pid_exists` first
    and falls back to a hand-rolled `OpenProcess + WaitForSingleObject`
