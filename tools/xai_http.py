@@ -69,7 +69,7 @@ def hermes_xai_user_agent() -> str:
         from hermes_cli import __version__
     except Exception:
         __version__ = "unknown"
-    return f"Hermes-Agent/{__version__}"
+    return f"TeamHermes-Agent/{__version__}"
 
 
 def resolve_xai_http_credentials(*, force_refresh: bool = False) -> Dict[str, str]:
