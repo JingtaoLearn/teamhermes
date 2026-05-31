@@ -24,7 +24,7 @@ Hermes 还支持独立的 **Google Gemini（OAuth）** provider，使用与 Goog
 
 ```bash
 # 添加 Gemini API 密钥
-echo "GOOGLE_API_KEY=..." >> ~/.hermes/.env
+echo "GOOGLE_API_KEY=..." >> ~/.teamhermes/.env
 
 # 选择 Gemini 作为 provider
 hermes model
@@ -47,7 +47,7 @@ model:
 
 ## 配置
 
-运行 `hermes model` 后，`~/.hermes/config.yaml` 将包含：
+运行 `hermes model` 后，`~/.teamhermes/config.yaml` 将包含：
 
 ```yaml
 model:
@@ -56,7 +56,7 @@ model:
   base_url: https://generativelanguage.googleapis.com/v1beta
 ```
 
-`~/.hermes/.env` 中：
+`~/.teamhermes/.env` 中：
 
 ```bash
 GOOGLE_API_KEY=...
@@ -218,7 +218,7 @@ gateway 读取 `config.yaml` 并使用相同的 Gemini provider 配置。
 
 ### "Gemini native client requires an API key"
 
-Hermes 找不到可用的 API 密钥。请将以下任一项添加到 `~/.hermes/.env`：
+Hermes 找不到可用的 API 密钥。请将以下任一项添加到 `~/.teamhermes/.env`：
 
 ```bash
 GOOGLE_API_KEY=...
@@ -244,7 +244,7 @@ hermes model
 
 ### Gemma 模型未显示在 `hermes model` 中
 
-Hermes 默认可能会在选择器中隐藏低吞吐量的 Gemma 模型。如果你有意评估某个模型，请直接在 `~/.hermes/config.yaml` 中设置模型 ID。
+Hermes 默认可能会在选择器中隐藏低吞吐量的 Gemma 模型。如果你有意评估某个模型，请直接在 `~/.teamhermes/config.yaml` 中设置模型 ID。
 
 ### Gemma 出现 "429 quota exceeded"
 
@@ -252,7 +252,7 @@ Hermes 默认可能会在选择器中隐藏低吞吐量的 Gemma 模型。如果
 
 ### 已配置 OpenAI 兼容端点
 
-检查 `~/.hermes/.env` 中是否存在：
+检查 `~/.teamhermes/.env` 中是否存在：
 
 ```bash
 GEMINI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/

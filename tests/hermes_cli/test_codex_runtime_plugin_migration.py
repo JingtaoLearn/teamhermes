@@ -489,7 +489,7 @@ class TestMigrate:
 
     def test_expose_hermes_tools_writes_callback_mcp_entry(self, tmp_path):
         """When expose_hermes_tools=True (production default), an
-        [mcp_servers.hermes-tools] entry is written so codex calls back
+        [mcp_servers.teamhermes-tools] entry is written so codex calls back
         into Hermes for browser/web/delegate_task/vision/memory tools.
 
         This is the fix for 'all other tools that codex doesn't provide
@@ -499,7 +499,7 @@ class TestMigrate:
                          default_permission_profile=None,
                          expose_hermes_tools=True)
         text = (tmp_path / "config.toml").read_text()
-        assert "[mcp_servers.hermes-tools]" in text
+        assert "[mcp_servers.teamhermes-tools]" in text
         assert "hermes_tools_mcp_server" in text
         # Must include startup + tool timeouts so codex doesn't give up
         assert "startup_timeout_sec" in text
@@ -514,7 +514,7 @@ class TestMigrate:
                 default_permission_profile=None,
                 expose_hermes_tools=False)
         text = (tmp_path / "config.toml").read_text()
-        assert "[mcp_servers.hermes-tools]" not in text
+        assert "[mcp_servers.teamhermes-tools]" not in text
         assert "hermes_tools_mcp_server" not in text
 
     def test_dry_run_doesnt_write(self, tmp_path):
@@ -627,7 +627,7 @@ class TestMigrate:
         assert "user-above" in final
         assert "user-below" in final
         # And our managed block is still there with the new content
-        assert "[mcp_servers.hermes-mcp]" in final
+        assert "[mcp_servers.teamhermes-mcp]" in final
 
     def test_skipped_keys_reported(self, tmp_path):
         report = migrate({
@@ -818,8 +818,8 @@ class TestHermesHomeLeakGuard:
         )
 
     def test_tempdir_detector_accepts_real_hermes_home(self):
-        assert not _looks_like_test_tempdir("/Users/alice/.hermes")
-        assert not _looks_like_test_tempdir("/home/bob/.hermes")
+        assert not _looks_like_test_tempdir("/Users/alice/.teamhermes")
+        assert not _looks_like_test_tempdir("/home/bob/.teamhermes")
         assert not _looks_like_test_tempdir("/opt/hermes")
         assert not _looks_like_test_tempdir("")
 
@@ -844,7 +844,7 @@ class TestHermesHomeLeakGuard:
         # We can't easily create one in the test, so just use a stable path
         # outside any tempdir-detector needle. The detector checks for tempdir
         # markers, not for path existence.
-        real_path = "/Users/alice/.hermes"
+        real_path = "/Users/alice/.teamhermes"
         monkeypatch.setenv("HERMES_HOME", real_path)
         entry = _build_hermes_tools_mcp_entry()
         env = entry.get("env", {})

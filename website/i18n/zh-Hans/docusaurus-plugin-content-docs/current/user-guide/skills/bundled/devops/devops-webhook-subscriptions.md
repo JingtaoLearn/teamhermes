@@ -46,7 +46,7 @@ hermes gateway setup
 按照提示启用 webhook、设置端口并配置全局 HMAC 密钥。
 
 ### 选项 2：手动配置
-在 `~/.hermes/config.yaml` 中添加：
+在 `~/.teamhermes/config.yaml` 中添加：
 ```yaml
 platforms:
   webhook:
@@ -58,7 +58,7 @@ platforms:
 ```
 
 ### 选项 3：环境变量
-在 `~/.hermes/.env` 中添加：
+在 `~/.teamhermes/.env` 中添加：
 ```bash
 WEBHOOK_ENABLED=true
 WEBHOOK_PORT=8644
@@ -201,11 +201,11 @@ hermes webhook subscribe antenna-matches \
 - 每个订阅自动生成 HMAC-SHA256 密钥（也可通过 `--secret` 自行提供）
 - webhook 适配器对每个传入的 POST 请求验证签名
 - `config.yaml` 中的静态路由不会被动态订阅覆盖
-- 订阅持久化保存至 `~/.hermes/webhook_subscriptions.json`
+- 订阅持久化保存至 `~/.teamhermes/webhook_subscriptions.json`
 
 ## 工作原理
 
-1. `hermes webhook subscribe` 写入 `~/.hermes/webhook_subscriptions.json`
+1. `hermes webhook subscribe` 写入 `~/.teamhermes/webhook_subscriptions.json`
 2. webhook 适配器在每次收到请求时热重载该文件（基于 mtime 检测，开销可忽略不计）
 3. 当匹配路由的 POST 请求到达时，适配器格式化 prompt 并触发 agent 运行
 4. agent 的响应被投递到已配置的目标（Telegram、Discord、GitHub comment 等）
@@ -216,7 +216,7 @@ hermes webhook subscribe antenna-matches \
 
 1. **gateway 是否在运行？** 通过 `systemctl --user status hermes-gateway` 或 `ps aux | grep gateway` 检查
 2. **webhook 服务器是否在监听？** `curl http://localhost:8644/health` 应返回 `{"status": "ok"}`
-3. **查看 gateway 日志：** `grep webhook ~/.hermes/logs/gateway.log | tail -20`
+3. **查看 gateway 日志：** `grep webhook ~/.teamhermes/logs/gateway.log | tail -20`
 4. **签名不匹配？** 验证服务中的 secret 与 `hermes webhook list` 返回的一致。GitHub 发送 `X-Hub-Signature-256`，GitLab 发送 `X-Gitlab-Token`。
 5. **防火墙/NAT？** webhook URL 必须能从该服务访问到。本地开发时，请使用隧道工具（ngrok、cloudflared）。
 6. **事件类型错误？** 检查 `--events` 过滤器是否与服务发送的事件匹配。使用 `hermes webhook test <name>` 验证路由是否正常工作。

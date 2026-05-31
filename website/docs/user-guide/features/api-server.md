@@ -18,7 +18,7 @@ Hermes itself needs a configured provider and tool backends for the API server t
 
 ### 1. Enable the API server
 
-Add to `~/.hermes/.env`:
+Add to `~/.teamhermes/.env`:
 
 ```bash
 API_SERVER_ENABLED=true
@@ -462,13 +462,13 @@ hermes profile create bob
 
 # Configure each profile's API server on a different port. API_SERVER_* are env
 # vars (not config.yaml keys), so write them to each profile's .env:
-cat >> ~/.hermes/profiles/alice/.env <<EOF
+cat >> ~/.teamhermes/profiles/alice/.env <<EOF
 API_SERVER_ENABLED=true
 API_SERVER_PORT=8643
 API_SERVER_KEY=alice-secret
 EOF
 
-cat >> ~/.hermes/profiles/bob/.env <<EOF
+cat >> ~/.teamhermes/profiles/bob/.env <<EOF
 API_SERVER_ENABLED=true
 API_SERVER_PORT=8644
 API_SERVER_KEY=bob-secret

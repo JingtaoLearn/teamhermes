@@ -52,7 +52,7 @@ class TestDiscovery:
         from hermes_cli import plugins as plugins_mod
 
         # Isolated HERMES_HOME so we don't read the developer's config.yaml.
-        home = tmp_path / ".hermes"
+        home = tmp_path / ".teamhermes"
         home.mkdir()
         monkeypatch.setenv("HERMES_HOME", str(home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)

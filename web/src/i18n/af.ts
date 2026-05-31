@@ -285,8 +285,8 @@ export const af: Translations = {
     providersHint:
       "Skryf memory.provider (leeg = ingebou) en context.engine na config.yaml. Tree volgende sessie in werking.",
     refreshDashboard: "Herskandeer dashboard-uitbreidings",
-    removeConfirm: "Verwyder hierdie inprop uit ~/.hermes/plugins/?",
-    removeHint: "Slegs gebruiker-geïnstalleerde inproppe onder ~/.hermes/plugins kan verwyder word.",
+    removeConfirm: "Verwyder hierdie inprop uit ~/.teamhermes/plugins/?",
+    removeHint: "Slegs gebruiker-geïnstalleerde inproppe onder ~/.teamhermes/plugins kan verwyder word.",
     rescanHeading: "SPA-inprop-register",
     rescanHint: "Herskandeer ná die byvoeg van lêers op skyf sodat die dashboard-sybalk nuwe manifeste optel.",
     runtimeHeading: "Gateway-looptyd (YAML-inproppe)",
@@ -308,7 +308,7 @@ export const af: Translations = {
     all: "Alles",
     categories: "Kategorieë",
     filters: "Filters",
-    noSkills: "Geen vaardighede gevind nie. Vaardighede word gelaai uit ~/.hermes/skills/",
+    noSkills: "Geen vaardighede gevind nie. Vaardighede word gelaai uit ~/.teamhermes/skills/",
     noSkillsMatch: "Geen vaardighede stem ooreen met jou soektog of filter nie.",
     skillCount: "{count} vaardighe{s}id",
     resultCount: "{count} resulta{s}at",
@@ -322,7 +322,7 @@ export const af: Translations = {
   },
 
   config: {
-    configPath: "~/.hermes/config.yaml",
+    configPath: "~/.teamhermes/config.yaml",
     filters: "Filters",
     sections: "Afdelings",
     exportConfig: "Voer konfigurasie uit as JSON",

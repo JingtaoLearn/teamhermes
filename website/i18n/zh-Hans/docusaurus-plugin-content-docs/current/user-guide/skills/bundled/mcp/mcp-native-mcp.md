@@ -60,7 +60,7 @@ uv pip install mcp
 
 ## 快速开始
 
-在 `~/.hermes/config.yaml` 的 `mcp_servers` 键下添加 MCP 服务器：
+在 `~/.teamhermes/config.yaml` 的 `mcp_servers` 键下添加 MCP 服务器：
 
 ```yaml
 mcp_servers:
@@ -126,7 +126,7 @@ mcp_servers:
 
 Hermes Agent 启动时，`discover_mcp_tools()` 在工具初始化期间被调用：
 
-1. 从 `~/.hermes/config.yaml` 读取 `mcp_servers`
+1. 从 `~/.teamhermes/config.yaml` 读取 `mcp_servers`
 2. 对每个服务器，在专用后台事件循环中生成连接
 3. 初始化 MCP 会话并调用 `list_tools()` 发现可用工具
 4. 在 Hermes 工具注册表中注册每个工具
@@ -232,7 +232,7 @@ pip install mcp
 
 ### "No MCP servers configured"
 
-`~/.hermes/config.yaml` 中没有 `mcp_servers` 键，或该键为空。请至少添加一个服务器。
+`~/.teamhermes/config.yaml` 中没有 `mcp_servers` 键，或该键为空。请至少添加一个服务器。
 
 ### "Failed to connect to MCP server 'X'"
 

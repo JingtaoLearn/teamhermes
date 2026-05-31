@@ -152,8 +152,8 @@ You can switch providers at any time with `hermes model` — no lock-in. For a f
 
 Hermes separates secrets from normal config:
 
-- **Secrets and tokens** → `~/.hermes/.env`
-- **Non-secret settings** → `~/.hermes/config.yaml`
+- **Secrets and tokens** → `~/.teamhermes/.env`
+- **Non-secret settings** → `~/.teamhermes/config.yaml`
 
 The easiest way to set values correctly is through the CLI:
 
@@ -271,8 +271,8 @@ hermes config set terminal.backend ssh       # Remote server
 
 ```bash
 # From the Hermes install directory (the curl installer placed it at
-# ~/.hermes/hermes-agent on Linux/macOS or %LOCALAPPDATA%\hermes\hermes-agent on Windows):
-cd ~/.hermes/hermes-agent
+# ~/.teamhermes/hermes-agent on Linux/macOS or %LOCALAPPDATA%\hermes\hermes-agent on Windows):
+cd ~/.teamhermes/hermes-agent
 uv pip install -e ".[voice]"
 # Includes faster-whisper for free local speech-to-text
 ```
@@ -291,7 +291,7 @@ Or use `/skills` inside a chat session.
 ### MCP servers
 
 ```yaml
-# Add to ~/.hermes/config.yaml
+# Add to ~/.teamhermes/config.yaml
 mcp_servers:
   github:
     command: npx
@@ -308,7 +308,7 @@ ACP support ships with the standard `[all]` extras, so the curl installer alread
 hermes acp
 ```
 
-(If you installed without `[all]`, run `cd ~/.hermes/hermes-agent && uv pip install -e ".[acp]"` first.)
+(If you installed without `[all]`, run `cd ~/.teamhermes/hermes-agent && uv pip install -e ".[acp]"` first.)
 
 See [ACP Editor Integration](../user-guide/features/acp.md).
 

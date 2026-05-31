@@ -152,7 +152,7 @@ web:
 
 ### Self-hosted gateway (advanced)
 
-Running your own Nous-compatible gateway? Override endpoints in `~/.hermes/.env`:
+Running your own Nous-compatible gateway? Override endpoints in `~/.teamhermes/.env`:
 
 ```bash
 TOOL_GATEWAY_DOMAIN=your-domain.example.com

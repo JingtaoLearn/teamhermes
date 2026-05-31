@@ -4,7 +4,7 @@ Regression: the old implementation wrote ``hermes_conversation_<ts>.json``
 to the current working directory (CWD). Users who ran /save expected the
 file to be discoverable via ``hermes sessions browse``, but CWD-resident
 snapshots are not indexed in the state DB and are generally invisible.
-The fix writes snapshots under ``~/.hermes/sessions/saved/`` and prints
+The fix writes snapshots under ``~/.teamhermes/sessions/saved/`` and prints
 the absolute path plus the resume hint for the live session.
 """
 
@@ -22,7 +22,7 @@ import pytest
 
 @pytest.fixture
 def hermes_home(tmp_path, monkeypatch):
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".teamhermes"
     home.mkdir()
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     monkeypatch.setenv("HERMES_HOME", str(home))
@@ -44,7 +44,7 @@ def _make_stub_cli(history):
 
 
 def test_save_conversation_writes_under_hermes_home(hermes_home, tmp_path, monkeypatch, capsys):
-    """Snapshot must land under ~/.hermes/sessions/saved/, not CWD."""
+    """Snapshot must land under ~/.teamhermes/sessions/saved/, not CWD."""
     # Change CWD to a different directory to prove the file does NOT go there.
     work = tmp_path / "somewhere-else"
     work.mkdir()
@@ -68,7 +68,7 @@ def test_save_conversation_writes_under_hermes_home(hermes_home, tmp_path, monke
     cwd_leak = list(work.glob("hermes_conversation_*.json"))
     assert not cwd_leak, f"snapshot leaked to CWD: {cwd_leak}"
 
-    # File MUST be under ~/.hermes/sessions/saved/
+    # File MUST be under ~/.teamhermes/sessions/saved/
     saved_dir = hermes_home / "sessions" / "saved"
     assert saved_dir.is_dir(), "expected saved/ subdirectory to be created"
     files = list(saved_dir.glob("hermes_conversation_*.json"))

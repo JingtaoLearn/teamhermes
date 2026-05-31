@@ -16,8 +16,8 @@ This repo is a security-oriented hard fork. Upstream is `https://github.com/Nous
 | Package metadata | `pyproject.toml`: name `hermes-agent` → `teamhermes`; self-referencing extras updated | 1 |
 | Console scripts | `hermes` / `hermes-agent` / `hermes-acp` → `thm` / `thm-agent` / `thm-acp` | 1 (pyproject) + downstream refs |
 | Argparse `prog=` | `prog="hermes"` → `prog="thm"`, `prog="hermes-acp"` → `prog="thm-acp"` | ~7 |
-| Default home dir | Path literals `.hermes` → `.teamhermes` (`Path.home() / ".hermes"`, `~/.hermes/...`, `${HOME}/.hermes`) | ~890 |
-| Home dir artifacts | `.hermes_history` → `.teamhermes_history`, `.hermes_build_sha` → `.teamhermes_build_sha`, `.hermes_sync.*` → `.teamhermes_sync.*` | 12 |
+| Default home dir | Path literals `.teamhermes` → `.teamhermes` (`Path.home() / ".teamhermes"`, `~/.teamhermes/...`, `${HOME}/.teamhermes`) | ~890 |
+| Home dir artifacts | `.teamhermes_history` → `.teamhermes_history`, `.teamhermes_build_sha` → `.teamhermes_build_sha`, `.teamhermes_sync.*` → `.teamhermes_sync.*` | 12 |
 | Brand string (uppercase) | Standalone `Hermes` → `TeamHermes` in user-facing strings/docs/i18n/comments/docstrings | ~1,444 |
 | CLI command in text | `hermes <subcommand>` → `thm <subcommand>` in docs, shell scripts, Python strings, docker scripts | ~997 |
 | Skin engine | All 5 built-in skins: agent_name + welcome + response_label → TeamHermes | 1 file |

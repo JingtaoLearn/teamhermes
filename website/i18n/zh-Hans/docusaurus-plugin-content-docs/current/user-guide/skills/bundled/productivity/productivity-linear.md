@@ -57,7 +57,7 @@ curl -s -X POST https://api.linear.app/graphql \
 如需无需手写 GraphQL 的快速单行命令，此 skill 提供了一个基于标准库的 Python CLI，路径为 `scripts/linear_api.py`。零依赖，使用相同的认证方式（读取 `LINEAR_API_KEY`）。
 
 ```bash
-SCRIPT=$(dirname "$(find ~/.hermes -path '*skills/productivity/linear/scripts/linear_api.py' 2>/dev/null | head -1)")/linear_api.py
+SCRIPT=$(dirname "$(find ~/.teamhermes -path '*skills/productivity/linear/scripts/linear_api.py' 2>/dev/null | head -1)")/linear_api.py
 
 python3 "$SCRIPT" whoami
 python3 "$SCRIPT" list-teams
