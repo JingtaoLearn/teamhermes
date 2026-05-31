@@ -731,7 +731,7 @@ Plugin API routes bypass session-token authentication since the dashboard server
 
 #### Accessing TeamHermes internals
 
-Backend routes run inside the dashboard process, so they can import from the hermes-agent codebase directly:
+Backend routes run inside the dashboard process, so they can import from the teamhermes codebase directly:
 
 ```python
 from fastapi import APIRouter

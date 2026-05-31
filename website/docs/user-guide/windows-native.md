@@ -43,13 +43,13 @@ No admin rights required. The installer goes to `%LOCALAPPDATA%\hermes\` and add
 | `-NoVenv` | off | Skip venv creation (advanced — you manage Python yourself) |
 | `-SkipSetup` | off | Skip the post-install `thm setup` wizard |
 | `-HermesHome` | `%LOCALAPPDATA%\hermes` | Override data directory |
-| `-InstallDir` | `%LOCALAPPDATA%\hermes\hermes-agent` | Override code location |
+| `-InstallDir` | `%LOCALAPPDATA%\hermes\teamhermes` | Override code location |
 
 The installer auto-retries flaky git fetches and strips BOM from any downloaded `install.ps1` payload, so a UTF-8 BOM picked up during HTTP transit no longer breaks the `[scriptblock]::Create((irm ...))` form.
 
 ### Desktop installer (alternative)
 
-A thin GUI installer is also available — useful if you'd rather double-click an `.exe` than open PowerShell. Download TeamHermes Desktop, run the installer, and on first launch the GUI calls `install.ps1` under the hood to provision Python (via `uv`), Node, PortableGit, and the rest of the dependency bootstrap described below. After the first run, the desktop app and the PowerShell-installed `thm` CLI share the same `%LOCALAPPDATA%\hermes\hermes-agent` install and `%USERPROFILE%\.teamhermes` data directory — switch between the GUI and the CLI freely.
+A thin GUI installer is also available — useful if you'd rather double-click an `.exe` than open PowerShell. Download TeamHermes Desktop, run the installer, and on first launch the GUI calls `install.ps1` under the hood to provision Python (via `uv`), Node, PortableGit, and the rest of the dependency bootstrap described below. After the first run, the desktop app and the PowerShell-installed `thm` CLI share the same `%LOCALAPPDATA%\hermes\teamhermes` install and `%USERPROFILE%\.teamhermes` data directory — switch between the GUI and the CLI freely.
 
 Use the desktop installer when you want a familiar Windows install experience or you're handing TeamHermes to a non-developer; use the PowerShell one-liner when you're already in a terminal.
 
@@ -75,7 +75,7 @@ Top-to-bottom, in order:
 2. **Installs Python 3.11** via `uv`. No existing Python needed.
 3. **Installs Node.js 22** (winget if available, else a portable Node tarball unpacked under `%LOCALAPPDATA%\hermes\node`). Used for the browser tool and the WhatsApp bridge.
 4. **Installs portable Git** — if `git` is already on PATH the installer uses it; otherwise it downloads a trimmed, self-contained **PortableGit** (~45 MB, from the official `git-for-windows` release) to `%LOCALAPPDATA%\hermes\git`. No admin, no Windows installer registry, no interference with anything else on the box.
-5. **Clones the repo** to `%LOCALAPPDATA%\hermes\hermes-agent` and creates a virtualenv inside it.
+5. **Clones the repo** to `%LOCALAPPDATA%\hermes\teamhermes` and creates a virtualenv inside it.
 6. **Tiered `uv pip install`** — tries `.[all]` first, falls back to progressively smaller sets (`[messaging,dashboard,ext]` → `[messaging]` → `.`) if a `git+https` dep flakes on rate-limited GitHub. Prevents "single flake drops you to a bare install" failure mode.
 7. **Auto-installs messaging SDKs** keyed off `.env` — if `TELEGRAM_BOT_TOKEN` / `DISCORD_BOT_TOKEN` / `SLACK_BOT_TOKEN` / `SLACK_APP_TOKEN` / `WHATSAPP_ENABLED` are present, runs `python -m ensurepip --upgrade` and targeted `pip install` calls so each platform's SDK is actually importable.
 8. **Sets `HERMES_GIT_BASH_PATH`** to the resolved `bash.exe` so TeamHermes finds it deterministically in fresh shells.
@@ -206,7 +206,7 @@ Services require admin rights to install and tie the gateway's lifecycle to mach
 
 | Path | Contents |
 |---|---|
-| `%LOCALAPPDATA%\hermes\hermes-agent\` | Git checkout + venv. Safe to `Remove-Item -Recurse` and reinstall. |
+| `%LOCALAPPDATA%\hermes\teamhermes\` | Git checkout + venv. Safe to `Remove-Item -Recurse` and reinstall. |
 | `%LOCALAPPDATA%\hermes\git\` | PortableGit (only if the installer provisioned it). |
 | `%LOCALAPPDATA%\hermes\node\` | Portable Node.js (only if the installer provisioned it). |
 | `%LOCALAPPDATA%\hermes\bin\` | `hermes.cmd` shim, added to User PATH. |
@@ -266,7 +266,7 @@ From PowerShell:
 thm  uninstall
 ```
 
-That's the clean path — removes the schtasks entry, Startup folder shortcut, `hermes.cmd` shim, deletes `%LOCALAPPDATA%\hermes\hermes-agent\`, and trims the User PATH. It leaves `%USERPROFILE%\.teamhermes\` alone (your config, auth, skills, sessions, logs) in case you're reinstalling.
+That's the clean path — removes the schtasks entry, Startup folder shortcut, `hermes.cmd` shim, deletes `%LOCALAPPDATA%\hermes\teamhermes\`, and trims the User PATH. It leaves `%USERPROFILE%\.teamhermes\` alone (your config, auth, skills, sessions, logs) in case you're reinstalling.
 
 To nuke everything:
 

@@ -437,7 +437,7 @@ Configure in `~/.teamhermes/config.yaml` under your gateway's settings. See the 
 **Solution:**
 ```bash
 # Install core messaging gateway dependencies
-pip install "hermes-agent[messaging]"  # Telegram, Discord, Slack, and shared gateway deps
+pip install "teamhermes[messaging]"  # Telegram, Discord, Slack, and shared gateway deps
 
 # Check for port conflicts
 lsof -i :8080
@@ -797,7 +797,7 @@ The imported profile will have all config, memories, sessions, and skills from t
 
 **Manual fallback (rsync):** If you prefer to copy files directly, exclude the code repo:
 ```bash
-rsync -av --exclude='hermes-agent' ~/.teamhermes/ newmachine:~/.teamhermes/
+rsync -av --exclude='teamhermes' ~/.teamhermes/ newmachine:~/.teamhermes/
 ```
 
 :::tip

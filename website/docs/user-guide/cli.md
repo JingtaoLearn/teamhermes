@@ -36,7 +36,7 @@ thm  chat --provider openrouter  # Force OpenRouter
 thm  chat --toolsets "web,terminal,skills"
 
 # Start with one or more skills preloaded
-thm  -s hermes-agent-dev,github-auth
+thm  -s teamhermes-dev,github-auth
 thm  chat -s github-pr-workflow -q "open a draft PR"
 
 # Resume previous sessions
@@ -152,7 +152,7 @@ You can define custom commands that run shell commands instantly without invokin
 quick_commands:
   status:
     type: exec
-    command: systemctl status hermes-agent
+    command: systemctl status teamhermes
   gpu:
     type: exec
     command: nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader
@@ -168,7 +168,7 @@ Then type `/status`, `/gpu`, or `/restart` in any chat. See the [Configuration g
 If you already know which skills you want active for the session, pass them at launch time:
 
 ```bash
-thm  -s hermes-agent-dev,github-auth
+thm  -s teamhermes-dev,github-auth
 thm  chat -s github-pr-workflow -s github-auth
 ```
 

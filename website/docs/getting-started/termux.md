@@ -81,7 +81,7 @@ Why these packages?
 
 ```bash
 git clone --recurse-submodules https://github.com/NousResearch/hermes-agent.git
-cd hermes-agent
+cd teamhermes
 ```
 
 If you already cloned without submodules:

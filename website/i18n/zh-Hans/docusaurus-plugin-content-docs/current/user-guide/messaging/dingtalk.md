@@ -44,7 +44,7 @@ group_sessions_per_user: false
 安装所需的 Python 包：
 
 ```bash
-pip install "hermes-agent[dingtalk]"
+pip install "teamhermes[dingtalk]"
 ```
 
 或单独安装：

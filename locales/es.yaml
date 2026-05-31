@@ -98,7 +98,7 @@ gateway:
     upload_failed:         "✗ No se pudo subir el informe de depuración: {error}"
     header:                "**Informe de depuración subido:**"
     auto_delete:           "⏱ Los pastes se eliminarán automáticamente en 6 horas."
-    full_logs_hint:        "Para subir registros completos, usa `hermes debug share` desde la CLI."
+    full_logs_hint:        "Para subir registros completos, usa `thm debug share` desde la CLI."
     share_hint:            "Comparte estos enlaces con el equipo de TeamHermes para obtener soporte."
 
   deny:

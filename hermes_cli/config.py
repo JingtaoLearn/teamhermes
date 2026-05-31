@@ -273,7 +273,7 @@ def get_managed_update_command() -> Optional[str]:
     """Return the preferred upgrade command for a managed install."""
     managed_system = get_managed_system()
     if managed_system == "Homebrew":
-        return "brew upgrade hermes-agent"
+        return "brew upgrade teamhermes"
     if managed_system == "NixOS":
         return _NIX_UPDATE_MSG
     return None
@@ -324,15 +324,15 @@ def recommended_update_command_for_method(method: str) -> str:
     if method == "nixos":
         return _NIX_UPDATE_MSG
     if method == "homebrew":
-        return "brew upgrade hermes-agent"
+        return "brew upgrade teamhermes"
     if method == "docker":
         return "docker pull nousresearch/hermes-agent:latest"
     if method == "pip":
         import shutil
         uv = shutil.which("uv")
         if uv:
-            return "uv pip install --upgrade hermes-agent"
-        return "pip install --upgrade hermes-agent"
+            return "uv pip install --upgrade teamhermes"
+        return "pip install --upgrade teamhermes"
     return "thm update"
 
 
@@ -369,7 +369,7 @@ pulling a fresh image and restarting your container instead:
 
   docker pull nousresearch/hermes-agent:latest
   # then restart whatever started the container, e.g.:
-  docker compose up -d --force-recreate hermes-agent
+  docker compose up -d --force-recreate teamhermes
   # or, for ad-hoc runs, exit the current container and `docker run` again
 
 Verify the new version after restart:
@@ -417,7 +417,7 @@ def format_managed_message(action: str = "modify this TeamHermes installation") 
             f"Cannot {action}: this TeamHermes installation is managed by Homebrew "
             f"(HERMES_MANAGED={env_hint}).\n"
             "Use:\n"
-            "  brew upgrade hermes-agent"
+            "  brew upgrade teamhermes"
         )
 
     return (
@@ -467,7 +467,7 @@ def get_container_exec_info() -> Optional[dict]:
     # All other exceptions (PermissionError, malformed data, etc.) propagate
 
     backend = info.get("backend", "docker")
-    container_name = info.get("container_name", "hermes-agent")
+    container_name = info.get("container_name", "teamhermes")
     exec_user = info.get("exec_user", "hermes")
     hermes_bin = info.get("hermes_bin", "/data/current-package/bin/hermes")
 
@@ -1750,7 +1750,7 @@ DEFAULT_CONFIG = {
         #     with the active virtualenv/conda env's python, so project deps
         #     (pandas, torch, project packages) and relative paths resolve.
         #   strict            — scripts run in an isolated temp directory with
-        #     hermes-agent's own python (sys.executable). Maximum isolation
+        #     teamhermes's own python (sys.executable). Maximum isolation
         #     and reproducibility; project deps and relative paths won't work.
         # Env scrubbing (strips *_API_KEY, *_TOKEN, *_SECRET, ...) and the
         # tool whitelist apply identically in both modes.
@@ -1777,7 +1777,7 @@ DEFAULT_CONFIG = {
     # Remotely-hosted model catalog manifest.  When enabled, the CLI fetches
     # curated model lists for OpenRouter and Nous Portal from this URL,
     # falling back to the in-repo snapshot on network failure.  Lets us
-    # update model picker lists without shipping a hermes-agent release.
+    # update model picker lists without shipping a teamhermes release.
     # The default URL is served by the docs site GitHub Pages deploy.
     "model_catalog": {
         "enabled": True,
@@ -3033,7 +3033,7 @@ OPTIONAL_ENV_VARS = {
         "advanced": True,
     },
     "API_SERVER_MODEL_NAME": {
-        "description": "Model name advertised on /v1/models. Defaults to the profile name (or 'hermes-agent' for the default profile). Useful for multi-user setups with OpenWebUI.",
+        "description": "Model name advertised on /v1/models. Defaults to the profile name (or 'teamhermes' for the default profile). Useful for multi-user setups with OpenWebUI.",
         "prompt": "API server model name",
         "url": None,
         "password": False,

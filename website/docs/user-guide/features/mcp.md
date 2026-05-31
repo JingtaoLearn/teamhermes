@@ -74,7 +74,7 @@ github       installed (disabled)   GitHub repo + PR tools
 
 Hit `Enter` on a row to install (and walk through any required credentials),
 enable, disable, or uninstall. Catalog entries are stored under
-`optional-mcps/` in the hermes-agent repo — presence in that directory means
+`optional-mcps/` in the teamhermes repo — presence in that directory means
 Nous approval. There is no community submission tier; entries are added by
 merging a PR.
 
@@ -124,7 +124,7 @@ reachable to refine.
 Installing a catalog entry runs whatever the manifest specifies — `git clone`,
 the entry's `bootstrap` commands (`pip install`, `npm install`, etc.), and
 ultimately the MCP server's own code. Manifests are gated by PR review into
-the hermes-agent repo, so Nous has reviewed each entry before it shipped —
+the teamhermes repo, so Nous has reviewed each entry before it shipped —
 **but you should still read the manifest before installing**, especially the
 `source:` field's repository, the `install.bootstrap:` commands, and any
 `transport.command:` invocation.

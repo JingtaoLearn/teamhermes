@@ -51,7 +51,7 @@ description: "与 TeamHermes Agent 的第一次对话——从安装到开始聊
 **方式 A — pip（最简单）：**
 
 ```bash
-pip install hermes-agent
+pip install teamhermes
 hermes postinstall     # 可选：安装 Node.js、浏览器、ripgrep、ffmpeg 并运行 setup
 ```
 
@@ -257,7 +257,7 @@ thm config set terminal.backend ssh       # 远程服务器
 
 ```bash
 # 在 TeamHermes 安装目录下运行（curl 安装器在 Linux/macOS 上将其放置于
-# ~/.teamhermes/hermes-agent，在 Windows 上为 %LOCALAPPDATA%\hermes\hermes-agent）：
+# ~/.teamhermes/hermes-agent，在 Windows 上为 %LOCALAPPDATA%\hermes\teamhermes）：
 cd ~/.teamhermes/hermes-agent
 uv pip install -e ".[voice]"
 # 包含 faster-whisper，用于免费的本地语音转文字

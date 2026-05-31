@@ -733,7 +733,7 @@ thm  debug share --local      # Print report to terminal (no upload)
 thm  backup [options]
 ```
 
-Create a zip archive of your TeamHermes configuration, skills, sessions, and data. The backup excludes the hermes-agent codebase itself.
+Create a zip archive of your TeamHermes configuration, skills, sessions, and data. The backup excludes the teamhermes codebase itself.
 
 | Option | Description |
 |--------|-------------|
@@ -747,7 +747,7 @@ The backup uses SQLite's `backup()` API for safe copying, so it works correctly 
 
 - `*.db-wal`, `*.db-shm`, `*.db-journal` — SQLite's WAL / shared-memory / journal sidecars. The `*.db` file already got a consistent snapshot via `sqlite3.backup()`; shipping the live sidecars alongside it would let a restore see a half-committed state.
 - `checkpoints/` — per-session trajectory caches. Hash-keyed and regenerated per session; wouldn't port cleanly to another install anyway.
-- The `hermes-agent` code itself (this is a user-data backup, not a repo snapshot).
+- The `teamhermes` code itself (this is a user-data backup, not a repo snapshot).
 
 ### Examples
 
@@ -1289,14 +1289,14 @@ thm  claw migrate --source /home/user/old-openclaw
 thm  dashboard [options]
 ```
 
-Launch the web dashboard — a browser-based UI for managing configuration, API keys, and monitoring sessions. Requires `pip install hermes-agent[web]` (FastAPI + Uvicorn). The embedded browser Chat tab requires `--tui` plus the `pty` extra. See [Web Dashboard](/user-guide/features/web-dashboard) for full documentation.
+Launch the web dashboard — a browser-based UI for managing configuration, API keys, and monitoring sessions. Requires `pip install teamhermes[web]` (FastAPI + Uvicorn). The embedded browser Chat tab requires `--tui` plus the `pty` extra. See [Web Dashboard](/user-guide/features/web-dashboard) for full documentation.
 
 | Option | Default | Description |
 |--------|---------|-------------|
 | `--port` | `9119` | Port to run the web server on |
 | `--host` | `127.0.0.1` | Bind address |
 | `--no-open` | — | Don't auto-open the browser |
-| `--tui` | off | Enable the in-browser Chat tab by running `thm  --tui` behind a PTY/WebSocket bridge. Requires `pip install 'hermes-agent[web,pty]'` and a POSIX PTY environment such as Linux, macOS, or WSL2. |
+| `--tui` | off | Enable the in-browser Chat tab by running `thm  --tui` behind a PTY/WebSocket bridge. Requires `pip install 'teamhermes[web,pty]'` and a POSIX PTY environment such as Linux, macOS, or WSL2. |
 | `--insecure` | off | Allow binding to non-localhost hosts. Exposes dashboard credentials on the network; use only behind trusted network controls. |
 | `--stop` | — | Stop running `thm dashboard` processes and exit. |
 | `--status` | — | List running `thm dashboard` processes and exit. |
@@ -1376,9 +1376,9 @@ thm  completion fish > ~/.config/fish/completions/hermes.fish
 thm  update [--check] [--backup] [--restart-gateway]
 ```
 
-Pulls the latest `hermes-agent` code and reinstalls dependencies in your venv, then re-runs the post-install hooks (MCP servers, skills sync, completion install). Safe to run on a live install.
+Pulls the latest `teamhermes` code and reinstalls dependencies in your venv, then re-runs the post-install hooks (MCP servers, skills sync, completion install). Safe to run on a live install.
 
-**pip installs:** `thm update` detects pip-based installations automatically — it queries PyPI for the latest release and runs `pip install --upgrade hermes-agent` instead of `git pull`. PyPI releases track tagged versions (major/minor releases), not every commit on `main`. Use `--check` to see if a newer PyPI release is available without installing.
+**pip installs:** `thm update` detects pip-based installations automatically — it queries PyPI for the latest release and runs `pip install --upgrade teamhermes` instead of `git pull`. PyPI releases track tagged versions (major/minor releases), not every commit on `main`. Use `--check` to see if a newer PyPI release is available without installing.
 
 | Option | Description |
 |--------|-------------|
@@ -1398,7 +1398,7 @@ Additional behavior:
 |---------|-------------|
 | `thm version` | Print version information. |
 | `thm update` | Pull latest changes and reinstall dependencies. |
-| `thm  postinstall` | Internal bootstrap. Runs once after `pip install hermes-agent` (or `thm update` on pip installs) to install non-Python dependencies that pip cannot provide — Node.js runtime, headless browser, ripgrep, ffmpeg — and then trigger `thm setup` if the profile has not been configured yet. Safe to re-run idempotently. |
+| `thm  postinstall` | Internal bootstrap. Runs once after `pip install teamhermes` (or `thm update` on pip installs) to install non-Python dependencies that pip cannot provide — Node.js runtime, headless browser, ripgrep, ffmpeg — and then trigger `thm setup` if the profile has not been configured yet. Safe to re-run idempotently. |
 | `thm  uninstall [--full] [--yes]` | Remove TeamHermes, optionally deleting all config/data. |
 
 ## See also

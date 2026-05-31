@@ -437,7 +437,7 @@ cat ~/.teamhermes/logs/gateway.log | tail -50
 **解决方案：**
 ```bash
 # 安装核心消息网关依赖项
-pip install "hermes-agent[messaging]"  # Telegram、Discord、Slack 及共享网关依赖
+pip install "teamhermes[messaging]"  # Telegram、Discord、Slack 及共享网关依赖
 
 # 检查端口冲突
 lsof -i :8080
@@ -796,7 +796,7 @@ thm profile import ./work-backup.tar.gz work
 
 **手动备选方案（rsync）：** 如果您倾向于直接复制文件，请排除代码仓库：
 ```bash
-rsync -av --exclude='hermes-agent' ~/.teamhermes/ newmachine:~/.teamhermes/
+rsync -av --exclude='teamhermes' ~/.teamhermes/ newmachine:~/.teamhermes/
 ```
 
 :::tip

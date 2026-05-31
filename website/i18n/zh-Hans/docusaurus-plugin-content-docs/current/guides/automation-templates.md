@@ -138,7 +138,7 @@ Report any gaps where code changed but docs didn't. If everything is in sync, re
 
 ```bash
 thm cron create "0 6 * * *" \
-  "Run a dependency security audit on the hermes-agent project.
+  "Run a dependency security audit on the teamhermes project.
 
 1. cd ~/.teamhermes/hermes-agent && source .venv/bin/activate
 2. Run: pip audit --format json 2>/dev/null || pip audit 2>&1
@@ -501,7 +501,7 @@ Deliver as a clean, scannable message." \
 
 ```bash
 thm cron create "0 3 * * 0" \
-  "Run a comprehensive security audit of the hermes-agent codebase.
+  "Run a comprehensive security audit of the teamhermes codebase.
 
 1. Check for dependency vulnerabilities (pip audit, npm audit)
 2. Search the codebase for common security anti-patterns:

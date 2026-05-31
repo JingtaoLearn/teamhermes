@@ -30,7 +30,7 @@ curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scri
 iex (irm https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.ps1)
 ```
 
-安装程序处理**一切**：`uv`、Python 3.11、Node.js 22、`ripgrep`、`ffmpeg`，**以及一个便携式 Git Bash**（PortableGit——一个自包含的 Git-for-Windows 发行版，附带 `bash.exe` 和 TeamHermes 用于 shell 命令的完整 POSIX 工具链；在 32 位 Windows 上安装程序会回退到 MinGit，后者缺少 bash，终端工具和 agent 浏览器功能将被禁用）。它将仓库克隆到 `%LOCALAPPDATA%\hermes\hermes-agent`，创建虚拟环境，并将 `thm` 添加到**用户 PATH**。安装完成后请重启终端（或打开新的 PowerShell 窗口）以使 PATH 生效。
+安装程序处理**一切**：`uv`、Python 3.11、Node.js 22、`ripgrep`、`ffmpeg`，**以及一个便携式 Git Bash**（PortableGit——一个自包含的 Git-for-Windows 发行版，附带 `bash.exe` 和 TeamHermes 用于 shell 命令的完整 POSIX 工具链；在 32 位 Windows 上安装程序会回退到 MinGit，后者缺少 bash，终端工具和 agent 浏览器功能将被禁用）。它将仓库克隆到 `%LOCALAPPDATA%\hermes\teamhermes`，创建虚拟环境，并将 `thm` 添加到**用户 PATH**。安装完成后请重启终端（或打开新的 PowerShell 窗口）以使 PATH 生效。
 
 **Git 的处理方式：**
 1. 如果 `git` 已在你的 PATH 中，安装程序将使用现有安装。

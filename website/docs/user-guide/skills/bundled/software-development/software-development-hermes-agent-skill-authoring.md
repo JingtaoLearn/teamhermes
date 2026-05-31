@@ -20,7 +20,7 @@ Author in-repo SKILL.md: frontmatter, validator, structure.
 | Author | TeamHermes Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
-| Tags | `skills`, `authoring`, `hermes-agent`, `conventions`, `skill-md` |
+| Tags | `skills`, `authoring`, `teamhermes`, `conventions`, `skill-md` |
 | Related skills | [`writing-plans`](/docs/user-guide/skills/bundled/software-development/software-development-writing-plans), [`requesting-code-review`](/docs/user-guide/skills/bundled/software-development/software-development-requesting-code-review) |
 
 ## Reference: full SKILL.md
@@ -41,7 +41,7 @@ There are two places a SKILL.md can live:
 ## When to Use
 
 - User asks you to add a skill "in this branch / repo / commit"
-- You're committing a reusable workflow that should ship with hermes-agent
+- You're committing a reusable workflow that should ship with teamhermes
 - You're editing an existing skill under `/home/bb/hermes-agent/skills/` (use `patch` for small edits, `write_file` for rewrites; `skill_manage` still works for patch on in-repo skills, but not for `create`)
 
 ## Required Frontmatter

@@ -807,7 +807,7 @@ thm config set auxiliary.vision.model <model_name>
 
 <!-- ascii-guard-ignore -->
 ```
-hermes-agent/
+teamhermes/
 ├── run_agent.py          # AIAgent — core conversation loop
 ├── model_tools.py        # Tool discovery and dispatch
 ├── toolsets.py           # Toolset definitions

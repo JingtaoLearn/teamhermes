@@ -42,7 +42,7 @@ We value contributions in this order:
 
 ```bash
 git clone --recurse-submodules https://github.com/NousResearch/hermes-agent.git
-cd hermes-agent
+cd teamhermes
 
 # Create venv with Python 3.11
 uv venv venv --python 3.11

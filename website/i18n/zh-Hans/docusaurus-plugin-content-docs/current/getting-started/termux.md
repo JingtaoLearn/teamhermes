@@ -81,7 +81,7 @@ pkg install -y git python clang rust make pkg-config libffi openssl nodejs ripgr
 
 ```bash
 git clone --recurse-submodules https://github.com/NousResearch/hermes-agent.git
-cd hermes-agent
+cd teamhermes
 ```
 
 如果你已经克隆但未包含子模块：

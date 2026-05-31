@@ -15,7 +15,7 @@ TeamHermes Agent 通过 **Converse API** 原生支持 Amazon Bedrock——而非
   - `AWS_ACCESS_KEY_ID` + `AWS_SECRET_ACCESS_KEY` 环境变量
   - `AWS_PROFILE`（用于 SSO 或命名配置文件）
   - `aws configure`（用于本地开发）
-- **boto3** — 通过 `pip install hermes-agent[bedrock]` 安装
+- **boto3** — 通过 `pip install teamhermes[bedrock]` 安装
 - **IAM 权限** — 至少需要：
   - `bedrock:InvokeModel` 和 `bedrock:InvokeModelWithResponseStream`（用于推理）
   - `bedrock:ListFoundationModels` 和 `bedrock:ListInferenceProfiles`（用于模型发现）
@@ -28,7 +28,7 @@ TeamHermes Agent 通过 **Converse API** 原生支持 Amazon Bedrock——而非
 
 ```bash
 # 安装并启用 Bedrock 支持
-pip install hermes-agent[bedrock]
+pip install teamhermes[bedrock]
 
 # 选择 Bedrock 作为提供商
 thm model
@@ -167,4 +167,4 @@ TeamHermes 按以下顺序检查凭证：
 
 如需在 EC2 上通过 CloudFormation 进行全自动部署：
 
-**[sample-hermes-agent-on-aws-with-bedrock](https://github.com/JiaDe-Wu/sample-hermes-agent-on-aws-with-bedrock)** — 自动创建 VPC、IAM 角色、EC2 实例并配置 Bedrock。一键即可在任意区域完成部署。
+**[sample-teamhermes-on-aws-with-bedrock](https://github.com/JiaDe-Wu/sample-teamhermes-on-aws-with-bedrock)** — 自动创建 VPC、IAM 角色、EC2 实例并配置 Bedrock。一键即可在任意区域完成部署。

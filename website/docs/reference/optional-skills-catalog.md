@@ -1,12 +1,12 @@
 ---
 sidebar_position: 9
 title: "Optional Skills Catalog"
-description: "Official optional skills shipped with hermes-agent — install via thm  skills install official/<category>/<skill>"
+description: "Official optional skills shipped with teamhermes — install via thm  skills install official/<category>/<skill>"
 ---
 
 # Optional Skills Catalog
 
-Optional skills ship with hermes-agent under `optional-skills/` but are **not active by default**. Install them explicitly:
+Optional skills ship with teamhermes under `optional-skills/` but are **not active by default**. Install them explicitly:
 
 ```bash
 thm  skills install official/<category>/<skill>
@@ -78,7 +78,7 @@ thm  skills uninstall <skill-name>
 
 | Skill | Description |
 |-------|-------------|
-| [**agentmail**](/docs/user-guide/skills/optional/email/email-agentmail) | Give the agent its own dedicated email inbox via AgentMail. Send, receive, and manage email autonomously using agent-owned email addresses (e.g. hermes-agent@agentmail.to). |
+| [**agentmail**](/docs/user-guide/skills/optional/email/email-agentmail) | Give the agent its own dedicated email inbox via AgentMail. Send, receive, and manage email autonomously using agent-owned email addresses (e.g. teamhermes@agentmail.to). |
 
 ## finance
 

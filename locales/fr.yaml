@@ -98,7 +98,7 @@ gateway:
     upload_failed:         "✗ Échec de l'envoi du rapport de débogage : {error}"
     header:                "**Rapport de débogage envoyé :**"
     auto_delete:           "⏱ Les pastes s'effaceront automatiquement dans 6 heures."
-    full_logs_hint:        "Pour envoyer les journaux complets, utilisez `hermes debug share` depuis la CLI."
+    full_logs_hint:        "Pour envoyer les journaux complets, utilisez `thm debug share` depuis la CLI."
     share_hint:            "Partagez ces liens avec l'équipe TeamHermes pour obtenir de l'aide."
 
   deny:

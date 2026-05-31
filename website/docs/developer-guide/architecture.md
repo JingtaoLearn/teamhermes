@@ -51,7 +51,7 @@ This page is the top-level map of TeamHermes Agent internals. Use it to orient y
 ## Directory Structure
 
 ```text
-hermes-agent/
+teamhermes/
 ├── run_agent.py              # AIAgent — core conversation loop (large file)
 ├── cli.py                    # HermesCLI — interactive terminal UI (large file)
 ├── model_tools.py            # Tool discovery, schema collection, dispatch

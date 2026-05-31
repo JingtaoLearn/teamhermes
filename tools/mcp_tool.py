@@ -3,7 +3,7 @@
 MCP (Model Context Protocol) Client Support
 
 Connects to external MCP servers via stdio, HTTP/StreamableHTTP, or SSE
-transport, discovers their tools, and registers them into the hermes-agent
+transport, discovers their tools, and registers them into the teamhermes
 tool registry so the agent can call them like any built-in tool.
 
 Configuration is read from ~/.teamhermes/config.yaml under the ``mcp_servers`` key.
@@ -1343,9 +1343,9 @@ class MCPServerTask:
             raise ImportError(
                 f"MCP server '{self.name}' requires the 'mcp' Python SDK, but "
                 "it is not installed. Install with:\n"
-                "  pip install 'hermes-agent[mcp]'\n"
+                "  pip install 'teamhermes[mcp]'\n"
                 "or (full install):\n"
-                "  pip install 'hermes-agent[all]'"
+                "  pip install 'teamhermes[all]'"
             )
 
         command = config.get("command")

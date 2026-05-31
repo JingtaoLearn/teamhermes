@@ -44,7 +44,7 @@ thm  setup
 thm  chat
 ```
 
-After `nix profile install`, `thm`, `hermes-agent`, and `thm-acp` are on your PATH. From here, the workflow is identical to the [standard installation](./installation.md) — `thm setup` walks you through provider selection, `thm  gateway install` sets up a launchd (macOS) or systemd user service, and config lives in `~/.teamhermes/`.
+After `nix profile install`, `thm`, `teamhermes`, and `thm-acp` are on your PATH. From here, the workflow is identical to the [standard installation](./installation.md) — `thm setup` walks you through provider selection, `thm  gateway install` sets up a launchd (macOS) or systemd user service, and config lives in `~/.teamhermes/`.
 
 :::warning Messaging platforms (Discord, Telegram, Slack)
 The default package doesn't include messaging platform libraries — they were moved to on-demand installation, which can't work in Nix's read-only environment. If you plan to connect the agent to Discord, Telegram, or Slack, install the `messaging` variant:
@@ -67,7 +67,7 @@ The `full` variant adds ~700 MB to the closure. If you only need messaging platf
 
 ```bash
 git clone https://github.com/NousResearch/hermes-agent.git
-cd hermes-agent
+cd teamhermes
 nix build
 ./result/bin/hermes setup
 ```
@@ -91,14 +91,14 @@ This module requires NixOS. For non-NixOS systems (macOS, other Linux distros), 
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    hermes-agent.url = "github:NousResearch/hermes-agent";
+    teamhermes.url = "github:NousResearch/hermes-agent";
   };
 
-  outputs = { nixpkgs, hermes-agent, ... }: {
+  outputs = { nixpkgs, teamhermes, ... }: {
     nixosConfigurations.your-host = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        hermes-agent.nixosModules.default
+        teamhermes.nixosModules.default
         ./configuration.nix
       ];
     };
@@ -181,10 +181,10 @@ After `nixos-rebuild switch`, check that the service is running:
 
 ```bash
 # Check service status
-systemctl status hermes-agent
+systemctl status teamhermes
 
 # Watch logs (Ctrl+C to stop)
-journalctl -u hermes-agent -f
+journalctl -u teamhermes -f
 
 # If addToSystemPackages is true, test the CLI
 thm  version
@@ -354,7 +354,7 @@ Quick reference for the most common things Nix users want to customize:
 Values in Nix expressions end up in `/nix/store`, which is world-readable. Always use `environmentFiles` with a secrets manager.
 :::
 
-Both `environment` (non-secret vars) and `environmentFiles` (secret files) are merged into `$HERMES_HOME/.env` at activation time (`nixos-rebuild switch`). TeamHermes reads this file on every startup, so changes take effect with a `systemctl restart hermes-agent` — no container recreation needed.
+Both `environment` (non-secret vars) and `environmentFiles` (secret files) are merged into `$HERMES_HOME/.env` at activation time (`nixos-rebuild switch`). TeamHermes reads this file on every startup, so changes take effect with a `systemctl restart teamhermes` — no container recreation needed.
 
 ### sops-nix
 
@@ -494,7 +494,7 @@ The first OAuth authorization requires a browser-based consent flow. In a headle
 
 ```bash
 # Container mode
-docker exec -it hermes-agent \
+docker exec -it teamhermes \
   thm  mcp add my-oauth-server --url https://mcp.example.com/mcp --auth oauth
 
 # Native mode
@@ -552,7 +552,7 @@ When thm  runs via the NixOS module, the following CLI commands are **blocked** 
 This prevents drift between what Nix declares and what's on disk. Detection uses two signals:
 
 1. **`HERMES_MANAGED=true`** environment variable — set by the systemd service, visible to the gateway process
-2. **`.managed` marker file** in `HERMES_HOME` — set by the activation script, visible to interactive shells (e.g., `docker exec -it hermes-agent thm  config set ...` is also blocked)
+2. **`.managed` marker file** in `HERMES_HOME` — set by the activation script, visible to interactive shells (e.g., `docker exec -it teamhermes thm  config set ...` is also blocked)
 
 To change configuration, edit your Nix config and run `sudo nixos-rebuild switch`.
 
@@ -569,7 +569,7 @@ When container mode is enabled, thm  runs inside a persistent Ubuntu container w
 ```
 Host                                    Container
 ────                                    ─────────
-/nix/store/...-hermes-agent-0.1.0  ──►  /nix/store/... (ro)
+/nix/store/...-teamhermes-0.1.0  ──►  /nix/store/... (ro)
 ~/.teamhermes -> /var/lib/hermes/.teamhermes       (symlink bridge, per hostUsers)
 /var/lib/hermes/                    ──►  /data/          (rw)
   ├── current-package -> /nix/store/...    (symlink, updated each rebuild)
@@ -596,7 +596,7 @@ The Nix-built binary works inside the Ubuntu container because `/nix/store` is b
 
 | Event | Container recreated? | `/data` (state) | `/home/hermes` | Writable layer (`apt`/`pip`/`npm`) |
 |---|---|---|---|---|
-| `systemctl restart hermes-agent` | No | Persists | Persists | Persists |
+| `systemctl restart teamhermes` | No | Persists | Persists | Persists |
 | `nixos-rebuild switch` (code change) | No (symlink updated) | Persists | Persists | Persists |
 | Host reboot | No | Persists | Persists | Persists |
 | `nix-collect-garbage` | No (GC root) | Persists | Persists | Persists |
@@ -664,7 +664,7 @@ The package's `site-packages` is added to PYTHONPATH in the thm  wrapper. `impor
 
 ### Optional Dependency Groups (`extraDependencyGroups`)
 
-For optional extras declared in hermes-agent's `pyproject.toml`, use `extraDependencyGroups` to include them in the sealed venv at build time. This is required for any extra not in the default `[all]` set — on Nix, runtime installation into the read-only store is not possible.
+For optional extras declared in teamhermes's `pyproject.toml`, use `extraDependencyGroups` to include them in the sealed venv at build time. This is required for any extra not in the default `[all]` set — on Nix, runtime installation into the read-only store is not possible.
 
 ```nix
 # Enable Discord, Telegram, Slack
@@ -731,8 +731,8 @@ External flakes can override the package directly:
 ```nix
 {
   inputs.teamhermes-agent.url = "github:NousResearch/hermes-agent";
-  outputs = { hermes-agent, nixpkgs, ... }: {
-    nixpkgs.overlays = [ hermes-agent.overlays.default ];
+  outputs = { teamhermes, nixpkgs, ... }: {
+    nixpkgs.overlays = [ teamhermes.overlays.default ];
     # Then:
     #   pkgs.teamhermes-agent.override { extraPythonPackages = [...]; }
     #   pkgs.teamhermes-agent.override { extraDependencyGroups = [ "hindsight" ]; }
@@ -764,7 +764,7 @@ A build-time collision check prevents plugin packages from shadowing core thm  d
 The flake provides a development shell with Python 3.12, uv, Node.js, and all runtime tools:
 
 ```bash
-cd hermes-agent
+cd teamhermes
 nix develop
 
 # Shell provides:
@@ -781,7 +781,7 @@ thm  chat
 The included `.envrc` activates the dev shell automatically:
 
 ```bash
-cd hermes-agent
+cd teamhermes
 direnv allow    # one-time
 # Subsequent entries are near-instant (stamp file skips dep install)
 ```
@@ -808,7 +808,7 @@ nix build .#checks.x86_64-linux.config-roundtrip    # merge script preserves use
 
 | Check | What it tests |
 |---|---|
-| `package-contents` | `thm` and `hermes-agent` binaries exist and `thm version` runs |
+| `package-contents` | `thm` and `teamhermes` binaries exist and `thm version` runs |
 | `entry-points-sync` | Every `[project.scripts]` entry in `pyproject.toml` has a wrapped binary in the Nix package |
 | `cli-commands` | `thm  --help` exposes `gateway` and `config` subcommands |
 | `managed-guard` | `HERMES_MANAGED=true thm  config set ...` prints the NixOS error |
@@ -825,8 +825,8 @@ nix build .#checks.x86_64-linux.config-roundtrip    # merge script preserves use
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `enable` | `bool` | `false` | Enable the hermes-agent service |
-| `package` | `package` | `hermes-agent` | The hermes-agent package to use |
+| `enable` | `bool` | `false` | Enable the teamhermes service |
+| `package` | `package` | `teamhermes` | The teamhermes package to use |
 | `user` | `str` | `"hermes"` | System user |
 | `group` | `str` | `"hermes"` | System group |
 | `createUser` | `bool` | `true` | Auto-create user/group |
@@ -940,7 +940,7 @@ Same layout, mounted into the container:
 
 ```bash
 # Update the flake input (run from the directory containing flake.nix)
-cd /etc/nixos && nix flake update hermes-agent
+cd /etc/nixos && nix flake update teamhermes
 
 # Rebuild
 sudo nixos-rebuild switch
@@ -960,21 +960,21 @@ All `docker` commands below work the same with `podman`. Substitute accordingly 
 
 ```bash
 # Both modes use the same systemd unit
-journalctl -u hermes-agent -f
+journalctl -u teamhermes -f
 
 # Container mode: also available directly
-docker logs -f hermes-agent
+docker logs -f teamhermes
 ```
 
 ### Container Inspection
 
 ```bash
-systemctl status hermes-agent
-docker ps -a --filter name=hermes-agent
-docker inspect hermes-agent --format='{{.State.Status}}'
-docker exec -it hermes-agent bash
-docker exec hermes-agent readlink /data/current-package
-docker exec hermes-agent cat /data/.container-identity
+systemctl status teamhermes
+docker ps -a --filter name=teamhermes
+docker inspect teamhermes --format='{{.State.Status}}'
+docker exec -it teamhermes bash
+docker exec teamhermes readlink /data/current-package
+docker exec teamhermes cat /data/.container-identity
 ```
 
 ### Force Container Recreation
@@ -982,10 +982,10 @@ docker exec hermes-agent cat /data/.container-identity
 If you need to reset the writable layer (fresh Ubuntu):
 
 ```bash
-sudo systemctl stop hermes-agent
-docker rm -f hermes-agent
+sudo systemctl stop teamhermes
+docker rm -f teamhermes
 sudo rm /var/lib/hermes/.container-identity
-sudo systemctl start hermes-agent
+sudo systemctl start teamhermes
 ```
 
 ### Verify Secrets Are Loaded
@@ -997,13 +997,13 @@ If the agent starts but can't authenticate with the LLM provider, check that the
 sudo -u hermes cat /var/lib/hermes/.teamhermes/.env
 
 # Container mode
-docker exec hermes-agent cat /data/.teamhermes/.env
+docker exec teamhermes cat /data/.teamhermes/.env
 ```
 
 ### GC Root Verification
 
 ```bash
-nix-store --query --roots $(docker exec hermes-agent readlink /data/current-package)
+nix-store --query --roots $(docker exec teamhermes readlink /data/current-package)
 ```
 
 ### Common Issues
@@ -1011,11 +1011,11 @@ nix-store --query --roots $(docker exec hermes-agent readlink /data/current-pack
 | Symptom | Cause | Fix |
 |---|---|---|
 | `Cannot save configuration: managed by NixOS` | CLI guards active | Edit `configuration.nix` and `nixos-rebuild switch` |
-| `No adapter available for discord` (or telegram/slack) | Messaging deps missing from the sealed Nix venv | Install `#messaging` variant: `nix profile install ...#messaging`. For NixOS module: `extraDependencyGroups = [ "messaging" ]`. Check `journalctl -u hermes-agent` for `FeatureUnavailable` or `requirements not met` for the underlying error. |
+| `No adapter available for discord` (or telegram/slack) | Messaging deps missing from the sealed Nix venv | Install `#messaging` variant: `nix profile install ...#messaging`. For NixOS module: `extraDependencyGroups = [ "messaging" ]`. Check `journalctl -u teamhermes` for `FeatureUnavailable` or `requirements not met` for the underlying error. |
 | Container recreated unexpectedly | `extraVolumes`, `extraOptions`, or `image` changed | Expected — writable layer resets. Reinstall packages or use a custom image |
-| `thm version` shows old version | Container not restarted | `systemctl restart hermes-agent` |
+| `thm version` shows old version | Container not restarted | `systemctl restart teamhermes` |
 | Permission denied on `/var/lib/hermes` | State dir is `0750 hermes:hermes` | Use `docker exec` or `sudo -u hermes` |
 | `nix-collect-garbage` removed hermes | GC root missing | Restart the service (preStart recreates the GC root) |
-| `no container with name or ID "hermes-agent"` (Podman) | Podman rootful container not visible to regular user | Add passwordless sudo for podman (see [Container Mode](#container-mode) section) |
+| `no container with name or ID "teamhermes"` (Podman) | Podman rootful container not visible to regular user | Add passwordless sudo for podman (see [Container Mode](#container-mode) section) |
 | `unable to find user hermes` | Container still starting (entrypoint hasn't created user yet) | Wait a few seconds and retry — the CLI retries automatically |
-| Tool added via `extraPackages` not found in terminal | Requires `nixos-rebuild switch` to update the per-user profile | Rebuild and restart: `nixos-rebuild switch && systemctl restart hermes-agent` |
+| Tool added via `extraPackages` not found in terminal | Requires `nixos-rebuild switch` to update the per-user profile | Rebuild and restart: `nixos-rebuild switch && systemctl restart teamhermes` |

@@ -20,7 +20,7 @@ description: "调试 TeamHermes TUI slash 命令：Python、gateway、Ink UI"
 | 作者 | TeamHermes Agent |
 | 许可证 | MIT |
 | 平台 | linux, macos, windows |
-| 标签 | `debugging`, `hermes-agent`, `tui`, `slash-commands`, `typescript`, `python` |
+| 标签 | `debugging`, `teamhermes`, `tui`, `slash-commands`, `typescript`, `python` |
 | 相关 skill | [`python-debugpy`](/user-guide/skills/bundled/software-development/software-development-python-debugpy)、[`node-inspect-debugger`](/user-guide/skills/bundled/software-development/software-development-node-inspect-debugger)、[`systematic-debugging`](/user-guide/skills/bundled/software-development/software-development-systematic-debugging) |
 
 ## 参考：完整 SKILL.md

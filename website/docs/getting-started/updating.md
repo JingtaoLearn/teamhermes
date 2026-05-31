@@ -24,13 +24,13 @@ PyPI releases track **tagged versions** (major and minor releases), not every co
 
 ```bash
 thm  update --check    # see if a newer release is on PyPI
-thm  update            # runs pip install --upgrade hermes-agent
+thm  update            # runs pip install --upgrade teamhermes
 ```
 
 Or manually:
 
 ```bash
-pip install --upgrade hermes-agent    # or: uv pip install --upgrade hermes-agent
+pip install --upgrade teamhermes    # or: uv pip install --upgrade teamhermes
 ```
 
 :::tip
@@ -220,10 +220,10 @@ If you installed via Nix flake, updates are managed through the Nix package mana
 
 ```bash
 # Update the flake input
-nix flake update hermes-agent
+nix flake update teamhermes
 
 # Or rebuild with the latest
-nix profile upgrade hermes-agent
+nix profile upgrade teamhermes
 ```
 
 Nix installations are immutable — rollback is handled by Nix's generation system:
@@ -249,7 +249,7 @@ The uninstaller gives you the option to keep your configuration files (`~/.teamh
 ### pip installs
 
 ```bash
-pip uninstall hermes-agent
+pip uninstall teamhermes
 rm -rf ~/.teamhermes            # Optional — keep if you plan to reinstall
 ```
 

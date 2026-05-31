@@ -20,7 +20,7 @@ Modify, debug, or extend the s6-overlay supervision tree inside the TeamHermes A
 | Author | TeamHermes Agent |
 | License | MIT |
 | Tags | `docker`, `s6`, `supervision`, `gateway`, `profiles` |
-| Related skills | [`hermes-agent`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-hermes-agent), `hermes-agent-dev` |
+| Related skills | [`teamhermes`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-teamhermes), `teamhermes-dev` |
 
 ## Reference: full SKILL.md
 
@@ -153,8 +153,8 @@ Edit `S6ServiceManager._render_run_script` in `hermes_cli/service_manager.py`. T
 ### Run the docker test harness
 
 ```sh
-docker build -t hermes-agent-harness:latest .
-HERMES_TEST_IMAGE=hermes-agent-harness:latest scripts/run_tests.sh tests/docker/ -v
+docker build -t teamhermes-harness:latest .
+HERMES_TEST_IMAGE=teamhermes-harness:latest scripts/run_tests.sh tests/docker/ -v
 # Expect 19 passed, 0 xfailed against the s6 image
 ```
 
@@ -192,5 +192,5 @@ Check whether something is invoking `s6-svscanctl -t` or `/run/s6/basedir/bin/ha
 
 ## Related skills
 
-- `hermes-agent-dev`: General hermes-agent codebase navigation
+- `teamhermes-dev`: General teamhermes codebase navigation
 - `hermes-tool-quirks`: Specific TeamHermes-tool workarounds (sed/grep/etc.) — load when debugging the s6 stack's interaction with thm  built-in tools.

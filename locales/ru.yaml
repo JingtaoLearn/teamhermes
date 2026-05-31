@@ -98,7 +98,7 @@ gateway:
     upload_failed:         "✗ Не удалось загрузить отчёт отладки: {error}"
     header:                "**Отчёт отладки загружен:**"
     auto_delete:           "⏱ Вставки автоматически удалятся через 6 часов."
-    full_logs_hint:        "Для загрузки полных журналов используйте `hermes debug share` из CLI."
+    full_logs_hint:        "Для загрузки полных журналов используйте `thm debug share` из CLI."
     share_hint:            "Поделитесь этими ссылками с командой TeamHermes для получения поддержки."
 
   deny:

@@ -30,7 +30,7 @@ Open PowerShell and run:
 iex (irm https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.ps1)
 ```
 
-The installer handles **everything**: `uv`, Python 3.11, Node.js 22, `ripgrep`, `ffmpeg`, **and a portable Git Bash** (PortableGit — a self-contained Git-for-Windows distribution that ships `bash.exe` and the full POSIX toolchain TeamHermes uses for shell commands; on 32-bit Windows the installer falls back to MinGit, which lacks bash and disables terminal-tool / agent-browser features).  It clones the repo under `%LOCALAPPDATA%\hermes\hermes-agent`, creates a virtualenv, and adds `thm` to your **User PATH**.  Restart your terminal (or open a new PowerShell window) after the install so PATH picks up.
+The installer handles **everything**: `uv`, Python 3.11, Node.js 22, `ripgrep`, `ffmpeg`, **and a portable Git Bash** (PortableGit — a self-contained Git-for-Windows distribution that ships `bash.exe` and the full POSIX toolchain TeamHermes uses for shell commands; on 32-bit Windows the installer falls back to MinGit, which lacks bash and disables terminal-tool / agent-browser features).  It clones the repo under `%LOCALAPPDATA%\hermes\teamhermes`, creates a virtualenv, and adds `thm` to your **User PATH**.  Restart your terminal (or open a new PowerShell window) after the install so PATH picks up.
 
 **How Git is handled:**
 1. If `git` is already on your PATH, the installer uses your existing install.

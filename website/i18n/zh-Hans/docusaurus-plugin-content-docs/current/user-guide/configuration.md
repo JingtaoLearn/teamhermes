@@ -1355,7 +1355,7 @@ whatsapp:
 quick_commands:
   status:
     type: exec
-    command: systemctl status hermes-agent
+    command: systemctl status teamhermes
   disk:
     type: exec
     command: df -h /

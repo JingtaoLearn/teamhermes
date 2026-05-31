@@ -21,7 +21,7 @@ description: "将用户的 OpenClaw 自定义配置迁移到 TeamHermes Agent"
 | 许可证 | MIT |
 | 平台 | linux, macos, windows |
 | 标签 | `Migration`, `OpenClaw`, `TeamHermes`, `Memory`, `Persona`, `Import` |
-| 相关 skill | [`hermes-agent`](/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-hermes-agent) |
+| 相关 skill | [`teamhermes`](/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-teamhermes) |
 
 ## 参考：完整 SKILL.md
 
