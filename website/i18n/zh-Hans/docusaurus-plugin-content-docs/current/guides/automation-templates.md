@@ -6,7 +6,7 @@ description: "开箱即用的自动化配方——定时任务、GitHub 事件�
 
 # 自动化模板
 
-常见自动化模式的复制粘贴配方。每个模板使用 Hermes 内置的 [cron 调度器](/user-guide/features/cron) 实现基于时间的触发，使用 [webhook 平台](/user-guide/messaging/webhooks) 实现事件驱动触发。
+常见自动化模式的复制粘贴配方。每个模板使用 TeamHermes 内置的 [cron 调度器](/user-guide/features/cron) 实现基于时间的触发，使用 [webhook 平台](/user-guide/messaging/webhooks) 实现事件驱动触发。
 
 所有模板适用于**任意模型**——不绑定单一提供商。
 
@@ -31,7 +31,7 @@ description: "开箱即用的自动化配方——定时任务、GitHub 事件�
 **触发方式：** 定时（每晚）
 
 ```bash
-hermes cron create "0 2 * * *" \
+thm cron create "0 2 * * *" \
   "You are a project manager triaging the NousResearch/hermes-agent GitHub repo.
 
 1. Run: gh issue list --repo NousResearch/hermes-agent --state open --json number,title,labels,author,createdAt --limit 30
@@ -113,7 +113,7 @@ platforms:
 **触发方式：** 定时（每周）
 
 ```bash
-hermes cron create "0 9 * * 1" \
+thm cron create "0 9 * * 1" \
   "Scan the NousResearch/hermes-agent repo for documentation drift.
 
 1. Run: gh pr list --repo NousResearch/hermes-agent --state merged --json number,title,files,mergedAt --limit 30
@@ -137,7 +137,7 @@ Report any gaps where code changed but docs didn't. If everything is in sync, re
 **触发方式：** 定时（每日）
 
 ```bash
-hermes cron create "0 6 * * *" \
+thm cron create "0 6 * * *" \
   "Run a dependency security audit on the hermes-agent project.
 
 1. cd ~/.teamhermes/hermes-agent && source .venv/bin/activate
@@ -239,7 +239,7 @@ results = []
 for ep in ENDPOINTS:
     try:
         start = time.time()
-        req = urllib.request.Request(ep["url"], headers={"User-Agent": "Hermes-Monitor/1.0"})
+        req = urllib.request.Request(ep["url"], headers={"User-Agent": "TeamHermes-Monitor/1.0"})
         resp = urllib.request.urlopen(req, timeout=10)
         elapsed = round((time.time() - start) * 1000)
         results.append({"name": ep["name"], "status": resp.getcode(), "ms": elapsed})
@@ -257,7 +257,7 @@ else:
 ```
 
 ```bash
-hermes cron create "every 30m" \
+thm cron create "every 30m" \
   "If the script reports OUTAGE DETECTED, summarize which services are down and suggest likely causes. If NO_ISSUES, respond with [SILENT]." \
   --script ~/.teamhermes/scripts/check-uptime.py \
   --name "Uptime monitor" \
@@ -275,7 +275,7 @@ hermes cron create "every 30m" \
 **触发方式：** 定时（每日）
 
 ```bash
-hermes cron create "0 8 * * *" \
+thm cron create "0 8 * * *" \
   "Scout these AI agent repositories for notable activity in the last 24 hours:
 
 Repos to check:
@@ -308,7 +308,7 @@ If there are findings, organize by repo with brief analysis of each item." \
 **触发方式：** 定时（每周）
 
 ```bash
-hermes cron create "0 9 * * 1" \
+thm cron create "0 9 * * 1" \
   "Generate a weekly AI news digest covering the past 7 days:
 
 1. Search the web for major AI announcements, model releases, and research breakthroughs
@@ -333,8 +333,8 @@ Keep each item to 1-2 sentences. Include links. Total under 600 words." \
 **触发方式：** 定时（每日）
 
 ```bash
-hermes cron create "0 8 * * *" \
-  "Search arXiv for the 3 most interesting papers on 'language model reasoning' OR 'tool-use agents' from the past day. For each paper, create an Obsidian note with the title, authors, abstract summary, key contribution, and potential relevance to Hermes Agent development." \
+thm cron create "0 8 * * *" \
+  "Search arXiv for the 3 most interesting papers on 'language model reasoning' OR 'tool-use agents' from the past day. For each paper, create an Obsidian note with the title, authors, abstract summary, key contribution, and potential relevance to TeamHermes Agent development." \
   --skill arxiv --skill obsidian \
   --name "Paper digest" \
   --deliver local
@@ -475,7 +475,7 @@ Keep responses concise for the ops channel." \
 **触发方式：** 定时（每日）
 
 ```bash
-hermes cron create "0 8 * * *" \
+thm cron create "0 8 * * *" \
   "Generate a morning business metrics summary.
 
 Search the web for:
@@ -500,7 +500,7 @@ Deliver as a clean, scannable message." \
 **触发方式：** 定时（每周）
 
 ```bash
-hermes cron create "0 3 * * 0" \
+thm cron create "0 3 * * 0" \
   "Run a comprehensive security audit of the hermes-agent codebase.
 
 1. Check for dependency vulnerabilities (pip audit, npm audit)
@@ -526,7 +526,7 @@ If nothing found, report a clean bill of health." \
 **触发方式：** 定时（每周）
 
 ```bash
-hermes cron create "0 10 * * 3" \
+thm cron create "0 10 * * 3" \
   "Research and draft a technical blog post outline about a trending topic in AI agents.
 
 1. Search the web for the most discussed AI agent topics this week

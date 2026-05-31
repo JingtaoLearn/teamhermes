@@ -23,7 +23,7 @@
           ''
             echo "TeamHermes Agent dev shell"
             ${combined}
-            echo "Ready. Run 'hermes' to start."
+            echo "Ready. Run 'thm' to start."
           '';
       };
     };

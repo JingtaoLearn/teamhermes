@@ -1,7 +1,7 @@
 ---
 sidebar_position: 11
 title: "Cron 内部机制"
-description: "Hermes 如何存储、调度、编辑、暂停、加载技能以及投递 cron 任务"
+description: "TeamHermes 如何存储、调度、编辑、暂停、加载技能以及投递 cron 任务"
 ---
 
 # Cron 内部机制
@@ -212,13 +212,13 @@ Cron 运行的会话已禁用 `cronjob` 工具集。这可防止：
 `thm cron` CLI 提供直接的任务管理功能：
 
 ```bash
-hermes cron list                    # 显示所有任务
-hermes cron create                  # 交互式创建任务（别名：add）
-hermes cron edit <job_id>           # 编辑任务配置
-hermes cron pause <job_id>          # 暂停运行中的任务
-hermes cron resume <job_id>         # 恢复已暂停的任务
-hermes cron run <job_id>            # 触发立即执行
-hermes cron remove <job_id>         # 删除任务
+thm cron list                    # 显示所有任务
+thm cron create                  # 交互式创建任务（别名：add）
+thm cron edit <job_id>           # 编辑任务配置
+thm cron pause <job_id>          # 暂停运行中的任务
+thm cron resume <job_id>         # 恢复已暂停的任务
+thm cron run <job_id>            # 触发立即执行
+thm cron remove <job_id>         # 删除任务
 ```
 
 ## 相关文档

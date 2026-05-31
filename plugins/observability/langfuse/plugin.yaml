@@ -1,6 +1,6 @@
 name: langfuse
 version: "1.0.0"
-description: "Optional Langfuse observability for Hermes — traces conversations, LLM calls, and tool usage. Opt-in via `thm plugins enable observability/langfuse` (or check the box in `thm plugins`)."
+description: "Optional Langfuse observability for TeamHermes — traces conversations, LLM calls, and tool usage. Opt-in via `thm plugins enable observability/langfuse` (or check the box in `thm plugins`)."
 author: NousResearch
 requires_env:
   - HERMES_LANGFUSE_PUBLIC_KEY

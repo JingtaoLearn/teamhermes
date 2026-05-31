@@ -188,7 +188,7 @@ class TestVersionRequires:
         if ok:
             check_hermes_requires(spec, cur)
         else:
-            with pytest.raises(DistributionError, match="requires Hermes"):
+            with pytest.raises(DistributionError, match="requires TeamHermes"):
                 check_hermes_requires(spec, cur)
 
     def test_parse_semver_handles_prerelease(self):
@@ -235,7 +235,7 @@ class TestEnvTemplate:
     def test_empty_env_requires_is_header_only(self):
         m = DistributionManifest(name="x")
         out = _env_template_from_manifest(m)
-        assert "Hermes distribution" in out
+        assert "TeamHermes distribution" in out
         assert "FOO" not in out
 
 
@@ -336,7 +336,7 @@ class TestInstall:
         assert "OPENAI_API_KEY" in example.read_text()
 
     def test_install_enforces_hermes_requires(self, profile_env, monkeypatch):
-        # Pin current Hermes version to something well below the requirement
+        # Pin current TeamHermes version to something well below the requirement
         import hermes_cli
         monkeypatch.setattr(hermes_cli, "__version__", "0.1.0", raising=False)
 
@@ -346,7 +346,7 @@ class TestInstall:
             hermes_requires=">=99.0.0",
         )
         staged = _make_staging_dir(profile_env, "future", manifest=mf)
-        with pytest.raises(DistributionError, match="requires Hermes"):
+        with pytest.raises(DistributionError, match="requires TeamHermes"):
             install_distribution(str(staged), name="future")
 
 

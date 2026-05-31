@@ -2779,7 +2779,7 @@ def _(rid, params: dict) -> dict:
     provider = getattr(agent, "provider", None) or "unknown"
     model = getattr(agent, "model", None) or "(unknown)"
     lines = [
-        "Hermes TUI Status",
+        "TeamHermes TUI Status",
         "",
         f"Session ID: {key}",
         f"Path: {display_hermes_home()}",
@@ -4875,9 +4875,9 @@ def _cli_exec_blocked(argv: list[str]) -> str | None:
     if a0 == "setup":
         return "`thm setup` needs a full terminal — run it outside the TUI"
     if a0 == "gateway":
-        return "`hermes gateway` is long-running — run it in another terminal"
+        return "`thm gateway` is long-running — run it in another terminal"
     if a0 == "sessions" and len(argv) > 1 and argv[1].lower() == "browse":
-        return "`hermes sessions browse` is interactive — use /resume here, or run browse in another terminal"
+        return "`thm sessions browse` is interactive — use /resume here, or run browse in another terminal"
     if a0 == "config" and len(argv) > 1 and argv[1].lower() == "edit":
         return "`thm config edit` needs $EDITOR in a real terminal"
     return None

@@ -344,7 +344,7 @@ def extract_skill_conditions(frontmatter: Dict[str, Any]) -> Dict[str, List]:
     # Handle cases where metadata is not a dict (e.g., a string from malformed YAML)
     if not isinstance(metadata, dict):
         metadata = {}
-    hermes = metadata.get("hermes") or {}
+    hermes = metadata.get("thm") or {}
     if not isinstance(hermes, dict):
         hermes = {}
     return {
@@ -377,7 +377,7 @@ def extract_skill_config_vars(frontmatter: Dict[str, Any]) -> List[Dict[str, Any
     metadata = frontmatter.get("metadata")
     if not isinstance(metadata, dict):
         return []
-    hermes = metadata.get("hermes")
+    hermes = metadata.get("thm")
     if not isinstance(hermes, dict):
         return []
     raw = hermes.get("config")
@@ -532,7 +532,7 @@ def extract_skill_description(frontmatter: Dict[str, Any]) -> str:
 def iter_skill_index_files(skills_dir: Path, filename: str):
     """Walk skills_dir yielding sorted paths matching *filename*.
 
-    Excludes Hermes metadata, VCS, virtualenv/dependency, and cache
+    Excludes TeamHermes metadata, VCS, virtualenv/dependency, and cache
     directories so dependencies cannot register nested skills.
     """
     matches = []

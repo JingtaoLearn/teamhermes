@@ -16,7 +16,7 @@ hermes memory setup    # select "openviking"
 
 Or manually:
 ```bash
-hermes config set memory.provider openviking
+thm config set memory.provider openviking
 echo "OPENVIKING_ENDPOINT=http://localhost:1933" >> ~/.teamhermes/.env
 ```
 

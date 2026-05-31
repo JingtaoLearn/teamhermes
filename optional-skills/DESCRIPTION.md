@@ -6,10 +6,10 @@ These skills ship with the hermes-agent repository but are not copied to
 `~/.teamhermes/skills/` during setup. They are discoverable via the Skills Hub:
 
 ```bash
-hermes skills browse               # browse all skills, official shown first
-hermes skills browse --source official  # browse only official optional skills
-hermes skills search <query>       # finds optional skills labeled "official"
-hermes skills install <identifier> # copies to ~/.teamhermes/skills/ and activates
+thm skills browse               # browse all skills, official shown first
+thm skills browse --source official  # browse only official optional skills
+thm skills search <query>       # finds optional skills labeled "official"
+thm skills install <identifier> # copies to ~/.teamhermes/skills/ and activates
 ```
 
 ## Why optional?

@@ -1,7 +1,7 @@
 ---
 sidebar_position: 11
 title: "Cron Internals"
-description: "How Hermes stores, schedules, edits, pauses, skill-loads, and delivers cron jobs"
+description: "How TeamHermes stores, schedules, edits, pauses, skill-loads, and delivers cron jobs"
 ---
 
 # Cron Internals
@@ -212,13 +212,13 @@ The scheduler uses cross-process file-based locking (`fcntl.flock` on Unix, `msv
 The `thm cron` CLI provides direct job management:
 
 ```bash
-hermes cron list                    # Show all jobs
-hermes cron create                  # Interactive job creation (alias: add)
-hermes cron edit <job_id>           # Edit job configuration
-hermes cron pause <job_id>          # Pause a running job
-hermes cron resume <job_id>         # Resume a paused job
-hermes cron run <job_id>            # Trigger immediate execution
-hermes cron remove <job_id>         # Delete a job
+thm  cron list                    # Show all jobs
+thm  cron create                  # Interactive job creation (alias: add)
+thm  cron edit <job_id>           # Edit job configuration
+thm  cron pause <job_id>          # Pause a running job
+thm  cron resume <job_id>         # Resume a paused job
+thm  cron run <job_id>            # Trigger immediate execution
+thm  cron remove <job_id>         # Delete a job
 ```
 
 ## Related Docs

@@ -1,12 +1,12 @@
 ---
 sidebar_position: 1
 title: "架构"
-description: "Hermes Agent 内部结构——主要子系统、执行路径、数据流及延伸阅读指引"
+description: "TeamHermes Agent 内部结构——主要子系统、执行路径、数据流及延伸阅读指引"
 ---
 
 # 架构
 
-本页是 Hermes Agent 内部结构的顶层导图。用它在代码库中定位自己，然后深入各子系统专项文档了解实现细节。
+本页是 TeamHermes Agent 内部结构的顶层导图。用它在代码库中定位自己，然后深入各子系统专项文档了解实现细节。
 
 ## 系统概览
 
@@ -85,12 +85,12 @@ hermes-agent/
 │   ├── model_switch.py       # /model 命令逻辑（CLI + gateway 共用）
 │   ├── setup.py              # 交互式设置向导（大文件）
 │   ├── skin_engine.py        # CLI 主题引擎
-│   ├── skills_config.py      # hermes skills——按平台启用/禁用
+│   ├── skills_config.py      # thm skills——按平台启用/禁用
 │   ├── skills_hub.py         # /skills 斜杠命令
-│   ├── tools_config.py       # hermes tools——按平台启用/禁用
+│   ├── tools_config.py       # thm tools——按平台启用/禁用
 │   ├── plugins.py            # PluginManager——发现、加载、hook
 │   ├── callbacks.py          # 终端回调（clarify、sudo、approval）
-│   └── gateway.py            # hermes gateway 启动/停止
+│   └── gateway.py            # thm gateway 启动/停止
 │
 ├── tools/                    # 工具实现（每个工具一个文件）
 │   ├── registry.py           # 中央工具注册表
@@ -241,7 +241,7 @@ CLI、gateway、cron、ACP 及辅助调用共用的运行时解析器。将 `(pr
 
 ### ACP 集成
 
-通过 stdio/JSON-RPC 将 Hermes 作为编辑器原生 agent 暴露给 VS Code、Zed 和 JetBrains。
+通过 stdio/JSON-RPC 将 TeamHermes 作为编辑器原生 agent 暴露给 VS Code、Zed 和 JetBrains。
 
 → [ACP 内部机制](./acp-internals.md)
 

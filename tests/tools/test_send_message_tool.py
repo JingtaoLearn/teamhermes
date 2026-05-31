@@ -588,7 +588,7 @@ class TestSendToPlatformChunking:
                     Platform.SLACK,
                     SimpleNamespace(enabled=True, token="***", extra={}),
                     "C123",
-                    "**hello** from [Hermes](<https://example.com>)",
+                    "**hello** from [TeamHermes](<https://example.com>)",
                 )
             )
 
@@ -596,7 +596,7 @@ class TestSendToPlatformChunking:
         send.assert_awaited_once_with(
             "***",
             "C123",
-            "*hello* from <https://example.com|Hermes>",
+            "*hello* from <https://example.com|TeamHermes>",
         )
 
     def test_slack_bold_italic_formatted_before_send(self, monkeypatch):

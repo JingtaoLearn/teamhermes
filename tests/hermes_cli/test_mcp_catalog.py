@@ -572,7 +572,7 @@ class TestCatalogDiagnostics:
         show_catalog()
         out = capsys.readouterr().out
         assert "futuristic" in out
-        assert "requires a newer Hermes" in out
+        assert "requires a newer TeamHermes" in out
 
 
 # ---------------------------------------------------------------------------

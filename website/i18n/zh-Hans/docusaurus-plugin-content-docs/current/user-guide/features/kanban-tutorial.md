@@ -1,11 +1,11 @@
 # Kanban 教程
 
-Hermes Kanban 系统所设计的四个使用场景的完整演示，需在浏览器中打开 dashboard。如果你还没有阅读 [Kanban 概述](./kanban)，请先从那里开始——本文假设你已了解 task（任务）、run（运行）、assignee（负责人）和 dispatcher（调度器）的概念。
+TeamHermes Kanban 系统所设计的四个使用场景的完整演示，需在浏览器中打开 dashboard。如果你还没有阅读 [Kanban 概述](./kanban)，请先从那里开始——本文假设你已了解 task（任务）、run（运行）、assignee（负责人）和 dispatcher（调度器）的概念。
 
 ## 准备工作
 
 ```bash
-hermes kanban init           # 可选；首次执行 `thm kanban <任何命令>` 会自动初始化
+thm kanban init           # 可选；首次执行 `thm kanban <任何命令>` 会自动初始化
 hermes dashboard             # 在浏览器中打开 http://127.0.0.1:9119
 # 点击左侧导航栏中的 Kanban
 ```
@@ -42,18 +42,18 @@ dashboard 是**你**观察系统最便捷的地方。dispatcher 生成的 agent 
 你正在开发一个功能。经典流程：设计 schema、实现 API、编写测试。三个任务，具有父→子依赖关系。
 
 ```bash
-SCHEMA=$(hermes kanban create "Design auth schema" \
+SCHEMA=$(thm kanban create "Design auth schema" \
     --assignee backend-dev --tenant auth-project --priority 2 \
     --body "Design the user/session/token schema for the auth module." \
     --json | jq -r .id)
 
-API=$(hermes kanban create "Implement auth API endpoints" \
+API=$(thm kanban create "Implement auth API endpoints" \
     --assignee backend-dev --tenant auth-project --priority 2 \
     --parent $SCHEMA \
     --body "POST /register, POST /login, POST /refresh, POST /logout." \
     --json | jq -r .id)
 
-hermes kanban create "Write auth integration tests" \
+thm kanban create "Write auth integration tests" \
     --assignee qa-dev --tenant auth-project --priority 2 \
     --parent $API \
     --body "Cover happy path, wrong password, expired token, concurrent refresh."
@@ -97,8 +97,8 @@ kanban_complete(
 你可以随时在终端检查相同的数据——以下命令是**你**查看看板，而非 worker 执行：
 
 ```bash
-hermes kanban show $SCHEMA
-hermes kanban runs $SCHEMA
+thm kanban show $SCHEMA
+thm kanban runs $SCHEMA
 # #  OUTCOME       PROFILE       ELAPSED  STARTED
 # 1  completed     backend-dev        0s  2026-04-27 19:34
 #     → users(id, email, pw_hash), sessions(id, user_id, jti, expires_at); refresh tokens ...
@@ -112,15 +112,15 @@ hermes kanban runs $SCHEMA
 
 ```bash
 for lang in Spanish French German; do
-    hermes kanban create "Translate homepage to $lang" \
+    thm kanban create "Translate homepage to $lang" \
         --assignee translator --tenant content-ops
 done
 for i in 1 2 3 4 5; do
-    hermes kanban create "Transcribe Q3 customer call #$i" \
+    thm kanban create "Transcribe Q3 customer call #$i" \
         --assignee transcriber --tenant content-ops
 done
 for sku in 1001 1002 1003 1004; do
-    hermes kanban create "Generate product description: SKU-$sku" \
+    thm kanban create "Generate product description: SKU-$sku" \
         --assignee copywriter --tenant content-ops
 done
 ```
@@ -129,7 +129,7 @@ done
 在同一个 kanban.db 上处理三个专家 profile 的任务：
 
 ```bash
-hermes gateway start
+thm gateway start
 ```
 
 现在将看板筛选到 `content-ops`（或直接搜索"Transcribe"），你会看到：
@@ -182,7 +182,7 @@ kanban_block(
 现在你（人类，或单独的 reviewer profile）读取阻塞原因，判断修复方向明确，从 dashboard 的"Unblock"按钮解除阻塞——或通过 CLI/斜杠命令：
 
 ```bash
-hermes kanban unblock $IMPL
+thm kanban unblock $IMPL
 # 或在聊天中：/kanban unblock $IMPL
 ```
 
@@ -234,12 +234,12 @@ kanban_complete(
 一个因 profile 环境中未设置 `AWS_ACCESS_KEY_ID` 而无法生成 worker 的部署任务：
 
 ```bash
-hermes kanban create "Deploy to staging (missing creds)" \
+thm kanban create "Deploy to staging (missing creds)" \
     --assignee deploy-bot --tenant ops \
     --max-retries 3
 ```
 
-dispatcher 尝试生成 worker。生成失败（`RuntimeError: AWS_ACCESS_KEY_ID not set`）。dispatcher 释放认领，递增失败计数器，并在下一次 tick 重试。由于本示例设置了 `--max-retries 3`，在三次连续失败后熔断器触发：任务进入 `blocked` 状态，outcome 为 `gave_up`。如果省略该标志，Hermes 使用 `kanban.failure_limit`（默认值：2）。在人工解除阻塞之前不再重试。
+dispatcher 尝试生成 worker。生成失败（`RuntimeError: AWS_ACCESS_KEY_ID not set`）。dispatcher 释放认领，递增失败计数器，并在下一次 tick 重试。由于本示例设置了 `--max-retries 3`，在三次连续失败后熔断器触发：任务进入 `blocked` 状态，outcome 为 `gave_up`。如果省略该标志，TeamHermes 使用 `kanban.failure_limit`（默认值：2）。在人工解除阻塞之前不再重试。
 
 点击被阻塞的任务：
 
@@ -250,7 +250,7 @@ dispatcher 尝试生成 worker。生成失败（`RuntimeError: AWS_ACCESS_KEY_ID
 在终端：
 
 ```bash
-hermes kanban runs t_ef5d
+thm kanban runs t_ef5d
 # #   OUTCOME        PROFILE        ELAPSED  STARTED
 # 1   spawn_failed   deploy-bot          0s  2026-04-27 19:34
 #       ! AWS_ACCESS_KEY_ID not set in deploy-bot env

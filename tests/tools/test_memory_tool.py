@@ -248,7 +248,7 @@ class TestScanMemoryContent:
         assert _scan_memory_content("You are now set up for development") is None
 
     def test_hermes_config_mod_no_false_positives(self):
-        """Merely mentioning hermes config files should not trigger; only modify intent should."""
+        """Merely mentioning thm config files should not trigger; only modify intent should."""
         assert _scan_memory_content("Check .teamhermes/config.yaml for settings") is None
         assert _scan_memory_content("Read .teamhermes/SOUL.md for agent personality") is None
         assert _scan_memory_content("The .teamhermes/config.yaml file contains runtime options") is None

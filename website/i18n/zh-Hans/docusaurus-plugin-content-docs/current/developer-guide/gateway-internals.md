@@ -6,7 +6,7 @@ description: "消息 gateway 如何启动、授权用户、路由会话以及投
 
 # Gateway 内部机制
 
-消息 gateway 是一个长期运行的进程，通过统一架构将 Hermes 连接到 20 余个外部消息平台。
+消息 gateway 是一个长期运行的进程，通过统一架构将 TeamHermes 连接到 20 余个外部消息平台。
 
 ## 关键文件
 
@@ -247,11 +247,11 @@ Gateway 在处理消息的同时运行周期性维护任务：
 
 Gateway 作为长期运行进程运行，管理方式如下：
 
-- `hermes gateway start` / `hermes gateway stop` — 手动控制
+- `thm gateway start` / `thm gateway stop` — 手动控制
 - `systemctl`（Linux）或 `launchctl`（macOS）— 服务管理
 - PID 文件位于 `~/.teamhermes/gateway.pid` — 面向 profile 的进程追踪
 
-**Profile 范围 vs 全局**：`start_gateway()` 使用 profile 范围的 PID 文件。`hermes gateway stop` 仅停止当前 profile 的 gateway。`hermes gateway stop --all` 使用全局 `ps aux` 扫描来终止所有 gateway 进程（用于更新时）。
+**Profile 范围 vs 全局**：`start_gateway()` 使用 profile 范围的 PID 文件。`thm gateway stop` 仅停止当前 profile 的 gateway。`thm gateway stop --all` 使用全局 `ps aux` 扫描来终止所有 gateway 进程（用于更新时）。
 
 ## 相关文档
 

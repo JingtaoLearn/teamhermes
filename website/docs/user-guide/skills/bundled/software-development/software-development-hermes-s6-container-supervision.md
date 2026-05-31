@@ -1,14 +1,14 @@
 ---
-title: "Hermes S6 Container Supervision"
-sidebar_label: "Hermes S6 Container Supervision"
-description: "Modify, debug, or extend the s6-overlay supervision tree inside the Hermes Agent Docker image — adding new services, debugging profile gateways, understandin..."
+title: "TeamHermes S6 Container Supervision"
+sidebar_label: "TeamHermes S6 Container Supervision"
+description: "Modify, debug, or extend the s6-overlay supervision tree inside the TeamHermes Agent Docker image — adding new services, debugging profile gateways, understandin..."
 ---
 
 {/* This page is auto-generated from the skill's SKILL.md by website/scripts/generate-skill-docs.py. Edit the source SKILL.md, not this page. */}
 
-# Hermes S6 Container Supervision
+# TeamHermes S6 Container Supervision
 
-Modify, debug, or extend the s6-overlay supervision tree inside the Hermes Agent Docker image — adding new services, debugging profile gateways, understanding the Architecture B main-program pattern.
+Modify, debug, or extend the s6-overlay supervision tree inside the TeamHermes Agent Docker image — adding new services, debugging profile gateways, understanding the Architecture B main-program pattern.
 
 ## Skill metadata
 
@@ -17,7 +17,7 @@ Modify, debug, or extend the s6-overlay supervision tree inside the Hermes Agent
 | Source | Bundled (installed by default) |
 | Path | `skills/software-development/hermes-s6-container-supervision` |
 | Version | `1.0.0` |
-| Author | Hermes Agent |
+| Author | TeamHermes Agent |
 | License | MIT |
 | Tags | `docker`, `s6`, `supervision`, `gateway`, `profiles` |
 | Related skills | [`hermes-agent`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-hermes-agent), `hermes-agent-dev` |
@@ -25,21 +25,21 @@ Modify, debug, or extend the s6-overlay supervision tree inside the Hermes Agent
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that TeamHermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
-# Hermes s6-overlay Container Supervision
+# TeamHermes s6-overlay Container Supervision
 
 ## When to use this skill
 
 Load this skill when you're working on:
-- Adding or removing a static service in the Hermes Docker image (something that should be supervised at every container start, like the dashboard)
+- Adding or removing a static service in the TeamHermes Docker image (something that should be supervised at every container start, like the dashboard)
 - Diagnosing why a per-profile gateway isn't starting, restarting, or surviving `docker restart`
 - Understanding why the container's CMD is `/opt/hermes/docker/main-wrapper.sh` and how leading-dash args reach the user's program
 - Modifying `cont-init.d` boot scripts (UID remap, volume seeding, profile reconciliation)
 - Changing the rendered run-script for per-profile gateways (Phase 4)
 
-If you're just running the Hermes Agent and want to use Docker, see `website/docs/user-guide/docker.md` instead.
+If you're just running the TeamHermes Agent and want to use Docker, see `website/docs/user-guide/docker.md` instead.
 
 ## Architecture at a glance
 
@@ -66,13 +66,13 @@ If you're just running the Hermes Agent and want to use Docker, see `website/doc
 ├── /run/service (s6-svscan watches; tmpfs)
 │   ├── gateway-coder/                 ← runtime-registered per-profile
 │   │   ├── type        ("longrun")
-│   │   ├── run         ("#!/command/with-contenv sh ... exec s6-setuidgid hermes hermes -p coder gateway run")
+│   │   ├── run         ("#!/command/with-contenv sh ... exec s6-setuidgid thm  hermes -p coder gateway run")
 │   │   ├── down        (marker — present means "registered but don't auto-start")
 │   │   └── log/run     (s6-log → $HERMES_HOME/logs/gateways/coder/current)
 │   └── ...
 │
 └── CMD ("main program")               ← /opt/hermes/docker/main-wrapper.sh
-    └── routes user args: bare exec | hermes subcommand | hermes (no args)
+    └── routes user args: bare exec | thm  subcommand | hermes (no args)
         — exec'd by /init with stdin/stdout/stderr inherited (TTY for --tui)
 ```
 <!-- ascii-guard-ignore-end -->
@@ -85,12 +85,12 @@ If you're just running the Hermes Agent and want to use Docker, see `website/doc
 | `docker/stage2-hook.sh` | The "old entrypoint logic" — UID remap, chown, seed, skills sync. Runs as cont-init.d/01-hermes-setup. |
 | `docker/cont-init.d/02-reconcile-profiles` | Calls `hermes_cli.container_boot` on every boot to restore profile gateway slots from the persistent volume. |
 | `docker/main-wrapper.sh` | The container's CMD. Routes user args, drops to hermes via `s6-setuidgid`, exec's the chosen program. |
-| `docker/s6-rc.d/main-hermes/run` | No-op `sleep infinity` — slot exists so the s6-rc user bundle is valid; main hermes runs as the CMD, not as a supervised service. |
+| `docker/s6-rc.d/main-hermes/run` | No-op `sleep infinity` — slot exists so the s6-rc user bundle is valid; main thm  runs as the CMD, not as a supervised service. |
 | `docker/s6-rc.d/dashboard/run` | Conditional service — `exec sleep infinity` unless `HERMES_DASHBOARD` is truthy. |
 | `docker/entrypoint.sh` | Back-compat shim that `exec`s the stage2 hook. External scripts that hard-coded the old entrypoint path still work. |
 | `hermes_cli/service_manager.py` | `S6ServiceManager`: `register_profile_gateway`, `unregister_profile_gateway`, `start/stop/restart/is_running`, `list_profile_gateways`. |
 | `hermes_cli/container_boot.py` | `reconcile_profile_gateways()` — walks persistent profiles, regenerates s6 slots, emits `container-boot.log`. |
-| `hermes_cli/gateway.py::_dispatch_via_service_manager_if_s6` | Intercepts `hermes gateway start/stop/restart` and routes to s6 when running in a container. |
+| `hermes_cli/gateway.py::_dispatch_via_service_manager_if_s6` | Intercepts `thm  gateway start/stop/restart` and routes to s6 when running in a container. |
 
 ## Why Architecture B (CMD as main program, not s6-supervised)
 
@@ -168,7 +168,7 @@ The harness lives in `tests/docker/` and skips when Docker isn't available. The 
 
 ### Profile directory ownership
 
-The cont-init reconciler runs as hermes (`s6-setuidgid hermes` in `02-reconcile-profiles`). If a profile dir ends up root-owned (e.g. because `docker exec <c> hermes profile create …` ran as root by default), the reconciler can't read SOUL.md and fails with `PermissionError`. Mitigation: `stage2-hook.sh` chowns `$HERMES_HOME/profiles` to hermes on **every** boot, idempotently. Don't remove that block.
+The cont-init reconciler runs as hermes (`s6-setuidgid hermes` in `02-reconcile-profiles`). If a profile dir ends up root-owned (e.g. because `docker exec <c> thm  profile create …` ran as root by default), the reconciler can't read SOUL.md and fails with `PermissionError`. Mitigation: `stage2-hook.sh` chowns `$HERMES_HOME/profiles` to hermes on **every** boot, idempotently. Don't remove that block.
 
 ### Files written by `docker exec` are root-owned
 
@@ -180,7 +180,7 @@ The service directory is on tmpfs and was wiped on container restart. Either the
 
 ### Gateway starts then immediately exits (`down (exitcode 1)` in svstat)
 
-Most likely the profile has no model or auth configured. The service slot is correct — the gateway itself is unconfigured. Run `hermes -p <profile> setup` first. The s6 supervisor will keep restarting it; that's the desired behavior (when you fix the config, the next attempt succeeds and stays up).
+Most likely the profile has no model or auth configured. The service slot is correct — the gateway itself is unconfigured. Run `thm  -p <profile> setup` first. The s6 supervisor will keep restarting it; that's the desired behavior (when you fix the config, the next attempt succeeds and stays up).
 
 ### Reconciler skipped a profile
 
@@ -193,4 +193,4 @@ Check whether something is invoking `s6-svscanctl -t` or `/run/s6/basedir/bin/ha
 ## Related skills
 
 - `hermes-agent-dev`: General hermes-agent codebase navigation
-- `hermes-tool-quirks`: Specific Hermes-tool workarounds (sed/grep/etc.) — load when debugging the s6 stack's interaction with hermes built-in tools.
+- `hermes-tool-quirks`: Specific TeamHermes-tool workarounds (sed/grep/etc.) — load when debugging the s6 stack's interaction with thm  built-in tools.

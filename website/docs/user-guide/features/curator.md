@@ -16,7 +16,7 @@ Tracks [issue #7816](https://github.com/NousResearch/hermes-agent/issues/7816).
 
 ## How it runs
 
-The curator is triggered by an inactivity check, not a cron daemon. On CLI session start, and on a recurring tick inside the gateway's cron-ticker thread, Hermes checks whether:
+The curator is triggered by an inactivity check, not a cron daemon. On CLI session start, and on a recurring tick inside the gateway's cron-ticker thread, TeamHermes checks whether:
 
 1. Enough time has passed since the last curator run (`interval_hours`, default **7 days**), and
 2. The agent has been idle long enough (`min_idle_hours`, default **2 hours**).
@@ -58,7 +58,7 @@ The curator's LLM review pass is a regular auxiliary task slot — `auxiliary.cu
 **Easiest — `thm model`:**
 
 ```bash
-hermes model                   # → "Auxiliary models — side-task routing"
+thm  model                   # → "Auxiliary models — side-task routing"
                                # → pick "Curator" → pick provider → pick model
 ```
 
@@ -83,33 +83,33 @@ Earlier releases used a one-off `curator.auxiliary.{provider,model}` block. That
 ## CLI
 
 ```bash
-hermes curator status         # last run, counts, pinned list, LRU top 5
-hermes curator run            # trigger a review now (blocks until the LLM pass finishes)
-hermes curator run --background  # fire-and-forget: start the LLM pass in a background thread
-hermes curator run --dry-run  # preview only — report without any mutations
-hermes curator backup         # take a manual snapshot of ~/.teamhermes/skills/
-hermes curator rollback       # restore from the newest snapshot
-hermes curator rollback --list     # list available snapshots
-hermes curator rollback --id <ts>  # restore a specific snapshot
-hermes curator rollback -y         # skip the confirmation prompt
-hermes curator pause          # stop runs until resumed
-hermes curator resume
-hermes curator pin <skill>    # never auto-transition this skill
-hermes curator unpin <skill>
-hermes curator restore <skill>  # move an archived skill back to active
+thm  curator status         # last run, counts, pinned list, LRU top 5
+thm  curator run            # trigger a review now (blocks until the LLM pass finishes)
+thm  curator run --background  # fire-and-forget: start the LLM pass in a background thread
+thm  curator run --dry-run  # preview only — report without any mutations
+thm  curator backup         # take a manual snapshot of ~/.teamhermes/skills/
+thm  curator rollback       # restore from the newest snapshot
+thm  curator rollback --list     # list available snapshots
+thm  curator rollback --id <ts>  # restore a specific snapshot
+thm  curator rollback -y         # skip the confirmation prompt
+thm  curator pause          # stop runs until resumed
+thm  curator resume
+thm  curator pin <skill>    # never auto-transition this skill
+thm  curator unpin <skill>
+thm  curator restore <skill>  # move an archived skill back to active
 ```
 
 ## Backups and rollback
 
-Before every real curator pass, Hermes takes a tar.gz snapshot of `~/.teamhermes/skills/` at `~/.teamhermes/skills/.curator_backups/<utc-iso>/skills.tar.gz`. If a pass archives or consolidates something you didn't want touched, you can undo the whole run with one command:
+Before every real curator pass, TeamHermes takes a tar.gz snapshot of `~/.teamhermes/skills/` at `~/.teamhermes/skills/.curator_backups/<utc-iso>/skills.tar.gz`. If a pass archives or consolidates something you didn't want touched, you can undo the whole run with one command:
 
 ```bash
-hermes curator rollback        # restore newest snapshot (with confirmation)
-hermes curator rollback -y     # skip the prompt
-hermes curator rollback --list # see all snapshots with reason + size
+thm  curator rollback        # restore newest snapshot (with confirmation)
+thm  curator rollback -y     # skip the prompt
+thm  curator rollback --list # see all snapshots with reason + size
 ```
 
-The rollback itself is reversible: before replacing the skills tree, Hermes takes another snapshot tagged `pre-rollback to <target-id>`, so a mistaken rollback can be undone by rolling forward to that one with `--id`.
+The rollback itself is reversible: before replacing the skills tree, TeamHermes takes another snapshot tagged `pre-rollback to <target-id>`, so a mistaken rollback can be undone by rolling forward to that one with `--id`.
 
 You can also take manual snapshots at any time with `thm curator backup --reason "before-refactor"`. The `--reason` string lands in the snapshot's `manifest.json` and is shown in `--list`.
 
@@ -139,7 +139,7 @@ Everything else in `~/.teamhermes/skills/` is fair game for the curator. This in
 
 - Skills the agent saved via `skill_manage(action="create")` during a conversation.
 - Skills you created manually with a hand-written `SKILL.md`.
-- Skills added via external skill directories you've pointed Hermes at.
+- Skills added via external skill directories you've pointed TeamHermes at.
 
 :::warning Your hand-written skills look the same as agent-saved ones
 Provenance here is **binary** (bundled/hub vs. everything else). The curator cannot tell a hand-authored skill you rely on for private workflows apart from a skill the self-improvement loop saved mid-session. Both land in the "agent-created" bucket.
@@ -165,8 +165,8 @@ Pinning protects a skill from deletion — both the curator's automated archive 
 Pin and unpin with:
 
 ```bash
-hermes curator pin <skill>
-hermes curator unpin <skill>
+thm  curator pin <skill>
+thm  curator unpin <skill>
 ```
 
 The flag is stored as `"pinned": true` on the skill's entry in `~/.teamhermes/skills/.usage.json`, so it survives across sessions.
@@ -226,7 +226,7 @@ If a run consolidated multiple skills under an umbrella (or merged near-duplicat
 If the curator archived something you still want:
 
 ```bash
-hermes curator restore <skill-name>
+thm  curator restore <skill-name>
 ```
 
 This moves the skill back from `~/.teamhermes/skills/.archive/` to the active tree and resets its state to `active`. The restore refuses if a bundled or hub-installed skill has since been installed under the same name (would shadow upstream).

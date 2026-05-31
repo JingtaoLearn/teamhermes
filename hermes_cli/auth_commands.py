@@ -250,7 +250,7 @@ def auth_add_command(args) -> None:
         # Codex-style auto-import: if a shared Nous credential lives at
         # <hermes-root>/shared/nous_auth.json (written by any previous
         # successful login), offer to import it instead of running the
-        # full device-code flow. This makes `hermes --profile <name>
+        # full device-code flow. This makes `thm --profile <name>
         # auth add nous --type oauth` a one-tap operation for users who
         # run multiple profiles.
         shared = auth_mod._read_shared_nous_state()
@@ -470,7 +470,7 @@ def auth_remove_command(args) -> None:
         raise SystemExit(f'No credential matching "{target}" for provider {provider}.')
     print(f"Removed {provider} credential #{index} ({removed.label})")
 
-    # Unified removal dispatch.  Every credential source Hermes reads from
+    # Unified removal dispatch.  Every credential source TeamHermes reads from
     # (env vars, external OAuth files, auth.json blocks, custom config)
     # has a RemovalStep registered in agent.credential_sources.  The step
     # handles its source-specific cleanup and we centralise suppression +

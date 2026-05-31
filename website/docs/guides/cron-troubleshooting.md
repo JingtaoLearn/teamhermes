@@ -1,7 +1,7 @@
 ---
 sidebar_position: 12
 title: "Cron Troubleshooting"
-description: "Diagnose and fix common Hermes cron issues — jobs not firing, delivery failures, skill loading errors, and performance problems"
+description: "Diagnose and fix common TeamHermes cron issues — jobs not firing, delivery failures, skill loading errors, and performance problems"
 ---
 
 # Cron Troubleshooting
@@ -15,7 +15,7 @@ When a cron job isn't behaving as expected, work through these checks in order. 
 ### Check 1: Verify the job exists and is active
 
 ```bash
-hermes cron list
+thm  cron list
 ```
 
 Look for the job and confirm its state is `[active]` (not `[paused]` or `[completed]`). If it shows `[completed]`, the repeat count may be exhausted — edit the job to reset it.
@@ -38,7 +38,7 @@ If the job fires once and then disappears from the list, it's a one-shot schedul
 
 Cron jobs are fired by the gateway's background ticker thread, which ticks every 60 seconds. A regular CLI chat session does **not** automatically fire cron jobs.
 
-If you're expecting jobs to fire automatically, you need a running gateway (`hermes gateway` for foreground, or `hermes gateway start` for the installed service). For one-off debugging, you can manually trigger a tick with `thm cron tick`.
+If you're expecting jobs to fire automatically, you need a running gateway (`thm  gateway` for foreground, or `thm  gateway start` for the installed service). For one-off debugging, you can manually trigger a tick with `thm cron tick`.
 
 ### Check 4: Check the system clock and timezone
 
@@ -46,7 +46,7 @@ Jobs use the local timezone. If your machine's clock is wrong or in a different 
 
 ```bash
 date
-hermes cron list   # Compare next_run times with local time
+thm  cron list   # Compare next_run times with local time
 ```
 
 ---
@@ -104,7 +104,7 @@ cron:
 ### Check 1: Verify skills are installed
 
 ```bash
-hermes skills list
+thm  skills list
 ```
 
 Skills must be installed before they can be attached to cron jobs. If a skill is missing, install it first with `thm skills install <skill-name>` or via `/skills` in the CLI.
@@ -144,10 +144,10 @@ If a job ran and failed, you may see error context in:
 ### Check 2: Common error patterns
 
 **"No such file or directory" for scripts**
-The `script` path must be an absolute path (or relative to the Hermes config directory). Verify:
+The `script` path must be an absolute path (or relative to the TeamHermes config directory). Verify:
 ```bash
 ls ~/.teamhermes/scripts/your-script.py   # Must exist
-hermes cron edit <job_id> --script ~/.teamhermes/scripts/your-script.py
+thm  cron edit <job_id> --script ~/.teamhermes/scripts/your-script.py
 ```
 
 **"Skill not found" at job execution**
@@ -165,7 +165,7 @@ The scheduler uses file-based locking to prevent overlapping ticks. If two gatew
 
 Kill duplicate gateway processes:
 ```bash
-ps aux | grep hermes
+ps aux | grep thm
 # Kill duplicate processes, keep only one
 ```
 
@@ -199,11 +199,11 @@ Scripts that dump megabytes of output will slow down the agent and may hit token
 ## Diagnostic Commands
 
 ```bash
-hermes cron list                    # Show all jobs, states, next_run times
-hermes cron run <job_id>            # Schedule for next tick (for testing)
-hermes cron edit <job_id>           # Fix configuration issues
-hermes logs                         # View recent Hermes logs
-hermes skills list                  # Verify installed skills
+thm  cron list                    # Show all jobs, states, next_run times
+thm  cron run <job_id>            # Schedule for next tick (for testing)
+thm  cron edit <job_id>           # Fix configuration issues
+thm  logs                         # View recent TeamHermes logs
+thm  skills list                  # Verify installed skills
 ```
 
 ---

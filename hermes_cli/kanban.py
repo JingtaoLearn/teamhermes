@@ -1,4 +1,4 @@
-"""CLI for the Hermes Kanban board — ``thm kanban …`` subcommand.
+"""CLI for the TeamHermes Kanban board — ``thm kanban …`` subcommand.
 
 Exposes the full Kanban command surface documented in the design spec
 (``docs/hermes-kanban-v1-spec.pdf``).  All DB work is delegated to
@@ -177,7 +177,7 @@ def _check_dispatcher_presence() -> tuple[bool, str]:
         False,
         "No gateway is running — the task will sit in 'ready' until you "
         "start it. Run:\n"
-        "    hermes gateway start\n"
+        "    thm gateway start\n"
         "The gateway hosts an embedded dispatcher (tick interval 60s by "
         "default); your task will be picked up on the next tick after "
         "the gateway comes up."
@@ -197,7 +197,7 @@ def build_parser(parent_subparsers: argparse._SubParsersAction) -> argparse.Argu
         "kanban",
         help="Multi-profile collaboration board (tasks, links, comments)",
         description=(
-            "Durable SQLite-backed task board shared across Hermes profiles. "
+            "Durable SQLite-backed task board shared across TeamHermes profiles. "
             "Tasks are claimed atomically, can depend on other tasks, and "
             "are executed by a named profile in an isolated workspace. "
             "See https://hermes-agent.nousresearch.com/docs/user-guide/features/kanban "
@@ -617,7 +617,7 @@ def build_parser(parent_subparsers: argparse._SubParsersAction) -> argparse.Argu
     # --- daemon (deprecated) ---
     p_daemon = sub.add_parser(
         "daemon",
-        help="DEPRECATED — dispatcher now runs in the gateway. Use `hermes gateway start`.",
+        help="DEPRECATED — dispatcher now runs in the gateway. Use `thm gateway start`.",
     )
     p_daemon.add_argument("--interval", type=float, default=60.0,
                           help="Seconds between dispatch ticks (default: 60)")
@@ -846,8 +846,8 @@ def kanban_command(args: argparse.Namespace) -> int:
             parser.print_help()
         else:
             print(
-                "usage: hermes kanban <action> [options]\n"
-                "Run 'hermes kanban --help' for the full list of actions.",
+                "usage: thm kanban <action> [options]\n"
+                "Run 'thm kanban --help' for the full list of actions.",
                 file=sys.stderr,
             )
         return 0
@@ -984,7 +984,7 @@ def _profile_author() -> str:
 
 
 # ---------------------------------------------------------------------------
-# Boards management (hermes kanban boards …)
+# Boards management (thm kanban boards …)
 # ---------------------------------------------------------------------------
 
 def _dispatch_boards(args: argparse.Namespace) -> int:
@@ -1238,7 +1238,7 @@ def _cmd_init(args: argparse.Namespace) -> int:
     # already addressable. Multica does this auto-detection on its
     # daemon start; we do it here at init time instead because our
     # dispatcher doesn't need to enumerate — we just pass the name
-    # through to `hermes -p <name>`.
+    # through to `thm -p <name>`.
     try:
         profiles = kb.list_profiles_on_disk()
     except Exception:
@@ -1250,10 +1250,10 @@ def _cmd_init(args: argparse.Namespace) -> int:
             print(f"  {name}")
     else:
         print("No profiles found under ~/.teamhermes/profiles/.")
-        print("Create one with `hermes -p <name> setup` before assigning tasks.")
+        print("Create one with `thm -p <name> setup` before assigning tasks.")
     print()
     print("Next step: start the gateway so ready tasks actually get picked up.")
-    print("  hermes gateway start")
+    print("  thm gateway start")
     print()
     print(
         "The gateway hosts an embedded dispatcher that ticks every 60 seconds\n"
@@ -1285,7 +1285,7 @@ def _cmd_assignees(args: argparse.Namespace) -> int:
         print(json.dumps(data, indent=2, ensure_ascii=False))
         return 0
     if not data:
-        print("(no assignees — create a profile with `hermes -p <name> setup`)")
+        print("(no assignees — create a profile with `thm -p <name> setup`)")
         return 0
     # Header
     print(f"{'NAME':20s}  {'ON DISK':8s}  COUNTS")
@@ -2155,10 +2155,10 @@ def _cmd_daemon(args: argparse.Namespace) -> int:
     # casually — intentional.
     if not getattr(args, "force", False):
         print(
-            "hermes kanban daemon: DEPRECATED — the dispatcher now runs\n"
+            "thm kanban daemon: DEPRECATED — the dispatcher now runs\n"
             "inside the gateway. To use kanban:\n"
             "\n"
-            "    hermes gateway start       # starts the gateway + embedded dispatcher\n"
+            "    thm gateway start       # starts the gateway + embedded dispatcher\n"
             "\n"
             "Ready tasks will be picked up on the next dispatcher tick\n"
             "(default: every 60 seconds). Configure via config.yaml:\n"
@@ -2248,7 +2248,7 @@ def _cmd_daemon(args: argparse.Namespace) -> int:
 
     def _ready_queue_nonempty() -> bool:
         """Cheap probe — is there at least one ready+assigned+unclaimed
-        task whose assignee maps to a real Hermes profile (i.e. one the
+        task whose assignee maps to a real TeamHermes profile (i.e. one the
         dispatcher would actually try to spawn for)?
 
         Filters out tasks assigned to control-plane lanes

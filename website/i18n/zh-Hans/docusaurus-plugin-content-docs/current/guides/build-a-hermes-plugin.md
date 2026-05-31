@@ -1,16 +1,16 @@
 ---
 sidebar_position: 9
 sidebar_label: "Build a Plugin"
-title: "构建 Hermes 插件"
-description: "逐步指南：构建包含工具、钩子、数据文件和技能的完整 Hermes 插件"
+title: "构建 TeamHermes 插件"
+description: "逐步指南：构建包含工具、钩子、数据文件和技能的完整 TeamHermes 插件"
 ---
 
-# 构建 Hermes 插件
+# 构建 TeamHermes 插件
 
-本指南从零开始构建一个完整的 Hermes 插件。完成后，你将拥有一个包含多个工具、生命周期钩子（hook）、随附数据文件和捆绑技能的可用插件——涵盖插件系统支持的所有功能。
+本指南从零开始构建一个完整的 TeamHermes 插件。完成后，你将拥有一个包含多个工具、生命周期钩子（hook）、随附数据文件和捆绑技能的可用插件——涵盖插件系统支持的所有功能。
 
 :::info 不确定需要哪份指南？
-Hermes 有多种不同的可插拔接口——有些使用 Python `register_*` API，另一些是配置驱动或放入指定目录即可生效。请先查阅下表：
+TeamHermes 有多种不同的可插拔接口——有些使用 Python `register_*` API，另一些是配置驱动或放入指定目录即可生效。请先查阅下表：
 
 | 如果你想添加… | 请阅读 |
 |---|---|
@@ -62,7 +62,7 @@ provides_hooks:
   - post_tool_call
 ```
 
-这告诉 Hermes："我是一个名为 calculator 的插件，我提供工具和钩子。" `provides_tools` 和 `provides_hooks` 字段是插件注册内容的列表。
+这告诉 TeamHermes："我是一个名为 calculator 的插件，我提供工具和钩子。" `provides_tools` 和 `provides_hooks` 字段是插件注册内容的列表。
 
 可选字段示例：
 ```yaml
@@ -223,7 +223,7 @@ def unit_convert(args: dict, **kwargs) -> str:
 1. **签名：** `def my_handler(args: dict, **kwargs) -> str`
 2. **返回值：** 始终返回 JSON 字符串。成功和错误均如此。
 3. **不要抛出异常：** 捕获所有异常，改为返回错误 JSON。
-4. **接受 `**kwargs`：** Hermes 未来可能传入额外上下文。
+4. **接受 `**kwargs`：** TeamHermes 未来可能传入额外上下文。
 
 ## 第五步：编写注册代码
 
@@ -264,10 +264,10 @@ def register(ctx):
 - 在启动时恰好调用一次
 - `ctx.register_tool()` 将你的工具放入注册表——模型立即可见
 - `ctx.register_hook()` 订阅生命周期事件
-- `ctx.register_cli_command()` 注册 CLI 子命令（例如 `hermes my-plugin <subcommand>`）
+- `ctx.register_cli_command()` 注册 CLI 子命令（例如 `thm my-plugin <subcommand>`）
 - `ctx.register_command()` 注册会话内斜杠命令（例如在 CLI / 网关聊天中输入 `/myplugin <args>`）——详见下方[注册斜杠命令](#register-slash-commands)
 - `ctx.dispatch_tool(name, arguments)` ——以父代理的上下文（审批、凭证、task_id 自动连接）调用任意其他工具（内置或来自其他插件）。适用于需要直接调用 `terminal`、`read_file` 或其他工具的斜杠命令处理器，效果等同于模型直接调用。
-- 如果此函数崩溃，插件将被禁用，但 Hermes 继续正常运行
+- 如果此函数崩溃，插件将被禁用，但 TeamHermes 继续正常运行
 
 **`dispatch_tool` 示例——执行工具的斜杠命令：**
 
@@ -285,7 +285,7 @@ def register(ctx):
 
 ## 第六步：测试
 
-启动 Hermes：
+启动 TeamHermes：
 
 ```bash
 hermes
@@ -454,7 +454,7 @@ requires_env:
 
 ### 懒加载可选 Python 依赖
 
-如果你的插件封装了一个并非所有用户都会安装的 SDK（供应商 SDK、重型 ML 库、平台特定包），不要在模块顶部 `import` 它。在工具处理器内部使用 `tools.lazy_deps.ensure(...)` 辅助函数——Hermes 会在首次使用时安装该包，并受用户 `security.allow_lazy_installs` 配置的控制。
+如果你的插件封装了一个并非所有用户都会安装的 SDK（供应商 SDK、重型 ML 库、平台特定包），不要在模块顶部 `import` 它。在工具处理器内部使用 `tools.lazy_deps.ensure(...)` 辅助函数——TeamHermes 会在首次使用时安装该包，并受用户 `security.allow_lazy_installs` 配置的控制。
 
 ```python
 # tools.py
@@ -474,10 +474,10 @@ def my_tool_handler(args, **kwargs):
 
 | 规则 | 原因 |
 |---|---|
-| 你的功能键必须出现在内置的 `LAZY_DEPS` 允许列表中 | 防止恶意配置诱使 Hermes 安装任意包——只有 Hermes 自身随附的规格才符合条件 |
+| 你的功能键必须出现在内置的 `LAZY_DEPS` 允许列表中 | 防止恶意配置诱使 TeamHermes 安装任意包——只有 TeamHermes 自身随附的规格才符合条件 |
 | 规格仅限 PyPI 包名 | 不允许 `--index-url`、`git+https://` 或 `file:` 路径。在允许列表条目中使用 PEP 440 固定版本（`"my-sdk>=1.2,<2"`） |
 
-对于通过 pip 分发的第三方插件，在你自己的 `pyproject.toml` 中将可选依赖声明为 `[project.optional-dependencies]` extras，并告知用户执行 `pip install your-plugin[backend]`——该路径不经过 `lazy_deps`。懒加载安装最适合**内置**插件，因为对每次安装都强制依赖会增加 Hermes 基础安装的体积。
+对于通过 pip 分发的第三方插件，在你自己的 `pyproject.toml` 中将可选依赖声明为 `[project.optional-dependencies]` extras，并告知用户执行 `pip install your-plugin[backend]`——该路径不经过 `lazy_deps`。懒加载安装最适合**内置**插件，因为对每次安装都强制依赖会增加 TeamHermes 基础安装的体积。
 
 当全局设置 `security.allow_lazy_installs: false` 时，`ensure()` 会立即抛出 `FeatureUnavailable` 并附带修复提示——你的插件应捕获该异常并优雅降级（返回错误结果，而非让工具循环崩溃）。
 
@@ -543,7 +543,7 @@ def register(ctx):
 
 ### `pre_llm_call` 上下文注入
 
-这是唯一一个返回值有意义的钩子。当 `pre_llm_call` 回调返回包含 `"context"` 键的字典（或纯字符串）时，Hermes 会将该文本注入**当前轮次的用户消息**中。这是记忆插件、RAG 集成、护栏以及任何需要向模型提供额外上下文的插件所使用的机制。
+这是唯一一个返回值有意义的钩子。当 `pre_llm_call` 回调返回包含 `"context"` 键的字典（或纯字符串）时，TeamHermes 会将该文本注入**当前轮次的用户消息**中。这是记忆插件、RAG 集成、护栏以及任何需要向模型提供额外上下文的插件所使用的机制。
 
 #### 返回格式
 
@@ -566,7 +566,7 @@ return None
 
 - **保留提示词缓存**——系统提示词在各轮次之间保持不变。Anthropic 和 OpenRouter 会缓存系统提示词前缀，保持其稳定可在多轮对话中节省 75% 以上的输入 token。如果插件修改系统提示词，每轮都会缓存未命中。
 - **临时性**——注入仅在 API 调用时发生。会话历史中的原始用户消息不会被修改，也不会持久化到会话数据库。
-- **系统提示词是 Hermes 的领地**——它包含模型特定的指导、工具执行规则、个性指令和缓存的技能内容。插件在用户输入旁边贡献上下文，而非修改代理的核心指令。
+- **系统提示词是 TeamHermes 的领地**——它包含模型特定的指导、工具执行规则、个性指令和缓存的技能内容。插件在用户输入旁边贡献上下文，而非修改代理的核心指令。
 
 #### 示例：记忆召回插件
 
@@ -644,17 +644,17 @@ def register(ctx):
 
 ```python
 def _my_command(args):
-    """Handler for hermes my-plugin <subcommand>."""
+    """Handler for thm my-plugin <subcommand>."""
     sub = getattr(args, "my_command", None)
     if sub == "status":
         print("All good!")
     elif sub == "config":
         print("Current config: ...")
     else:
-        print("Usage: hermes my-plugin <status|config>")
+        print("Usage: thm my-plugin <status|config>")
 
 def _setup_argparse(subparser):
-    """Build the argparse tree for hermes my-plugin."""
+    """Build the argparse tree for thm my-plugin."""
     subs = subparser.add_subparsers(dest="my_command")
     subs.add_parser("status", help="Show plugin status")
     subs.add_parser("config", help="Show plugin config")
@@ -670,7 +670,7 @@ def register(ctx):
     )
 ```
 
-注册后，用户可以运行 `hermes my-plugin status`、`hermes my-plugin config` 等命令。
+注册后，用户可以运行 `thm my-plugin status`、`thm my-plugin config` 等命令。
 
 **记忆提供商插件**使用基于约定的方式：在插件的 `cli.py` 文件中添加 `register_cli(subparser)` 函数。记忆插件发现系统会自动找到它——无需调用 `ctx.register_cli_command()`。详见[记忆提供商插件指南](/developer-guide/memory-provider-plugin#adding-cli-commands)。
 
@@ -772,7 +772,7 @@ def register(ctx):
 
 ## 专用插件类型
 
-Hermes 在通用接口之外还有五种专用插件类型。每种都以目录形式存放在 `plugins/<category>/<name>/`（内置）或 `~/.teamhermes/plugins/<category>/<name>/`（用户）下。各类别的约定不同——选择你需要的类型，然后阅读其完整指南。
+TeamHermes 在通用接口之外还有五种专用插件类型。每种都以目录形式存放在 `plugins/<category>/<name>/`（内置）或 `~/.teamhermes/plugins/<category>/<name>/`（用户）下。各类别的约定不同——选择你需要的类型，然后阅读其完整指南。
 
 ### 模型提供商插件——添加 LLM 后端
 
@@ -839,7 +839,7 @@ def register(ctx):
         check_fn=check_requirements,
         required_env=["MYPLATFORM_TOKEN"],
         # 从环境变量自动填充 PlatformConfig.extra，使仅环境变量的设置
-        # 在 `hermes gateway status` 中显示，无需 SDK 实例化。
+        # 在 `thm gateway status` 中显示，无需 SDK 实例化。
         env_enablement_fn=_env_enablement,
         # 启用 cron 投递：`deliver=myplatform` 路由到此变量。
         cron_deliver_env_var="MYPLATFORM_HOME_CHANNEL",
@@ -957,11 +957,11 @@ description: Custom image generation backend
 
 ## 非 Python 扩展接口
 
-Hermes 也接受完全不是 Python 插件的扩展。这些在[可插拔接口表](/user-guide/features/plugins#pluggable-interfaces--where-to-go-for-each)中有所展示；以下各节简要介绍每种编写方式。
+TeamHermes 也接受完全不是 Python 插件的扩展。这些在[可插拔接口表](/user-guide/features/plugins#pluggable-interfaces--where-to-go-for-each)中有所展示；以下各节简要介绍每种编写方式。
 
 ### MCP 服务器——注册外部工具
 
-Model Context Protocol（MCP）服务器无需任何 Python 插件即可将自己的工具注册到 Hermes。在 `~/.teamhermes/config.yaml` 中声明：
+Model Context Protocol（MCP）服务器无需任何 Python 插件即可将自己的工具注册到 TeamHermes。在 `~/.teamhermes/config.yaml` 中声明：
 
 ```yaml
 mcp_servers:
@@ -976,7 +976,7 @@ mcp_servers:
       type: "oauth"
 ```
 
-Hermes 在启动时连接到每个服务器，列出其工具，并与内置工具一起注册。LLM 看到它们的方式与其他工具完全相同。**完整指南：** [MCP](/user-guide/features/mcp)。
+TeamHermes 在启动时连接到每个服务器，列出其工具，并与内置工具一起注册。LLM 看到它们的方式与其他工具完全相同。**完整指南：** [MCP](/user-guide/features/mcp)。
 
 ### 网关事件钩子——在生命周期事件时触发
 
@@ -1023,9 +1023,9 @@ hooks:
 如果你维护了一个技能 GitHub 仓库（或想从内置来源之外的社区索引拉取），将其添加为 **tap**：
 
 ```bash
-hermes skills tap add myorg/skills-repo
-hermes skills search my-workflow --source myorg/skills-repo
-hermes skills install myorg/skills-repo/my-workflow
+thm skills tap add myorg/skills-repo
+thm skills search my-workflow --source myorg/skills-repo
+thm skills install myorg/skills-repo/my-workflow
 ```
 
 发布你自己的 tap 只需一个包含 `skills/<skill-name>/SKILL.md` 目录的 GitHub 仓库——无需服务器或注册表注册。
@@ -1118,7 +1118,7 @@ def handler(args, **kwargs):
 
 **处理器签名缺少 `**kwargs`：**
 ```python
-# 错误——Hermes 传入额外上下文时会报错
+# 错误——TeamHermes 传入额外上下文时会报错
 def handler(args):
     ...
 

@@ -14,7 +14,7 @@ hermes memory setup    # select "holographic"
 
 Or manually:
 ```bash
-hermes config set memory.provider holographic
+thm config set memory.provider holographic
 ```
 
 ## Config

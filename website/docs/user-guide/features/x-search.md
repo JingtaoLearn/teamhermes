@@ -33,7 +33,7 @@ The tool's `check_fn` runs the xAI credential resolver every time the model's to
 Auto-enables when xAI credentials (OAuth token or `XAI_API_KEY`) are present. Disable explicitly via `thm tools` → Search → x_search if you don't want this.
 
 ```bash
-hermes tools
+thm  tools
 # → 🐦 X (Twitter) Search   (press space to toggle on)
 ```
 

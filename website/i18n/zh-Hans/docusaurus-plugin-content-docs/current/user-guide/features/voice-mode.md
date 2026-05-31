@@ -1,20 +1,20 @@
 ---
 sidebar_position: 10
 title: "语音模式"
-description: "与 Hermes Agent 进行实时语音对话 — CLI、Telegram、Discord（私信、文字频道和语音频道）"
+description: "与 TeamHermes Agent 进行实时语音对话 — CLI、Telegram、Discord（私信、文字频道和语音频道）"
 ---
 
 # 语音模式
 
-Hermes Agent 支持在 CLI 和消息平台上进行完整的语音交互。通过麦克风与 Agent 对话，听取语音回复，并在 Discord 语音频道中进行实时语音对话。
+TeamHermes Agent 支持在 CLI 和消息平台上进行完整的语音交互。通过麦克风与 Agent 对话，听取语音回复，并在 Discord 语音频道中进行实时语音对话。
 
-如需包含推荐配置和实际使用模式的实践指南，请参阅 [使用 Hermes 的语音模式](/guides/use-voice-mode-with-hermes)。
+如需包含推荐配置和实际使用模式的实践指南，请参阅 [使用 TeamHermes 的语音模式](/guides/use-voice-mode-with-hermes)。
 
 ## 前提条件
 
 使用语音功能前，请确保已完成以下准备：
 
-1. **已安装 Hermes Agent** — `pip install hermes-agent`（参见 [安装](/getting-started/installation)）
+1. **已安装 TeamHermes Agent** — `pip install hermes-agent`（参见 [安装](/getting-started/installation)）
 2. **已配置 LLM 提供商** — 运行 `thm model` 或在 `~/.teamhermes/.env` 中设置首选提供商的凭据
 3. **基础设置正常** — 运行 `thm` 验证 Agent 能够响应文字消息，再启用语音功能
 
@@ -180,8 +180,8 @@ Whisper 有时会从静音或背景噪音中生成幻觉文字（如"Thank you f
 启动 gateway 以连接到消息平台：
 
 ```bash
-hermes gateway        # 启动 gateway（连接到已配置的平台）
-hermes gateway setup  # 首次配置的交互式设置向导
+thm gateway        # 启动 gateway（连接到已配置的平台）
+thm gateway setup  # 首次配置的交互式设置向导
 ```
 
 ### Discord：频道与私信
@@ -326,7 +326,7 @@ DISCORD_ALLOWED_USERS=your-user-id
 ### 启动 Gateway
 
 ```bash
-hermes gateway        # 使用现有配置启动
+thm gateway        # 使用现有配置启动
 ```
 
 Bot 应在几秒内在 Discord 中上线。

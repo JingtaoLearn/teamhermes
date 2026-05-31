@@ -1,5 +1,5 @@
 """
-Security advisory checker for Hermes Agent.
+Security advisory checker for TeamHermes Agent.
 
 Detects known-compromised Python packages installed in the active venv
 (supply-chain attacks like the Mini Shai-Hulud worm of May 2026 that
@@ -28,7 +28,7 @@ The check is invoked from three places:
    a one-line operator banner)
 
 This module is intentionally dependency-free beyond the stdlib so it can
-run in environments where the rest of Hermes failed to import.
+run in environments where the rest of TeamHermes failed to import.
 """
 
 from __future__ import annotations
@@ -102,7 +102,7 @@ ADVISORIES: tuple[Advisory, ...] = (
             "environment variables and credential files (~/.npmrc, ~/.pypirc, "
             "~/.aws/credentials, GitHub PATs, cloud SDK tokens) and exfils "
             "them to a hardcoded webhook. If you ran any Python process that "
-            "imported mistralai 2.4.6 — including hermes when configured "
+            "imported mistralai 2.4.6 — including thm when configured "
             "with provider=mistral for TTS or STT — assume those credentials "
             "are exposed."
         ),
@@ -118,7 +118,7 @@ ADVISORIES: tuple[Advisory, ...] = (
             "and any other credential files for tokens that may have been read.",
             "Check GitHub for unexpected new SSH keys, deploy keys, or webhook "
             "additions on repos you have admin on.",
-            "After cleanup: hermes doctor --ack shai-hulud-2026-05  to dismiss "
+            "After cleanup: thm doctor --ack shai-hulud-2026-05  to dismiss "
             "this warning.",
         ),
         published="2026-05-12",
@@ -149,7 +149,7 @@ def _installed_version(pkg_name: str) -> Optional[str]:
     """
     try:
         from importlib.metadata import PackageNotFoundError, version
-    except ImportError:  # py<3.8 — Hermes requires 3.10+ but defensive.
+    except ImportError:  # py<3.8 — TeamHermes requires 3.10+ but defensive.
         return None
     try:
         return version(pkg_name)
@@ -279,7 +279,7 @@ def short_banner_lines(hits: list[AdvisoryHit]) -> list[str]:
     lines = [
         f"SECURITY ADVISORY [{primary.advisory.id}]: {primary.advisory.title}",
         f"  Detected: {primary.package}=={primary.installed_version}",
-        "  Run 'hermes doctor' for remediation steps.",
+        "  Run 'thm doctor' for remediation steps.",
     ]
     if len(hits) > 1:
         lines.insert(1, f"  ({len(hits) - 1} additional advisor"

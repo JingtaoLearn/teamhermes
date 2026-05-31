@@ -149,5 +149,5 @@ def test_production_tree_passes_syntax_guard():
 
     assert ok is True, (
         f"Critical-path file {failing_path} fails to parse on current main; "
-        f"hermes update would brick users. Error: {error}"
+        f"thm update would brick users. Error: {error}"
     )

@@ -4,13 +4,13 @@ sidebar_position: 3
 
 # Profile 分发：共享完整 Agent
 
-**Profile 分发**将一个完整的 Hermes agent——个性、技能、cron 任务、MCP 连接、配置——打包为一个 git 仓库。任何有权访问该仓库的人都可以用一条命令安装整个 agent，就地更新，并保持自己的记忆、会话和 API 密钥不受影响。
+**Profile 分发**将一个完整的 TeamHermes agent——个性、技能、cron 任务、MCP 连接、配置——打包为一个 git 仓库。任何有权访问该仓库的人都可以用一条命令安装整个 agent，就地更新，并保持自己的记忆、会话和 API 密钥不受影响。
 
 如果说 [profile](./profiles.md) 是本地 agent，那么分发就是让该 agent 可共享的形式。
 
 ## 这意味着什么
 
-在分发功能出现之前，共享一个 Hermes agent 意味着要发送：
+在分发功能出现之前，共享一个 TeamHermes agent 意味着要发送：
 
 1. 你的 SOUL.md
 2. 需要安装的技能列表
@@ -36,7 +36,7 @@ my-research-agent/
 接收方运行：
 
 ```bash
-hermes profile install github.com/you/my-research-agent --alias
+thm profile install github.com/you/my-research-agent --alias
 ```
 
 ……他们就拥有了完整的 agent。填入自己的 API 密钥（`.env.EXAMPLE` → `.env`），即可运行 `my-research-agent chat`，或通过 Telegram / Discord / Slack / 任何 gateway 平台与其交互。当你推送新版本时，他们运行 `thm profile update my-research-agent` 即可拉取你的更改——他们的记忆和会话保持不变。
@@ -52,7 +52,7 @@ hermes profile install github.com/you/my-research-agent --alias
 - **私有仓库开箱即用。** SSH 密钥、`git credential` helper、GitHub CLI 存储的凭据——终端已配置好的任何认证方式都能透明生效。
 - **可复现性即 commit SHA。** 与 pip 和 npm 的记录方式相同。
 
-权衡之处：接收方需要安装 git。在 2026 年运行 Hermes 的任何机器上，这已是既成事实。
+权衡之处：接收方需要安装 git。在 2026 年运行 TeamHermes 的任何机器上，这已是既成事实。
 
 ## 什么时候应该使用分发？
 
@@ -82,7 +82,7 @@ hermes profile install github.com/you/my-research-agent --alias
 像构建其他 profile 一样构建并打磨 agent：
 
 ```bash
-hermes profile create research-bot
+thm profile create research-bot
 research-bot setup                    # configure model, API keys
 # Edit ~/.teamhermes/profiles/research-bot/SOUL.md
 # Install skills, wire up MCP servers, schedule cron jobs, etc.
@@ -195,7 +195,7 @@ distribution_owned:
 ### 安装
 
 ```bash
-hermes profile install github.com/you/research-bot --alias
+thm profile install github.com/you/research-bot --alias
 ```
 
 执行过程：
@@ -214,22 +214,22 @@ hermes profile install github.com/you/research-bot --alias
 
 ```bash
 # GitHub shorthand
-hermes profile install github.com/you/research-bot
+thm profile install github.com/you/research-bot
 
 # Full HTTPS
-hermes profile install https://github.com/you/research-bot.git
+thm profile install https://github.com/you/research-bot.git
 
 # SSH
-hermes profile install git@github.com:you/research-bot.git
+thm profile install git@github.com:you/research-bot.git
 
 # Self-hosted, GitLab, Gitea, Forgejo — any Git host
-hermes profile install https://git.example.com/team/research-bot.git
+thm profile install https://git.example.com/team/research-bot.git
 
 # Private repo using your configured git auth
-hermes profile install git@github.com:your-org/internal-bot.git
+thm profile install git@github.com:your-org/internal-bot.git
 
 # Local directory during development (no git push needed)
-hermes profile install ~/my-profile-in-progress/
+thm profile install ~/my-profile-in-progress/
 ```
 
 ### 覆盖 profile 名称
@@ -238,9 +238,9 @@ hermes profile install ~/my-profile-in-progress/
 
 ```bash
 # Alice
-hermes profile install github.com/acme/support-bot --name support-us --alias
+thm profile install github.com/acme/support-bot --name support-us --alias
 # Bob（同一分发，不同本地名称）
-hermes profile install github.com/acme/support-bot --name support-eu --alias
+thm profile install github.com/acme/support-bot --name support-eu --alias
 ```
 
 ### 填写环境变量
@@ -248,7 +248,7 @@ hermes profile install github.com/acme/support-bot --name support-eu --alias
 安装后，agent 的 profile 中包含一个 `.env.EXAMPLE`：
 
 ```
-# Environment variables required by this Hermes distribution.
+# Environment variables required by this TeamHermes distribution.
 # Copy to `.env` and fill in your own values before running.
 
 # OpenAI API key (for model access)
@@ -272,7 +272,7 @@ cp ~/.teamhermes/profiles/research-bot/.env.EXAMPLE ~/.teamhermes/profiles/resea
 ### 查看已安装内容
 
 ```bash
-hermes profile info research-bot
+thm profile info research-bot
 ```
 
 显示：
@@ -282,7 +282,7 @@ Distribution: research-bot
 Version:      1.0.0
 Description:  Autonomous research assistant with arXiv and web tools
 Author:       Your Name
-Requires:     Hermes >=0.12.0
+Requires:     TeamHermes >=0.12.0
 Source:       https://github.com/you/research-bot
 Installed:    2026-05-08T17:04:32+00:00
 
@@ -305,7 +305,7 @@ Environment variables:
 ### 更新
 
 ```bash
-hermes profile update research-bot
+thm profile update research-bot
 ```
 
 执行过程：
@@ -320,7 +320,7 @@ hermes profile update research-bot
 ### 删除
 
 ```bash
-hermes profile delete research-bot
+thm profile delete research-bot
 ```
 
 删除确认提示会在要求你确认之前显示分发信息：
@@ -358,7 +358,7 @@ git remote add origin git@github.com:you/research-bot.git
 git push -u origin main
 
 # 工作站
-hermes profile install github.com/you/research-bot --alias
+thm profile install github.com/you/research-bot --alias
 # 填写 .env，完成。
 ```
 
@@ -377,7 +377,7 @@ git tag v1.0.0
 git push -u origin main --tags    # push to your company's internal Git host
 
 # 每位工程师
-hermes profile install git@github.com:your-org/pr-reviewer.git --alias
+thm profile install git@github.com:your-org/pr-reviewer.git --alias
 # 填写 .env，使用自己的 API 密钥（费用由自己承担），.env.EXAMPLE 指明了所需内容
 pr-reviewer chat
 ```
@@ -399,14 +399,14 @@ git remote add origin https://github.com/you/hermes-polymarket-trader.git
 git push -u origin main --tags
 
 # 任何人
-hermes profile install github.com/you/hermes-polymarket-trader --alias
+thm profile install github.com/you/hermes-polymarket-trader --alias
 ```
 
 发推分享安装命令。尝试的人会给你提 issue 和 PR。想要自定义的人可以 fork——与大家已熟悉的 git 工作流完全相同。
 
 ### 产品：发布有主见的 agent
 
-你在 Hermes 之上构建了产品——也许是合规监控框架、客服技术栈、特定领域的研究平台。你想以产品形式分发它。
+你在 TeamHermes 之上构建了产品——也许是合规监控框架、客服技术栈、特定领域的研究平台。你想以产品形式分发它。
 
 ```yaml
 # distribution.yaml
@@ -442,10 +442,10 @@ env_requires:
 git push -u origin main
 
 # 每位值班人员
-hermes profile install git@github.com:your-org/incident-2026-q2.git --alias
+thm profile install git@github.com:your-org/incident-2026-q2.git --alias
 
 # 事故解决——清理
-hermes profile delete incident-2026-q2
+thm profile delete incident-2026-q2
 ```
 
 安装-删除的成本足够低，可以当作一次性工具使用。
@@ -464,7 +464,7 @@ Git ref 固定（`#v1.2.0`）已在规划中，但不在初始版本中——目
 
 ```bash
 # 你已安装的版本
-hermes profile info research-bot | grep Version
+thm profile info research-bot | grep Version
 
 # 上游最新版本（不安装）
 git ls-remote --tags https://github.com/you/research-bot | tail -5
@@ -485,11 +485,11 @@ git ls-remote --tags https://github.com/you/research-bot | tail -5
 
 ```bash
 # 彻底删除并重新安装（记忆/会话也会丢失）
-hermes profile delete research-bot --yes
-hermes profile install github.com/you/research-bot --alias
+thm profile delete research-bot --yes
+thm profile install github.com/you/research-bot --alias
 
 # 更新到当前 main，但将 config.yaml 重置为分发默认值
-hermes profile update research-bot --force-config --yes
+thm profile update research-bot --force-config --yes
 ```
 
 ### Fork 并自定义
@@ -498,7 +498,7 @@ hermes profile update research-bot --force-config --yes
 
 ```bash
 # 在 GitHub 上 fork 仓库，然后安装你的 fork
-hermes profile install github.com/yourname/forked-research-bot --alias
+thm profile install github.com/yourname/forked-research-bot --alias
 
 # 在 ~/.teamhermes/profiles/forked-research-bot/ 中本地迭代
 # 编辑 SOUL.md，提交，推送到你的 fork
@@ -511,11 +511,11 @@ hermes profile install github.com/yourname/forked-research-bot --alias
 
 ```bash
 # 从本地目录安装（无需 git push）
-hermes profile install ~/.teamhermes/profiles/research-bot --name research-bot-test --alias
+thm profile install ~/.teamhermes/profiles/research-bot --name research-bot-test --alias
 
 # 调整、删除、重新安装，直到满意
-hermes profile delete research-bot-test --yes
-hermes profile install ~/.teamhermes/profiles/research-bot --name research-bot-test
+thm profile delete research-bot-test --yes
+thm profile install ~/.teamhermes/profiles/research-bot --name research-bot-test
 ```
 
 ---
@@ -568,6 +568,6 @@ Profile 分发默认不带签名。你信任的是：
 - [Profiles：运行多个 Agent](./profiles.md) — 基础概念
 - [Profile 命令参考](../reference/profile-commands.md) — 每个标志、每个选项
 - [`thm profile export` / `import`](../reference/profile-commands.md#hermes-profile-export) — 本地备份 / 恢复（非分发）
-- [在 Hermes 中使用 SOUL](../guides/use-soul-with-hermes.md) — 编写个性
+- [在 TeamHermes 中使用 SOUL](../guides/use-soul-with-hermes.md) — 编写个性
 - [个性与 SOUL](./features/personality.md) — SOUL 在 agent 中的作用
 - [技能目录](../reference/skills-catalog.md) — 可打包的技能

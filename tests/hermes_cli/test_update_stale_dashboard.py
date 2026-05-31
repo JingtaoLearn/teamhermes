@@ -259,7 +259,7 @@ class TestKillStaleDashboardPosix:
 
     def test_permission_error_is_reported_not_raised(self, capsys):
         """os.kill raising PermissionError (e.g. another user's process)
-        must not abort hermes update — it's reported as a failure and we
+        must not abort thm update — it's reported as a failure and we
         move on."""
         def fake_kill(pid, sig):
             raise PermissionError("Operation not permitted")

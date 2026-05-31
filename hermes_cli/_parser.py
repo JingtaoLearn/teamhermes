@@ -40,39 +40,39 @@ def _inherited_flag(parser, *args, **kwargs):
 _EPILOGUE = """
 Examples:
     hermes                        Start interactive chat
-    hermes chat -q "Hello"        Single query mode
-    hermes -c                     Resume the most recent session
-    hermes -c "my project"        Resume a session by name (latest in lineage)
-    hermes --resume <session_id>  Resume a specific session by ID
-    hermes setup                  Run setup wizard
-    hermes logout                 Clear stored authentication
-    hermes auth add <provider>    Add a pooled credential
-    hermes auth list              List pooled credentials
-    hermes auth remove <p> <t>    Remove pooled credential by index, id, or label
-    hermes auth reset <provider>  Clear exhaustion status for a provider
-    hermes model                  Select default model
-    hermes fallback [list]        Show fallback provider chain
-    hermes fallback add           Add a fallback provider (same picker as `thm model`)
-    hermes fallback remove        Remove a fallback provider from the chain
-    hermes config                 View configuration
-    hermes config edit            Edit config in $EDITOR
-    hermes config set model gpt-4 Set a config value
-    hermes gateway                Run messaging gateway
-    hermes -s hermes-agent-dev,github-auth
-    hermes -w                     Start in isolated git worktree
-    hermes gateway install        Install gateway background service
-    hermes sessions list          List past sessions
-    hermes sessions browse        Interactive session picker
-    hermes sessions rename ID T   Rename/title a session
-    hermes logs                   View agent.log (last 50 lines)
-    hermes logs -f                Follow agent.log in real time
-    hermes logs errors            View errors.log
-    hermes logs --since 1h        Lines from the last hour
-    hermes debug share             Upload debug report for support
-    hermes update                 Update to latest version
-    hermes dashboard              Start web UI dashboard (port 9119)
-    hermes dashboard --stop       Stop running dashboard processes
-    hermes dashboard --status     List running dashboard processes
+    thm chat -q "Hello"        Single query mode
+    thm -c                     Resume the most recent session
+    thm -c "my project"        Resume a session by name (latest in lineage)
+    thm --resume <session_id>  Resume a specific session by ID
+    thm setup                  Run setup wizard
+    thm logout                 Clear stored authentication
+    thm auth add <provider>    Add a pooled credential
+    thm auth list              List pooled credentials
+    thm auth remove <p> <t>    Remove pooled credential by index, id, or label
+    thm auth reset <provider>  Clear exhaustion status for a provider
+    thm model                  Select default model
+    thm fallback [list]        Show fallback provider chain
+    thm fallback add           Add a fallback provider (same picker as `thm model`)
+    thm fallback remove        Remove a fallback provider from the chain
+    thm config                 View configuration
+    thm config edit            Edit config in $EDITOR
+    thm config set model gpt-4 Set a config value
+    thm gateway                Run messaging gateway
+    thm -s hermes-agent-dev,github-auth
+    thm -w                     Start in isolated git worktree
+    thm gateway install        Install gateway background service
+    thm sessions list          List past sessions
+    thm sessions browse        Interactive session picker
+    thm sessions rename ID T   Rename/title a session
+    thm logs                   View agent.log (last 50 lines)
+    thm logs -f                Follow agent.log in real time
+    thm logs errors            View errors.log
+    thm logs --since 1h        Lines from the last hour
+    thm debug share             Upload debug report for support
+    thm update                 Update to latest version
+    thm dashboard              Start web UI dashboard (port 9119)
+    thm dashboard --stop       Stop running dashboard processes
+    thm dashboard --status     List running dashboard processes
 
 For more help on a command:
     hermes <command> --help
@@ -88,7 +88,7 @@ def build_top_level_parser():
     """
     parser = argparse.ArgumentParser(
         prog="thm",
-        description="Hermes Agent - AI assistant with tool-calling capabilities",
+        description="TeamHermes Agent - AI assistant with tool-calling capabilities",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=_EPILOGUE,
     )
@@ -235,7 +235,7 @@ def build_top_level_parser():
     chat_parser = subparsers.add_parser(
         "chat",
         help="Interactive chat with the agent",
-        description="Start an interactive chat session with Hermes Agent",
+        description="Start an interactive chat session with TeamHermes Agent",
     )
     chat_parser.add_argument(
         "-q", "--query", help="Single query (non-interactive mode)"

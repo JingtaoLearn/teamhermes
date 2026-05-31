@@ -1,7 +1,7 @@
 ---
 sidebar_position: 4
 title: "工具集参考"
-description: "Hermes 核心、复合、平台及动态工具集参考"
+description: "TeamHermes 核心、复合、平台及动态工具集参考"
 ---
 
 # 工具集参考
@@ -21,9 +21,9 @@ description: "Hermes 核心、复合、平台及动态工具集参考"
 ### 按会话（CLI）
 
 ```bash
-hermes chat --toolsets web,file,terminal
-hermes chat --toolsets debugging        # composite — expands to file + terminal + web
-hermes chat --toolsets all              # everything
+thm chat --toolsets web,file,terminal
+thm chat --toolsets debugging        # composite — expands to file + terminal + web
+thm chat --toolsets all              # everything
 ```
 
 ### 按平台（config.yaml）
@@ -37,7 +37,7 @@ toolsets:
 ### 交互式管理
 
 ```bash
-hermes tools                            # curses UI to enable/disable per platform
+thm tools                            # curses UI to enable/disable per platform
 ```
 
 或在会话中：
@@ -54,7 +54,7 @@ hermes tools                            # curses UI to enable/disable per platfo
 |--------|------|------|
 | `browser` | `browser_back`, `browser_cdp`, `browser_click`, `browser_console`, `browser_dialog`, `browser_get_images`, `browser_navigate`, `browser_press`, `browser_scroll`, `browser_snapshot`, `browser_type`, `browser_vision`, `web_search` | 核心浏览器自动化。包含 `web_search` 作为快速查询的备用方案。`browser_cdp` 和 `browser_dialog` 在运行时受限——仅在会话启动时 CDP 端点可达（通过 `/browser connect`、`browser.cdp_url` 配置、Browserbase 或 Camofox）时才注册。`browser_dialog` 与 `browser_snapshot` 在附加 CDP supervisor 时添加的 `pending_dialogs` 和 `frame_tree` 字段配合使用。 |
 | `clarify` | `clarify` | 当 agent 需要澄清时向用户提问。 |
-| `code_execution` | `execute_code` | 运行以编程方式调用 Hermes 工具的 Python 脚本。 |
+| `code_execution` | `execute_code` | 运行以编程方式调用 TeamHermes 工具的 Python 脚本。 |
 | `cronjob` | `cronjob` | 调度和管理周期性任务。 |
 | `debugging` | 复合（`file` + `terminal` + `web`） | 调试套件——文件、进程/终端、网页提取/搜索。 |
 | `delegation` | `delegate_task` | 生成隔离的子 agent 实例以并行执行工作。 |
@@ -92,7 +92,7 @@ hermes tools                            # curses UI to enable/disable per platfo
 | 工具集 | 与 `hermes-cli` 的差异 |
 |--------|------------------------|
 | `hermes-cli` | 完整工具集——交互式 CLI 会话的默认配置。包含 file、terminal、web、browser、memory、skills、vision、image_gen、todo、tts、delegation、code_execution、cronjob、session_search、clarify 和 `safe`（只读）套件，以及标准消息工具。 |
-| `hermes-acp` | 移除了 `clarify`、`cronjob`、`image_generate`、`send_message`、`text_to_speech` 以及全部四个 Home Assistant 工具。专注于 IDE 环境中的编码任务。 |
+| `thm-acp` | 移除了 `clarify`、`cronjob`、`image_generate`、`send_message`、`text_to_speech` 以及全部四个 Home Assistant 工具。专注于 IDE 环境中的编码任务。 |
 | `hermes-api-server` | 移除了 `clarify`、`send_message` 和 `text_to_speech`。保留其他所有工具——适用于无法进行用户交互的程序化访问场景。 |
 | `hermes-cron` | 与 `hermes-cli` 相同。 |
 | `hermes-telegram` | 与 `hermes-cli` 相同。 |

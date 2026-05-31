@@ -1,13 +1,13 @@
 # Langfuse Observability Plugin
 
-This plugin ships bundled with Hermes but is **opt-in** — it only loads when
+This plugin ships bundled with TeamHermes but is **opt-in** — it only loads when
 you explicitly enable it.
 
 ## Enable
 
 ```bash
 pip install langfuse
-hermes plugins enable observability/langfuse
+thm plugins enable observability/langfuse
 ```
 
 Or check the box in the interactive `thm plugins` UI.
@@ -28,8 +28,8 @@ open.
 ## Verify
 
 ```bash
-hermes plugins list                 # observability/langfuse should show "enabled"
-hermes chat -q "hello"              # then check Langfuse for a "Hermes turn" trace
+thm plugins list                 # observability/langfuse should show "enabled"
+thm chat -q "hello"              # then check Langfuse for a "TeamHermes turn" trace
 ```
 
 ## Optional tuning
@@ -45,5 +45,5 @@ HERMES_LANGFUSE_DEBUG=true           # verbose plugin logging
 ## Disable
 
 ```bash
-hermes plugins disable observability/langfuse
+thm plugins disable observability/langfuse
 ```

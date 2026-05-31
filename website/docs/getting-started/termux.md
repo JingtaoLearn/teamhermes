@@ -1,19 +1,19 @@
 ---
 sidebar_position: 3
 title: "Android / Termux"
-description: "Run Hermes Agent directly on an Android phone with Termux"
+description: "Run TeamHermes Agent directly on an Android phone with Termux"
 ---
 
-# Hermes on Android with Termux
+# TeamHermes on Android with Termux
 
-This is the tested path for running Hermes Agent directly on an Android phone through [Termux](https://termux.dev/).
+This is the tested path for running TeamHermes Agent directly on an Android phone through [Termux](https://termux.dev/).
 
 It gives you a working local CLI on the phone, plus the core extras that are currently known to install cleanly on Android.
 
 ## What is supported in the tested path?
 
 The tested Termux bundle installs:
-- the Hermes CLI
+- the TeamHermes CLI
 - cron support
 - PTY/background terminal support
 - Telegram gateway support (manual / best-effort background runs)
@@ -37,13 +37,13 @@ A few features still need desktop/server-style dependencies that are not publish
 - Docker-based terminal isolation is not available inside Termux
 - Android may still suspend Termux background jobs, so gateway persistence is best-effort rather than a normal managed service
 
-That does not stop Hermes from working well as a phone-native CLI agent — it just means the recommended mobile install is intentionally narrower than the desktop/server install.
+That does not stop TeamHermes from working well as a phone-native CLI agent — it just means the recommended mobile install is intentionally narrower than the desktop/server install.
 
 ---
 
 ## Option 1: One-line installer
 
-Hermes now ships a Termux-aware installer path:
+TeamHermes now ships a Termux-aware installer path:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash
@@ -77,7 +77,7 @@ Why these packages?
 - `ripgrep` — fast file search
 - `ffmpeg` — media / TTS conversions
 
-### 2. Clone Hermes
+### 2. Clone TeamHermes
 
 ```bash
 git clone --recurse-submodules https://github.com/NousResearch/hermes-agent.git
@@ -124,14 +124,14 @@ ln -sf "$PWD/venv/bin/hermes" "$PREFIX/bin/hermes"
 ### 6. Verify the install
 
 ```bash
-hermes version
-hermes doctor
+thm  version
+thm  doctor
 ```
 
-### 7. Start Hermes
+### 7. Start TeamHermes
 
 ```bash
-hermes
+thm
 ```
 
 ---
@@ -141,7 +141,7 @@ hermes
 ### Configure a model
 
 ```bash
-hermes model
+thm  model
 ```
 
 Or set keys directly in `~/.teamhermes/.env`.
@@ -149,7 +149,7 @@ Or set keys directly in `~/.teamhermes/.env`.
 ### Re-run the full interactive setup wizard later
 
 ```bash
-hermes setup
+thm  setup
 ```
 
 ### Install optional Node dependencies manually

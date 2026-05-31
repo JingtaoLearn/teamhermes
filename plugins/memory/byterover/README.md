@@ -19,7 +19,7 @@ hermes memory setup    # select "byterover"
 
 Or manually:
 ```bash
-hermes config set memory.provider byterover
+thm config set memory.provider byterover
 # Optional cloud sync:
 echo "BRV_API_KEY=your-key" >> ~/.teamhermes/.env
 ```

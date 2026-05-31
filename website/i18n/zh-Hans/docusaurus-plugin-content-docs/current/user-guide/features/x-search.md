@@ -29,7 +29,7 @@ sidebar_position: 7
 当 xAI 凭据（OAuth token 或 `XAI_API_KEY`）存在时自动启用。如不需要，可通过 `thm tools` → Search → x_search 显式禁用。
 
 ```bash
-hermes tools
+thm tools
 # → 🐦 X (Twitter) Search   (press space to toggle on)
 ```
 

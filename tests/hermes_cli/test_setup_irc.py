@@ -1,7 +1,7 @@
 """Tests for IRC gateway configuration via `thm setup gateway` UI.
 
 Covers the full plugin-platform discovery → status → configure flow so that
-a fresh Hermes install (no state, no env vars) can set up IRC through the
+a fresh TeamHermes install (no state, no env vars) can set up IRC through the
 interactive setup menus.
 """
 
@@ -57,7 +57,7 @@ def _unregister_irc_platform():
 
 
 class TestIRCFreshInstallDiscovery:
-    """IRC appears in the setup menu on a brand-new Hermes install."""
+    """IRC appears in the setup menu on a brand-new TeamHermes install."""
 
     def test_irc_appears_in_all_platforms(self, monkeypatch):
         """When the IRC plugin is registered, _all_platforms() surfaces it."""

@@ -1141,7 +1141,7 @@ def init_agent(
                         from hermes_cli.profiles import get_active_profile_name
                         _profile = get_active_profile_name()
                         _init_kwargs["agent_identity"] = _profile
-                        _init_kwargs["agent_workspace"] = "hermes"
+                        _init_kwargs["agent_workspace"] = "thm"
                     except Exception:
                         pass
                     agent._memory_manager.initialize_all(**_init_kwargs)
@@ -1468,7 +1468,7 @@ def init_agent(
         raise ValueError(
             f"Model {agent.model} has a context window of {_ctx:,} tokens, "
             f"which is below the minimum {MINIMUM_CONTEXT_LENGTH:,} required "
-            f"by Hermes Agent.  Choose a model with at least "
+            f"by TeamHermes Agent.  Choose a model with at least "
             f"{MINIMUM_CONTEXT_LENGTH // 1000}K context, or set "
             f"model.context_length in config.yaml to override."
         )

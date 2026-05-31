@@ -163,7 +163,7 @@ class TestTencentTokenhubModelCatalog:
 
 
 # =============================================================================
-# CANONICAL_PROVIDERS (hermes model picker)
+# CANONICAL_PROVIDERS (thm model picker)
 # =============================================================================
 
 

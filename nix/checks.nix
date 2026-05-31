@@ -68,7 +68,7 @@ json.dump(sorted(leaf_paths(DEFAULT_CONFIG)), sys.stdout, indent=2)
           echo "PASS: All binaries present"
 
           echo "=== Checking version ==="
-          ${thm-agent}/bin/thm version 2>&1 | grep -qi "hermes" || (echo "FAIL: version check"; exit 1)
+          ${thm-agent}/bin/thm version 2>&1 | grep -qi "thm" || (echo "FAIL: version check"; exit 1)
           echo "PASS: Version check"
 
           echo "=== All checks passed ==="

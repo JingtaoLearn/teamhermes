@@ -1,11 +1,11 @@
-"""SimpleX Chat platform adapter (Hermes plugin).
+"""SimpleX Chat platform adapter (TeamHermes plugin).
 
 Connects to a simplex-chat daemon running in WebSocket mode.
 Inbound messages arrive via a persistent WebSocket connection.
 Outbound messages use the same WebSocket with JSON commands.
 
-This adapter ships as a Hermes platform plugin under
-``plugins/platforms/simplex/``. The Hermes plugin loader scans the
+This adapter ships as a TeamHermes platform plugin under
+``plugins/platforms/simplex/``. The TeamHermes plugin loader scans the
 directory at startup, calls ``register(ctx)``, and the platform
 becomes available to ``gateway/run.py`` and ``tools/send_message_tool``
 through the registry — no edits to core files are required.
@@ -41,7 +41,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 # Lazy import: BasePlatformAdapter and friends live in the main repo.
-# Imported at module top because they're stdlib-only inside Hermes — no
+# Imported at module top because they're stdlib-only inside TeamHermes — no
 # external dependency that would block the plugin from loading.
 from gateway.config import Platform, PlatformConfig
 from gateway.platforms.base import (
@@ -619,7 +619,7 @@ async def _standalone_send(
 
     Used by ``tools/send_message_tool._send_via_adapter`` when the gateway
     runner is not in this process (e.g. ``thm cron`` running as a
-    separate process from ``hermes gateway``). Without this hook,
+    separate process from ``thm gateway``). Without this hook,
     ``deliver=simplex`` cron jobs fail with "No live adapter for platform".
 
     ``thread_id`` and ``force_document`` are accepted for signature parity
@@ -702,7 +702,7 @@ def interactive_setup() -> None:
 
 
 def register(ctx) -> None:
-    """Plugin entry point — called by the Hermes plugin system at startup."""
+    """Plugin entry point — called by the TeamHermes plugin system at startup."""
     ctx.register_platform(
         name="simplex",
         label="SimpleX Chat",
@@ -714,7 +714,7 @@ def register(ctx) -> None:
         install_hint="pip install websockets   # SimpleX adapter requires the websockets package",
         setup_fn=interactive_setup,
         # Env-driven auto-configuration: seeds PlatformConfig.extra so
-        # env-only setups show up in `hermes gateway status` without
+        # env-only setups show up in `thm gateway status` without
         # instantiating the adapter.
         env_enablement_fn=_env_enablement,
         # Cron home-channel delivery support — `deliver=simplex` cron jobs

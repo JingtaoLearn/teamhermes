@@ -17,7 +17,7 @@ Spotify：播放、搜索、队列、管理播放列表和设备。
 | 来源 | 内置（默认安装） |
 | 路径 | `skills/media/spotify` |
 | 版本 | `1.0.0` |
-| 作者 | Hermes Agent |
+| 作者 | TeamHermes Agent |
 | 许可证 | MIT |
 | 平台 | linux, macos, windows |
 | 标签 | `spotify`, `music`, `playback`, `playlists`, `media` |
@@ -26,12 +26,12 @@ Spotify：播放、搜索、队列、管理播放列表和设备。
 ## 参考：完整 SKILL.md
 
 :::info
-以下是 Hermes 在触发此 skill 时加载的完整 skill 定义。这是 agent 在 skill 激活时所看到的指令内容。
+以下是 TeamHermes 在触发此 skill 时加载的完整 skill 定义。这是 agent 在 skill 激活时所看到的指令内容。
 :::
 
 # Spotify
 
-通过 Hermes Spotify 工具集（7 个工具）控制用户的 Spotify 账户。设置指南：https://hermes-agent.nousresearch.com/docs/user-guide/features/spotify
+通过 TeamHermes Spotify 工具集（7 个工具）控制用户的 Spotify 账户。设置指南：https://hermes-agent.nousresearch.com/docs/user-guide/features/spotify
 
 ## 何时使用此 skill
 

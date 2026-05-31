@@ -91,7 +91,7 @@
       if [ -n "$EXISTING_GROUP" ]; then
         GROUP_NAME="$EXISTING_GROUP"
       else
-        GROUP_NAME="hermes"
+        GROUP_NAME="thm"
         if command -v groupadd >/dev/null 2>&1; then
           groupadd -g "$HERMES_GID" "$GROUP_NAME"
         elif command -v addgroup >/dev/null 2>&1; then
@@ -105,7 +105,7 @@
         TARGET_USER=$(echo "$PASSWD_ENTRY" | cut -d: -f1)
         TARGET_HOME=$(echo "$PASSWD_ENTRY" | cut -d: -f6)
       else
-        TARGET_USER="hermes"
+        TARGET_USER="thm"
         TARGET_HOME="/home/hermes"
         if command -v useradd >/dev/null 2>&1; then
           useradd -u "$HERMES_UID" -g "$HERMES_GID" -m -d "$TARGET_HOME" -s /bin/bash "$TARGET_USER"
@@ -215,13 +215,13 @@
       # ── Service identity ─────────────────────────────────────────────────
       user = mkOption {
         type = types.str;
-        default = "hermes";
+        default = "thm";
         description = "System user running the gateway.";
       };
 
       group = mkOption {
         type = types.str;
-        default = "hermes";
+        default = "thm";
         description = "System group running the gateway.";
       };
 

@@ -98,8 +98,8 @@ class TestIsBotMentioned:
         assert self.adapter._is_bot_mentioned("HERMES can you help?")
 
     def test_matrix_pill_in_formatted_body(self):
-        html = '<a href="https://matrix.to/#/@hermes:example.org">Hermes</a> help'
-        assert self.adapter._is_bot_mentioned("Hermes help", html)
+        html = '<a href="https://matrix.to/#/@hermes:example.org">TeamHermes</a> help'
+        assert self.adapter._is_bot_mentioned("TeamHermes help", html)
 
     def test_no_mention(self):
         assert not self.adapter._is_bot_mentioned("hello everyone")
@@ -160,8 +160,8 @@ class TestStripMention:
 
     def test_localpart_preserved(self):
         """Bare localpart (no @) is preserved — avoids false positives in paths."""
-        result = self.adapter._strip_mention("hermes help me")
-        assert result == "hermes help me"
+        result = self.adapter._strip_mention("thm help me")
+        assert result == "thm help me"
 
     def test_localpart_in_path_preserved(self):
         """Localpart inside a file path must not be damaged."""
@@ -169,13 +169,13 @@ class TestStripMention:
         assert result == "read /home/hermes/config.yaml"
 
     def test_strip_localpart_when_explicit_at_mention(self):
-        result = self.adapter._strip_mention("@hermes help me")
+        result = self.adapter._strip_mention("@thm help me")
         assert result == "help me"
 
     def test_does_not_strip_bare_localpart_word(self):
-        # Regression: plain words like "Hermes Agent" should not be mutated.
-        result = self.adapter._strip_mention("Hermes Agent")
-        assert result == "Hermes Agent"
+        # Regression: plain words like "TeamHermes Agent" should not be mutated.
+        result = self.adapter._strip_mention("TeamHermes Agent")
+        assert result == "TeamHermes Agent"
 
     def test_strip_returns_empty_for_mention_only(self):
         result = self.adapter._strip_mention("@hermes:example.org")
@@ -303,8 +303,8 @@ async def test_require_mention_html_pill(monkeypatch):
     monkeypatch.setenv("MATRIX_AUTO_THREAD", "false")
 
     adapter = _make_adapter()
-    formatted = '<a href="https://matrix.to/#/@hermes:example.org">Hermes</a> help'
-    event = _make_event("Hermes help", formatted_body=formatted)
+    formatted = '<a href="https://matrix.to/#/@hermes:example.org">TeamHermes</a> help'
+    event = _make_event("TeamHermes help", formatted_body=formatted)
 
     await adapter._on_room_message(event)
     adapter.handle_message.assert_awaited_once()
@@ -390,12 +390,12 @@ async def test_dm_preserves_localpart_in_body(monkeypatch):
 
     adapter = _make_adapter()
     _set_dm(adapter)
-    event = _make_event("hermes help me")
+    event = _make_event("thm help me")
 
     await adapter._on_room_message(event)
     adapter.handle_message.assert_awaited_once()
     msg = adapter.handle_message.await_args.args[0]
-    assert msg.text == "hermes help me"
+    assert msg.text == "thm help me"
 
 
 @pytest.mark.asyncio

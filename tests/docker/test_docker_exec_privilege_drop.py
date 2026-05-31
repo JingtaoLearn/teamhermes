@@ -2,10 +2,10 @@
 
 The shim (docker/hermes-exec-shim.sh, installed at /opt/hermes/bin/hermes)
 exists to prevent the auth.json ownership-mismatch bug where
-`docker exec <c> hermes login` would write /opt/data/auth.json as
+`docker exec <c> thm login` would write /opt/data/auth.json as
 root:root mode 0600, leaving the supervised gateway (UID 10000) unable
 to read its own credentials and returning "Provider authentication
-failed: Hermes is not logged into Nous Portal" on every message.
+failed: TeamHermes is not logged into Nous Portal" on every message.
 
 These tests verify:
 
@@ -243,11 +243,11 @@ def test_e2e_login_then_supervised_gateway_can_read_auth(
 ) -> None:
     """End-to-end regression for the original bug.
 
-    Pre-shim: ``docker exec <c> hermes login`` (root) wrote
+    Pre-shim: ``docker exec <c> thm login`` (root) wrote
     /opt/data/auth.json as root:root 0600. The supervised gateway (UID
     10000) couldn't read it, _load_auth_store swallowed PermissionError
     as a parse failure, and resolve_nous_runtime_credentials raised
-    "Hermes is not logged into Nous Portal" on every message.
+    "TeamHermes is not logged into Nous Portal" on every message.
 
     We can't do a real OAuth login in a unit test, but we can stand in
     for it by writing the same file shape via `thm config set`-style
