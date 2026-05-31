@@ -356,7 +356,7 @@ class HonchoClientConfig:
     sessions: dict[str, str] = field(default_factory=dict)
     # Raw global config for anything else consumers need
     raw: dict[str, Any] = field(default_factory=dict)
-    # True when Honcho was explicitly configured for this host (hosts.teamhermes
+    # True when Honcho was explicitly configured for this host (hosts.teamthm
     # block exists or enabled was set explicitly), vs auto-enabled from a
     # stray HONCHO_API_KEY env var.
     explicitly_configured: bool = False
@@ -407,7 +407,7 @@ class HonchoClientConfig:
             return cls.from_env(host=resolved_host)
 
         host_block = (raw.get("hosts") or {}).get(resolved_host, {})
-        # A hosts.teamhermes block or explicit enabled flag means the user
+        # A hosts.teamthm block or explicit enabled flag means the user
         # intentionally configured Honcho for this host.
         _explicitly_configured = bool(host_block) or raw.get("enabled") is True
 
@@ -741,14 +741,14 @@ def get_honcho_client(config: HonchoClientConfig | None = None) -> Honcho:
         raise ValueError(
             "Honcho API key not found. "
             "Get your API key at https://app.honcho.dev, "
-            "then run 'hermes honcho setup' or set HONCHO_API_KEY. "
+            "then run 'thm honcho setup' or set HONCHO_API_KEY. "
             "For local instances, set HONCHO_BASE_URL instead."
         )
 
     # Lazy-install the honcho SDK on demand. ensure() honors
     # security.allow_lazy_installs (default true). On failure we surface
     # the original ImportError-shape message so existing callers still get
-    # the "go run hermes honcho setup" hint they used to.
+    # the "go run thm honcho setup" hint they used to.
     try:
         from tools.lazy_deps import FeatureUnavailable, ensure as _lazy_ensure
         _lazy_ensure("memory.honcho", prompt=False)
@@ -766,7 +766,7 @@ def get_honcho_client(config: HonchoClientConfig | None = None) -> Honcho:
         raise ImportError(
             "honcho-ai is required for Honcho integration. "
             "Install it with: pip install honcho-ai  "
-            "(or run `hermes honcho setup` to configure)."
+            "(or run `thm honcho setup` to configure)."
         )
 
     # Allow config.yaml honcho.base_url to override the SDK's environment

@@ -6,8 +6,8 @@ author: TeamHermes Agent + Teknium
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [hermes, setup, configuration, multi-agent, spawning, cli, gateway, development]
+  thm:
+    tags: [thm, setup, configuration, multi-agent, spawning, cli, gateway, development]
     homepage: https://github.com/NousResearch/hermes-agent
     related_skills: [claude-code, codex, opencode]
 ---
@@ -38,7 +38,7 @@ People use TeamHermes for software development, research, system administration,
 curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash
 
 # Interactive chat (default)
-hermes
+thm
 
 # Single query
 thm chat -q "What is the capital of France?"
@@ -50,7 +50,7 @@ thm setup
 thm model
 
 # Check health
-hermes doctor
+thm doctor
 ```
 
 ---
@@ -60,7 +60,7 @@ hermes doctor
 ### Global Flags
 
 ```
-hermes [flags] [command]
+thm [flags] [command]
 
   --version, -V             Show version
   --resume, -r SESSION      Resume session by ID or title
@@ -104,7 +104,7 @@ thm auth                 Interactive credential manager
 thm auth add PROVIDER    Add OAuth or API-key credential (e.g. nous, openai-codex, qwen-oauth)
 thm auth list            List stored credentials
 thm auth remove PROVIDER Remove a stored credential
-hermes doctor [--fix]       Check dependencies and config
+thm doctor [--fix]       Check dependencies and config
 thm status [--all]       Show component status
 ```
 
@@ -158,48 +158,48 @@ Platform docs: https://hermes-agent.nousresearch.com/docs/user-guide/messaging/
 ### Sessions
 
 ```
-hermes sessions list        List recent sessions
-hermes sessions browse      Interactive picker
-hermes sessions export OUT  Export to JSONL
-hermes sessions rename ID T Rename a session
-hermes sessions delete ID   Delete a session
-hermes sessions prune       Clean up old sessions (--older-than N days)
-hermes sessions stats       Session store statistics
+thm sessions list        List recent sessions
+thm sessions browse      Interactive picker
+thm sessions export OUT  Export to JSONL
+thm sessions rename ID T Rename a session
+thm sessions delete ID   Delete a session
+thm sessions prune       Clean up old sessions (--older-than N days)
+thm sessions stats       Session store statistics
 ```
 
 ### Cron Jobs
 
 ```
-hermes cron list            List jobs (--all for disabled)
-hermes cron create SCHED    Create: '30m', 'every 2h', '0 9 * * *'
-hermes cron edit ID         Edit schedule, prompt, delivery
-hermes cron pause/resume ID Control job state
-hermes cron run ID          Trigger on next tick
-hermes cron remove ID       Delete a job
-hermes cron status          Scheduler status
+thm cron list            List jobs (--all for disabled)
+thm cron create SCHED    Create: '30m', 'every 2h', '0 9 * * *'
+thm cron edit ID         Edit schedule, prompt, delivery
+thm cron pause/resume ID Control job state
+thm cron run ID          Trigger on next tick
+thm cron remove ID       Delete a job
+thm cron status          Scheduler status
 ```
 
 ### Webhooks
 
 ```
-hermes webhook subscribe N  Create route at /webhooks/<name>
-hermes webhook list         List subscriptions
-hermes webhook remove NAME  Remove a subscription
-hermes webhook test NAME    Send a test POST
+thm webhook subscribe N  Create route at /webhooks/<name>
+thm webhook list         List subscriptions
+thm webhook remove NAME  Remove a subscription
+thm webhook test NAME    Send a test POST
 ```
 
 ### Profiles
 
 ```
-hermes profile list         List all profiles
-hermes profile create NAME  Create (--clone, --clone-all, --clone-from)
-hermes profile use NAME     Set sticky default
-hermes profile delete NAME  Delete a profile
-hermes profile show NAME    Show details
-hermes profile alias NAME   Manage wrapper scripts
-hermes profile rename A B   Rename a profile
-hermes profile export NAME  Export to tar.gz
-hermes profile import FILE  Import from archive
+thm profile list         List all profiles
+thm profile create NAME  Create (--clone, --clone-all, --clone-from)
+thm profile use NAME     Set sticky default
+thm profile delete NAME  Delete a profile
+thm profile show NAME    Show details
+thm profile alias NAME   Manage wrapper scripts
+thm profile rename A B   Rename a profile
+thm profile export NAME  Export to tar.gz
+thm profile import FILE  Import from archive
 ```
 
 ### Credential Pools
@@ -214,15 +214,15 @@ thm auth reset PROVIDER  Clear exhaustion status
 ### Other
 
 ```
-hermes insights [--days N]  Usage analytics
+thm insights [--days N]  Usage analytics
 thm update               Update to latest version
-hermes pairing list/approve/revoke  DM authorization
+thm pairing list/approve/revoke  DM authorization
 thm plugins list/install/remove  Plugin management
-hermes honcho setup/status  Honcho memory integration (requires honcho plugin)
-hermes memory setup/status/off  Memory provider config
-hermes completion bash|zsh  Shell completions
-hermes acp                  ACP server (IDE integration)
-hermes claw migrate         Migrate from OpenClaw
+thm honcho setup/status  Honcho memory integration (requires honcho plugin)
+thm memory setup/status/off  Memory provider config
+thm completion bash|zsh  Shell completions
+thm acp                  ACP server (IDE integration)
+thm claw migrate         Migrate from OpenClaw
 thm uninstall            Uninstall TeamHermes
 ```
 
@@ -865,11 +865,11 @@ thm config set auxiliary.vision.model <model_name>
 | MCP servers | `thm mcp list` or [MCP guide](https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp) |
 | Profiles | `thm profile list` or [Profiles docs](https://hermes-agent.nousresearch.com/docs/user-guide/profiles) |
 | Cron jobs | `thm cron list` or [Cron docs](https://hermes-agent.nousresearch.com/docs/user-guide/features/cron) |
-| Memory | `hermes memory status` or [Memory docs](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory) |
+| Memory | `thm memory status` or [Memory docs](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory) |
 | Env variables | `thm config env-path` or [Env vars reference](https://hermes-agent.nousresearch.com/docs/reference/environment-variables) |
 | CLI commands | `thm --help` or [CLI reference](https://hermes-agent.nousresearch.com/docs/reference/cli-commands) |
 | Gateway logs | `~/.teamhermes/logs/gateway.log` |
-| Session files | `hermes sessions browse` (reads state.db) |
+| Session files | `thm sessions browse` (reads state.db) |
 | Source code | `~/.teamhermes/hermes-agent/` |
 
 ---
@@ -931,7 +931,7 @@ registry.register(
 
 Auto-discovery: any `tools/*.py` file with a top-level `registry.register()` call is imported automatically — no manual list needed.
 
-All handlers must return JSON strings. Use `get_hermes_home()` for paths, never hardcode `~/.teamhermes`.
+All handlers must return JSON strings. Use `get_hermes_home()` for paths, never hardcode `~/.teamthm`.
 
 ### Adding a Slash Command
 
