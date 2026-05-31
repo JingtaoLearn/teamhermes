@@ -1,5 +1,5 @@
 #
-# docker-compose.yml for Hermes Agent
+# docker-compose.yml for TeamHermes Agent
 #
 # Usage:
 #   HERMES_UID=$(id -u) HERMES_GID=$(id -g) docker compose up -d
@@ -29,8 +29,8 @@
 services:
   gateway:
     build: .
-    image: hermes-agent
-    container_name: hermes
+    image: thm-agent
+    container_name: thm
     restart: unless-stopped
     network_mode: host
     volumes:
@@ -61,8 +61,8 @@ services:
     command: ["gateway", "run"]
 
   dashboard:
-    image: hermes-agent
-    container_name: hermes-dashboard
+    image: thm-agent
+    container_name: thm-dashboard
     restart: unless-stopped
     network_mode: host
     depends_on:

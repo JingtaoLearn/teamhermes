@@ -9,9 +9,9 @@
 # the default UID is root (0), and any file the command writes under
 # $HERMES_HOME — auth.json, .env, config.yaml — ends up root-owned and
 # unreadable to the supervised gateway. The most common manifestation: the
-# user runs `docker exec <c> hermes login`, this writes
+# user runs `docker exec <c> thm login`, this writes
 # /opt/data/auth.json as root:root mode 0600, and from then on the gateway
-# returns "Provider authentication failed: Hermes is not logged into Nous
+# returns "Provider authentication failed: TeamHermes is not logged into Nous
 # Portal" on every incoming message — even though `docker exec <c> hermes
 # chat -q ping` (also running as root) succeeds because root happens to be
 # able to read its own root-owned file. See systematic-debugging skill
@@ -30,7 +30,7 @@
 # other path.
 #
 # Recursion safety: the shim exec's the venv binary by *absolute path*
-# (/opt/hermes/.venv/bin/hermes), so the second hop cannot re-enter this
+# (/opt/hermes/.venv/bin/thm), so the second hop cannot re-enter this
 # shim regardless of PATH state. No sentinel env var needed.
 #
 # Opt-out: set HERMES_DOCKER_EXEC_AS_ROOT=1 (1/true/yes, case-insensitive)
@@ -40,7 +40,7 @@
 
 set -e
 
-REAL=/opt/hermes/.venv/bin/hermes
+REAL=/opt/hermes/.venv/bin/thm
 
 # Defensive: if the venv binary is missing (corrupted image, partial
 # install), fail loudly rather than silently masking it.

@@ -18,7 +18,7 @@
 # ENTRYPOINT (`/init`). It will be removed in a future major release.
 # Surface a warning to stderr so anyone still invoking this path
 # sees the migration notice in their logs.
-echo "[hermes] WARNING: docker/entrypoint.sh is a deprecated shim under " \
+echo "[thm] WARNING: docker/entrypoint.sh is a deprecated shim under " \
     "s6-overlay. The container's real ENTRYPOINT is /init + " \
     "main-wrapper.sh; this script only runs the stage2 cont-init hook " \
     "and does NOT exec the CMD. If you hard-coded docker/entrypoint.sh " \

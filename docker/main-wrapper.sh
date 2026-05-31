@@ -12,9 +12,9 @@
 # what s6-supervised services use too (see main-hermes/run).
 #
 # Routing:
-#   no args                       → exec `hermes` (the default)
+#   no args                       → exec `thm` (the default)
 #   first arg is an executable    → exec it directly (sleep, bash, sh, …)
-#   first arg is anything else    → exec `hermes <args>` (subcommand passthrough)
+#   first arg is anything else    → exec `thm <args>` (subcommand passthrough)
 #
 # We drop to the hermes user via `s6-setuidgid` so the supervised
 # workload runs unprivileged (UID 10000 by default).
@@ -31,7 +31,7 @@ cd /opt/data
 . /opt/hermes/.venv/bin/activate
 
 if [ $# -eq 0 ]; then
-    exec s6-setuidgid hermes hermes
+    exec s6-setuidgid hermes thm
 fi
 
 if command -v "$1" >/dev/null 2>&1; then
@@ -39,5 +39,5 @@ if command -v "$1" >/dev/null 2>&1; then
     exec s6-setuidgid hermes "$@"
 fi
 
-# Hermes subcommand pass-through.
-exec s6-setuidgid hermes hermes "$@"
+# TeamHermes subcommand pass-through.
+exec s6-setuidgid hermes thm "$@"
