@@ -41,7 +41,7 @@ hermes chat
 
 ## 配置
 
-运行 `hermes model` 后，你的 `~/.teamhermes/config.yaml` 将包含以下内容：
+运行 `thm model` 后，你的 `~/.teamhermes/config.yaml` 将包含以下内容：
 
 ```yaml
 model:
@@ -90,7 +90,7 @@ bedrock:
 
 ## 可用模型
 
-Bedrock 模型使用**推理配置文件 ID** 进行按需调用。`hermes model` 选择器会自动显示这些 ID，并将推荐模型置于顶部：
+Bedrock 模型使用**推理配置文件 ID** 进行按需调用。`thm model` 选择器会自动显示这些 ID，并将推荐模型置于顶部：
 
 | 模型 | ID | 备注 |
 |-------|-----|-------|

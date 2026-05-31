@@ -7,7 +7,7 @@
 #
 # Shebang note: /init scrubs env before invoking CMD, so a plain
 # `#!/bin/sh` wrapper sees an empty environ and `ENV HERMES_HOME=/opt/data`
-# from the Dockerfile never reaches `hermes`. with-contenv repopulates
+# from the Dockerfile never reaches `thm`. with-contenv repopulates
 # the env from /run/s6/container_environment before exec'ing, which is
 # what s6-supervised services use too (see main-hermes/run).
 #

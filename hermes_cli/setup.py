@@ -452,7 +452,7 @@ def _print_setup_summary(config: dict, hermes_home):
         else:
             tool_status.append(("Image Generation", False, "FAL_KEY or OPENAI_API_KEY"))
 
-    # Video generation — opt-in via `hermes tools` → Video Generation.
+    # Video generation — opt-in via `thm tools` → Video Generation.
     # Only show the row when a plugin reports available so we don't badger
     # users who don't care about video gen with a "missing" status line.
     try:
@@ -679,7 +679,7 @@ def _prompt_container_resources(config: dict):
 
 
 # Tool categories and provider config are now in tools_config.py (shared
-# between `hermes tools` and `hermes setup tools`).
+# between `thm tools` and `thm setup tools`).
 
 
 # =============================================================================
@@ -691,10 +691,10 @@ def _prompt_container_resources(config: dict):
 def setup_model_provider(config: dict, *, quick: bool = False):
     """Configure the inference provider and default model.
 
-    Delegates to ``cmd_model()`` (the same flow used by ``hermes model``)
+    Delegates to ``cmd_model()`` (the same flow used by ``thm model``)
     for provider selection, credential prompting, and model picking.
     This ensures a single code path for all provider setup — any new
-    provider added to ``hermes model`` is automatically available here.
+    provider added to ``thm model`` is automatically available here.
 
     When *quick* is True, skips credential rotation, vision, and TTS
     configuration — used by the streamlined first-time quick setup.
@@ -995,7 +995,7 @@ def _xai_oauth_logged_in_for_setup() -> bool:
     """True iff xAI Grok OAuth credentials are already stored locally.
 
     Lets TTS / STT setup skip the API-key prompt for users who logged in
-    through ``hermes model`` -> xAI Grok OAuth (SuperGrok / Premium+).
+    through ``thm model`` -> xAI Grok OAuth (SuperGrok / Premium+).
     """
     try:
         from hermes_cli.auth import get_xai_oauth_auth_status
@@ -1648,7 +1648,7 @@ def _apply_default_agent_settings(config: dict):
     print_info("  Tool progress: all")
     print_info("  Compression threshold: 0.50")
     print_info("  Session reset: inactivity (1440 min) + daily (4:00)")
-    print_info("  Run `hermes setup agent` later to customize.")
+    print_info("  Run `thm setup agent` later to customize.")
 
 
 def setup_agent_settings(config: dict):
@@ -1910,7 +1910,7 @@ def _setup_slack():
             # new commands (e.g. /btw, /stop, ...) get registered in Slack.
             if prompt_yes_no(
                 "Regenerate the Slack app manifest with the latest command "
-                "list? (recommended after `hermes update`)",
+                "list? (recommended after `thm update`)",
                 True,
             ):
                 _write_slack_manifest_and_instruct()
@@ -2487,7 +2487,7 @@ def setup_gateway(config: dict):
 def setup_tools(config: dict, first_install: bool = False):
     """Configure tools — delegates to the unified tools_command() in tools_config.py.
 
-    Both `hermes setup tools` and `hermes tools` use the same flow:
+    Both `thm setup tools` and `thm tools` use the same flow:
     platform selection → toolset toggles → provider/API key configuration.
 
     Args:
@@ -2914,9 +2914,9 @@ SETUP_SECTIONS = [
 def _run_portal_one_shot(config: dict) -> None:
     """One-shot Nous Portal setup — OAuth + provider switch + Tool Gateway.
 
-    Wired into ``hermes setup --portal``. Does NOT prompt for anything
+    Wired into ``thm setup --portal``. Does NOT prompt for anything
     besides what the underlying OAuth + Tool Gateway prompts already need.
-    Designed to be shareable as a single command (``hermes setup --portal``)
+    Designed to be shareable as a single command (``thm setup --portal``)
     that gets a brand-new user from zero to a fully working Hermes session
     with web/image/tts/browser tools all routed via their Portal sub.
     """
@@ -2950,7 +2950,7 @@ def _run_portal_one_shot(config: dict) -> None:
     print()
 
     # Skip OAuth if already logged in (don't re-prompt every time the user
-    # runs `hermes setup --portal` after a successful first run).
+    # runs `thm setup --portal` after a successful first run).
     already_logged_in = False
     try:
         already_logged_in = bool((get_nous_auth_status() or {}).get("logged_in"))
@@ -2961,7 +2961,7 @@ def _run_portal_one_shot(config: dict) -> None:
         print_success("  Already logged into Nous Portal.")
     else:
         # Hand off to the shared auth wiring so the device-code flow is
-        # identical to `hermes auth add nous --type oauth`. SimpleNamespace
+        # identical to `thm auth add nous --type oauth`. SimpleNamespace
         # mirrors the argparse Namespace contract that auth_add_command expects.
         ns = SimpleNamespace(
             provider="nous",
@@ -2983,7 +2983,7 @@ def _run_portal_one_shot(config: dict) -> None:
         except SystemExit as e:
             print()
             print_error(f"  Nous Portal login failed (exit {e.code}).")
-            print_info("  You can retry later with `hermes auth add nous --type oauth`.")
+            print_info("  You can retry later with `thm auth add nous --type oauth`.")
             return
         except (KeyboardInterrupt, EOFError):
             print()
@@ -2992,13 +2992,13 @@ def _run_portal_one_shot(config: dict) -> None:
         except Exception as exc:
             print()
             print_error(f"  Nous Portal login failed: {exc}")
-            print_info("  You can retry later with `hermes auth add nous --type oauth`.")
+            print_info("  You can retry later with `thm auth add nous --type oauth`.")
             return
 
     # Set provider → nous so the model picker, status surfaces, and
     # managed-tool gating all light up. Leave model.model empty so the
     # runtime picks Nous's default model; the user can change it later
-    # with `hermes model`.
+    # with `thm model`.
     model_cfg = config.get("model")
     if not isinstance(model_cfg, dict):
         model_cfg = {}
@@ -3009,7 +3009,7 @@ def _run_portal_one_shot(config: dict) -> None:
     print_success("  Nous set as your inference provider.")
 
     # Offer the Tool Gateway opt-in (single Y/n) — same flow that fires
-    # from `hermes model` after picking Nous.
+    # from `thm model` after picking Nous.
     print()
     try:
         prompt_enable_tool_gateway(config)
@@ -3021,7 +3021,7 @@ def _run_portal_one_shot(config: dict) -> None:
     print()
     print_success("Portal setup complete.")
     print_info("  Run `hermes portal status` to inspect routing.")
-    print_info("  Run `hermes` to start chatting.")
+    print_info("  Run `thm` to start chatting.")
 
 
 def run_setup_wizard(args):
@@ -3253,7 +3253,7 @@ def _run_first_time_quick_setup(config: dict, hermes_home, is_existing: bool):
     """Streamlined first-time setup: provider, model, terminal & messaging.
 
     Applies sensible defaults for TTS (Edge), agent settings, and tools —
-    the user can customize later via ``hermes setup <section>``.
+    the user can customize later via ``thm setup <section>``.
     """
     # Step 1: Model & Provider (essential — skips rotation/vision/TTS)
     setup_model_provider(config, quick=True)

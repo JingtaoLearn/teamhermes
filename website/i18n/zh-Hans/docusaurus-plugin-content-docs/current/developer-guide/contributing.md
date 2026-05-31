@@ -186,7 +186,7 @@ refactor/description   # 代码重构
 ### 提交前检查
 
 1. **运行测试**：`pytest tests/ -v`
-2. **手动测试**：运行 `hermes` 并验证您修改的代码路径
+2. **手动测试**：运行 `thm` 并验证您修改的代码路径
 3. **检查跨平台影响**：考虑 macOS 和不同 Linux 发行版
 4. **保持 PR 聚焦**：每个 PR 只包含一个逻辑变更
 
@@ -227,7 +227,7 @@ fix(security): prevent shell injection in sudo password piping
 ## 报告问题
 
 - 使用 [GitHub Issues](https://github.com/NousResearch/hermes-agent/issues)
-- 请包含：操作系统、Python 版本、Hermes 版本（`hermes version`）、完整错误堆栈
+- 请包含：操作系统、Python 版本、Hermes 版本（`thm version`）、完整错误堆栈
 - 包含复现步骤
 - 创建前请检查是否已有重复 issue
 - 安全漏洞请私下报告

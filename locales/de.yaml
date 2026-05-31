@@ -147,7 +147,7 @@ gateway:
   kanban:
     error_prefix:          "⚠ Kanban-Fehler: {error}"
     subscribed_suffix:     "(abonniert — Sie werden benachrichtigt, wenn {task_id} abgeschlossen oder blockiert wird)"
-    truncated_suffix:      "… (gekürzt; verwenden Sie `hermes kanban …` im Terminal für die vollständige Ausgabe)"
+    truncated_suffix:      "… (gekürzt; verwenden Sie `thm kanban …` im Terminal für die vollständige Ausgabe)"
     no_output:             "(keine Ausgabe)"
 
   personality:
@@ -293,9 +293,9 @@ gateway:
     removed:               "↩️ {count} Nachricht(en) rückgängig gemacht.\nEntfernt: \"{preview}\""
 
   update:
-    platform_not_messaging:  "✗ /update ist nur auf Messaging-Plattformen verfügbar. Führen Sie `hermes update` im Terminal aus."
+    platform_not_messaging:  "✗ /update ist nur auf Messaging-Plattformen verfügbar. Führen Sie `thm update` im Terminal aus."
     not_git_repo:            "✗ Kein Git-Repository — Update nicht möglich."
-    hermes_cmd_not_found:    "✗ Der Befehl `hermes` konnte nicht gefunden werden. Hermes läuft, aber der Update-Befehl konnte das ausführbare Programm weder im PATH noch über den aktuellen Python-Interpreter finden. Versuchen Sie, `hermes update` manuell im Terminal auszuführen."
+    hermes_cmd_not_found:    "✗ Der Befehl `thm` konnte nicht gefunden werden. Hermes läuft, aber der Update-Befehl konnte das ausführbare Programm weder im PATH noch über den aktuellen Python-Interpreter finden. Versuchen Sie, `thm update` manuell im Terminal auszuführen."
     start_failed:            "✗ Update konnte nicht gestartet werden: {error}"
     starting:                "⚕ Hermes-Update wird gestartet… Ich streame den Fortschritt hier."
 

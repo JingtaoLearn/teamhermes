@@ -34,23 +34,23 @@ pip install --upgrade hermes-agent    # or: uv pip install --upgrade hermes-agen
 ```
 
 :::tip
-`hermes update` automatically detects new configuration options and prompts you to add them. If you skipped that prompt, you can manually run `hermes config check` to see missing options, then `hermes config migrate` to interactively add them.
+`thm update` automatically detects new configuration options and prompts you to add them. If you skipped that prompt, you can manually run `thm config check` to see missing options, then `thm config migrate` to interactively add them.
 :::
 
 ### What happens during an update (git installs)
 
-When you run `hermes update`, the following steps occur:
+When you run `thm update`, the following steps occur:
 
 1. **Pairing-data snapshot** — a lightweight pre-update state snapshot is saved (covers `~/.teamhermes/pairing/`, Feishu comment rules, and other state files that get modified at runtime). Recoverable via the snapshot restore flow described under [Snapshots and rollback](../user-guide/checkpoints-and-rollback.md), or by extracting the most recent quick-snapshot zip Hermes wrote next to your `~/.teamhermes/` directory.
 2. **Git pull** — pulls the latest code from the `main` branch and updates submodules
-3. **Post-pull syntax validation + auto-rollback** — after the pull, Hermes compiles the eight critical files every `hermes` invocation imports at startup. If any fails to parse (e.g. an orphan merge-conflict marker, an accidentally truncated file), Hermes runs `git reset --hard <pre-pull-sha>` to roll the install back so your shell stays bootable. Re-run `hermes update` once the upstream fix lands.
+3. **Post-pull syntax validation + auto-rollback** — after the pull, Hermes compiles the eight critical files every `thm` invocation imports at startup. If any fails to parse (e.g. an orphan merge-conflict marker, an accidentally truncated file), Hermes runs `git reset --hard <pre-pull-sha>` to roll the install back so your shell stays bootable. Re-run `thm update` once the upstream fix lands.
 4. **Dependency install** — runs `uv pip install -e ".[all]"` to pick up new or changed dependencies
 5. **Config migration** — detects new config options added since your version and prompts you to set them
 6. **Gateway auto-restart** — running gateways are refreshed after the update completes so the new code takes effect immediately. Service-managed gateways (systemd on Linux, launchd on macOS) are restarted through the service manager. Manual gateways are relaunched automatically when Hermes can map the running PID back to a profile.
 
 ### Updating against a non-default branch: `--branch`
 
-By default `hermes update` tracks `origin/main`. Pass `--branch <name>` to update against a different branch — useful for QA channels, feature branches, or release-candidate testing:
+By default `thm update` tracks `origin/main`. Pass `--branch <name>` to update against a different branch — useful for QA channels, feature branches, or release-candidate testing:
 
 ```bash
 hermes update --branch release-candidate
@@ -59,9 +59,9 @@ hermes update --check --branch experimental   # preview behindness only
 
 If your local checkout is on a different branch, Hermes auto-stashes any uncommitted work, switches HEAD to the target branch, and then pulls. Branches that don't exist locally are auto-tracked from `origin/<name>` (`git checkout -B <name> origin/<name>`). Branches that don't exist anywhere fail cleanly — your stashed changes are restored before exit so you're never stranded in a weird state. The `main`-only fork-upstream sync logic is automatically skipped on non-`main` branches.
 
-### Preview-only: `hermes update --check`
+### Preview-only: `thm update --check`
 
-Want to know if an update is available before pulling? Run `hermes update --check` — for git installs it fetches and compares commits against `origin/main`; for pip installs it queries PyPI for the latest release. No files are modified, no gateway is restarted. Useful in scripts and cron jobs that gate on "is there an update".
+Want to know if an update is available before pulling? Run `thm update --check` — for git installs it fetches and compares commits against `origin/main`; for pip installs it queries PyPI for the latest release. No files are modified, no gateway is restarted. Useful in scripts and cron jobs that gate on "is there an update".
 
 ### Full pre-update backup: `--backup`
 
@@ -83,19 +83,19 @@ updates:
 
 ### Windows: another `hermes.exe` is running
 
-On Windows, `hermes update` will refuse to run if it detects another `hermes.exe` process holding the venv's entry-point executable open — most commonly the Hermes Desktop app's spawned backend, an open `hermes` REPL in another terminal, or a running gateway:
+On Windows, `thm update` will refuse to run if it detects another `hermes.exe` process holding the venv's entry-point executable open — most commonly the Hermes Desktop app's spawned backend, an open `thm` REPL in another terminal, or a running gateway:
 
 ```
-$ hermes update
+ update
 ✗ Another hermes.exe is running:
     PID 12345  hermes.exe
 
   Updating now would fail to overwrite ...\venv\Scripts\hermes.exe because
   Windows blocks REPLACE on a running executable.
 
-  Close Hermes Desktop, exit any open `hermes` REPLs, and
+  Close Hermes Desktop, exit any open `thm` REPLs, and
   stop the gateway (`hermes gateway stop`) before retrying.
-  Override with `hermes update --force` if you've already
+  Override with `thm update --force` if you've already
   confirmed those processes will not write to the venv.
 ```
 
@@ -104,7 +104,7 @@ Close the listed processes and re-run. If you're sure the concurrent process won
 Expected output looks like:
 
 ```
-$ hermes update
+ update
 Updating Hermes Agent...
 📥 Pulling latest code...
 Already up to date.  (or: Updating abc1234..def5678)
@@ -119,21 +119,21 @@ Already up to date.  (or: Updating abc1234..def5678)
 
 ### Recommended Post-Update Validation
 
-`hermes update` handles the main update path, but a quick validation confirms everything landed cleanly:
+`thm update` handles the main update path, but a quick validation confirms everything landed cleanly:
 
 1. `git status --short` — if the tree is unexpectedly dirty, inspect before continuing
-2. `hermes doctor` — checks config, dependencies, and service health
+2. `thm doctor` — checks config, dependencies, and service health
 3. `hermes --version` — confirm the version bumped as expected
 4. If you use the gateway: `hermes gateway status`
 5. If `doctor` reports npm audit issues: run `npm audit fix` in the flagged directory
 
 :::warning Dirty working tree after update
-If `git status --short` shows unexpected changes after `hermes update`, stop and inspect them before continuing. This usually means local modifications were reapplied on top of the updated code, or a dependency step refreshed lockfiles.
+If `git status --short` shows unexpected changes after `thm update`, stop and inspect them before continuing. This usually means local modifications were reapplied on top of the updated code, or a dependency step refreshed lockfiles.
 :::
 
 ### If your terminal disconnects mid-update
 
-`hermes update` protects itself against accidental terminal loss:
+`thm update` protects itself against accidental terminal loss:
 
 - The update ignores `SIGHUP`, so closing your SSH session or terminal window no longer kills it mid-install. `pip` and `git` child processes inherit this protection, so the Python environment cannot be left half-installed by a dropped connection.
 - All output is mirrored to `~/.teamhermes/logs/update.log` while the update runs. If your terminal disappears, reconnect and inspect the log to see whether the update finished and whether the gateway restart succeeded:
@@ -144,7 +144,7 @@ tail -f ~/.teamhermes/logs/update.log
 
 - `Ctrl-C` (SIGINT) and system shutdown (SIGTERM) are still honored — those are deliberate cancellations, not accidents.
 
-You no longer need to wrap `hermes update` in `screen` or `tmux` to survive a terminal drop.
+You no longer need to wrap `thm update` in `screen` or `tmux` to survive a terminal drop.
 
 ### Checking your current version
 
@@ -211,7 +211,7 @@ uv pip install -e ".[all]"
 ```
 
 :::warning
-Rolling back may cause config incompatibilities if new options were added. Run `hermes config check` after rolling back and remove any unrecognized options from `config.yaml` if you encounter errors.
+Rolling back may cause config incompatibilities if new options were added. Run `thm config check` after rolling back and remove any unrecognized options from `config.yaml` if you encounter errors.
 :::
 
 ### Note for Nix users

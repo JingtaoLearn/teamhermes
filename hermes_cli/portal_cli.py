@@ -6,7 +6,7 @@ Subcommands:
   tools    List Tool Gateway tools and which are active in the current config.
 
 This command is intentionally minimal — it does not duplicate functionality
-already in ``hermes auth`` or ``hermes tools``. It's a discovery + status
+already in ``thm auth`` or ``thm tools``. It's a discovery + status
 surface for the Portal subscription itself.
 """
 from __future__ import annotations
@@ -71,7 +71,7 @@ def _cmd_status(args) -> int:
     if provider == "nous":
         print(f"  Model:   {color('✓ using Nous as inference provider', Colors.GREEN)}")
     elif provider:
-        print(f"  Model:   currently {provider} (switch with `hermes model`)")
+        print(f"  Model:   currently {provider} (switch with `thm model`)")
 
     # Tool Gateway routing
     print()
@@ -148,7 +148,7 @@ def _cmd_tools(args) -> int:
     print(color("  ────────────────────", Colors.MAGENTA))
 
     if not features.nous_auth_present:
-        print(color("  Not logged into Nous Portal — sign in with `hermes auth add nous --type oauth`.", Colors.YELLOW))
+        print(color("  Not logged into Nous Portal — sign in with `thm auth add nous --type oauth`.", Colors.YELLOW))
         print()
 
     label_width = max(len(label) for _, label, _ in catalog)

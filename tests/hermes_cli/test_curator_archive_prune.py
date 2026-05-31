@@ -1,4 +1,4 @@
-"""Tests for `hermes curator archive` and `hermes curator prune`.
+"""Tests for `thm curator archive` and `thm curator prune`.
 
 Covers:
 - archive refuses pinned skills with an `unpin` hint

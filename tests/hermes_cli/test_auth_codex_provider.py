@@ -307,7 +307,7 @@ def test_save_codex_tokens_syncs_manual_device_code_entries(tmp_path, monkeypatc
     """Re-auth must also refresh ``manual:device_code`` pool entries.
 
     Regression for #33538: a user who hit #33000 before the #33164 fix landed
-    would have run ``hermes auth add openai-codex`` as a workaround, leaving
+    would have run ``thm auth add openai-codex`` as a workaround, leaving
     a pool entry with ``source="manual:device_code"``.  On every subsequent
     re-auth via setup/model picker, the singleton-seeded ``device_code`` entry
     got refreshed but the ``manual:device_code`` entry stayed stale, recreating

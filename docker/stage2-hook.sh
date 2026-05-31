@@ -199,7 +199,7 @@ fi
 #
 # Fix: locate the binary at boot and export ``AGENT_BROWSER_EXECUTABLE_PATH``
 # via /run/s6/container_environment so the `with-contenv` shebang on
-# main-wrapper.sh propagates it into the supervised ``hermes`` process
+# main-wrapper.sh propagates it into the supervised ``thm`` process
 # and thence to agent-browser subprocesses.
 #
 # - Skipped when the user has already set ``AGENT_BROWSER_EXECUTABLE_PATH``

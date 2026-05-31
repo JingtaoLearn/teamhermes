@@ -217,7 +217,7 @@ sudo hermes gateway install --system   # 仅 Linux：开机启动系统服务
 
 ### 更新后刷新斜杠命令
 
-当 Hermes 添加新命令时（例如执行 `hermes update` 后），重新生成 manifest 并更新你的 Slack 应用：
+当 Hermes 添加新命令时（例如执行 `thm update` 后），重新生成 manifest 并更新你的 Slack 应用：
 
 ```bash
 hermes slack manifest --write

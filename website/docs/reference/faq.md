@@ -19,14 +19,14 @@ Hermes Agent works with any OpenAI-compatible API. Supported providers include:
 - **[OpenRouter](https://openrouter.ai/)** — access hundreds of models through one API key (recommended for flexibility)
 - **[Nous Portal](/integrations/nous-portal)** — Nous Research's subscription gateway — 300+ models plus web/image/TTS/browser through one OAuth login (recommended for newcomers)
 - **OpenAI** — GPT-5.4, GPT-5-codex, GPT-4.1, GPT-4o, etc.
-- **Anthropic** — Claude models (direct API, OAuth via `hermes auth add anthropic`, OpenRouter, or any compatible proxy)
+- **Anthropic** — Claude models (direct API, OAuth via `thm auth add anthropic`, OpenRouter, or any compatible proxy)
 - **Google** — Gemini models (direct API via `gemini` provider, the `google-gemini-cli` OAuth provider, OpenRouter, or compatible proxy)
 - **z.ai / ZhipuAI** — GLM models
 - **Kimi / Moonshot AI** — Kimi models
 - **MiniMax** — global and China endpoints
 - **Local models** — via [Ollama](https://ollama.com/), [vLLM](https://docs.vllm.ai/), [llama.cpp](https://github.com/ggerganov/llama.cpp), [SGLang](https://github.com/sgl-project/sglang), or any OpenAI-compatible server
 
-Set your provider with `hermes model` or by editing `~/.teamhermes/.env`. See the [Environment Variables](./environment-variables.md) reference for all provider keys.
+Set your provider with `thm model` or by editing `~/.teamhermes/.env`. See the [Environment Variables](./environment-variables.md) reference for all provider keys.
 
 ### Does it work on Windows?
 
@@ -74,7 +74,7 @@ API calls go **only to the LLM provider you configure** (e.g., OpenRouter, your 
 
 ### Can I use it offline / with local models?
 
-Yes. Run `hermes model`, select **Custom endpoint**, and enter your server's URL:
+Yes. Run `thm model`, select **Custom endpoint**, and enter your server's URL:
 
 ```bash
 hermes model
@@ -236,7 +236,7 @@ curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scri
 
 **Cause:** `/model` (inside a chat session) can only switch between providers you've **already configured**. If you've only set up OpenRouter, that's all `/model` will show.
 
-**Solution:** Exit your session and use `hermes model` from your terminal to add new providers:
+**Solution:** Exit your session and use `thm model` from your terminal to add new providers:
 
 ```bash
 # Exit the Hermes chat session first (Ctrl+C or /quit)
@@ -247,13 +247,13 @@ hermes model
 # This lets you: add providers, run OAuth, enter API keys, configure endpoints
 ```
 
-After adding a new provider via `hermes model`, start a new chat session — `/model` will now show all your configured providers.
+After adding a new provider via `thm model`, start a new chat session — `/model` will now show all your configured providers.
 
 :::tip Quick reference
 | Want to... | Use |
 |-----------|-----|
-| Add a new provider | `hermes model` (from terminal) |
-| Enter/change API keys | `hermes model` (from terminal) |
+| Add a new provider | `thm model` (from terminal) |
+| Enter/change API keys | `thm model` (from terminal) |
 | Switch model mid-session | `/model <name>` (inside session) |
 | Switch to different configured provider | `/model provider:model` (inside session) |
 :::
@@ -301,7 +301,7 @@ hermes chat --model openrouter/meta-llama/llama-3.1-70b-instruct
 **Solution:** Wait a moment and retry. For sustained usage, consider:
 - Upgrading your provider plan
 - Switching to a different model or provider
-- Using `hermes chat --provider <alternative>` to route to a different backend
+- Using `thm chat --provider <alternative>` to route to a different backend
 
 #### Context length exceeded
 
@@ -368,7 +368,7 @@ This is working as intended — Hermes never silently runs destructive commands.
 **Solution:**
 - Avoid `sudo` in messaging — ask the agent to find alternatives
 - If you must use `sudo`, configure passwordless sudo for specific commands in `/etc/sudoers`
-- Or switch to the terminal interface for administrative tasks: `hermes chat`
+- Or switch to the terminal interface for administrative tasks: `thm chat`
 
 #### Docker backend not connecting
 
@@ -508,8 +508,8 @@ You can verify the plist has the correct PATH:
 **Cause:** Large model, distant API server, or heavy system prompt with many tools.
 
 **Solution:**
-- Try a faster/smaller model: `hermes chat --model openrouter/meta-llama/llama-3.1-8b-instruct`
-- Reduce active toolsets: `hermes chat -t "terminal"`
+- Try a faster/smaller model: `thm chat --model openrouter/meta-llama/llama-3.1-8b-instruct`
+- Reduce active toolsets: `thm chat -t "terminal"`
 - Check your network latency to the provider
 - For local models, ensure you have enough GPU VRAM
 
@@ -626,11 +626,11 @@ No. Each messaging platform (Telegram, Discord, etc.) requires exclusive access 
 
 ### Do profiles share memory or sessions?
 
-No. Each profile has its own memory store, session database, and skills directory. They are completely isolated. If you want to start a new profile with existing memories and sessions, use `hermes profile create newname --clone-all` to copy everything from the current profile.
+No. Each profile has its own memory store, session database, and skills directory. They are completely isolated. If you want to start a new profile with existing memories and sessions, use `thm profile create newname --clone-all` to copy everything from the current profile.
 
-### What happens when I run `hermes update`?
+### What happens when I run `thm update`?
 
-`hermes update` pulls the latest code and reinstalls dependencies **once** (not per-profile). It then syncs updated skills to all profiles automatically. You only need to run `hermes update` once — it covers every profile on the machine.
+`thm update` pulls the latest code and reinstalls dependencies **once** (not per-profile). It then syncs updated skills to all profiles automatically. You only need to run `thm update` once — it covers every profile on the machine.
 
 
 ### How many profiles can I run?
@@ -712,9 +712,9 @@ display:
 
 ### Managing skills on Telegram (slash command limit)
 
-**Scenario:** Telegram has a 100 slash command limit, and your skills are pushing past it. You want to disable skills you don't need on Telegram, but `hermes skills config` settings don't seem to take effect.
+**Scenario:** Telegram has a 100 slash command limit, and your skills are pushing past it. You want to disable skills you don't need on Telegram, but `thm skills config` settings don't seem to take effect.
 
-**Solution:** Use `hermes skills config` to disable skills per-platform. This writes to `config.yaml`:
+**Solution:** Use `thm skills config` to disable skills per-platform. This writes to `config.yaml`:
 
 ```yaml
 skills:
@@ -769,7 +769,7 @@ Skills with very long descriptions are truncated to 40 characters in the Telegra
    hermes import ~/hermes-backup-<timestamp>.zip
    ```
 
-4. On the new machine, run `hermes setup` to verify API keys and provider config are working.
+4. On the new machine, run `thm setup` to verify API keys and provider config are working.
 
 ### Moving a single profile to another machine
 
@@ -785,9 +785,9 @@ hermes profile import ./work-backup.tar.gz work
 
 The imported profile will have all config, memories, sessions, and skills from the export. You may need to update paths or re-authenticate with providers if the new machine has a different setup.
 
-### `hermes backup` vs `hermes profile export`
+### `thm backup` vs `thm profile export`
 
-| Feature | `hermes backup` | `hermes profile export` |
+| Feature | `thm backup` | `thm profile export` |
 | :--- | :--- | :--- |
 | **Use Case** | **Full machine migration** | **Porting/sharing a specific profile** |
 | **Scope** | Global (entire `~/.teamhermes` directory) | Local (single profile directory) |
@@ -801,7 +801,7 @@ rsync -av --exclude='hermes-agent' ~/.teamhermes/ newmachine:~/.teamhermes/
 ```
 
 :::tip
-`hermes backup` produces a consistent snapshot even while Hermes is actively running. The restored archive excludes machine-local runtime files like `gateway.pid` and `cron.pid`.
+`thm backup` produces a consistent snapshot even while Hermes is actively running. The restored archive excludes machine-local runtime files like `gateway.pid` and `cron.pid`.
 :::
 
 ### Permission denied when reloading shell after install

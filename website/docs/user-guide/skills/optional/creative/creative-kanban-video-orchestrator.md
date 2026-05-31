@@ -14,7 +14,7 @@ Plan, set up, and monitor a multi-agent video production pipeline backed by Herm
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/creative/kanban-video-orchestrator` |
+| Source | Optional — install with `thm skills install official/creative/kanban-video-orchestrator` |
 | Path | `optional-skills/creative/kanban-video-orchestrator` |
 | Version | `1.0.0` |
 | Author | ['SHL0MS', 'alt-glitch'] |
@@ -111,11 +111,11 @@ Generate a setup script (`setup.sh`) and run it. The script:
 
 1. Creates the project workspace (`~/projects/video-pipeline/<slug>/`)
 2. Copies any provided assets into `taste/`, `audio/`, `assets/`
-3. Creates each Hermes profile via `hermes profile create --clone`
+3. Creates each Hermes profile via `thm profile create --clone`
 4. Writes per-profile `SOUL.md` (personality + role definition)
 5. Configures profile YAML (toolsets, always_load skills, cwd)
 6. Writes `brief.md`, `TEAM.md`, and `taste/` content
-7. Fires the initial `hermes kanban create` task assigned to the director
+7. Fires the initial `thm kanban create` task assigned to the director
 
 Use `scripts/bootstrap_pipeline.py` to generate setup.sh from a brief +
 team-design JSON. See **[references/kanban-setup.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/creative/kanban-video-orchestrator/references/kanban-setup.md)**
@@ -186,7 +186,7 @@ task graphs. See **[references/examples.md](https://github.com/NousResearch/herm
 6. **The director never executes.** Even with the full `kanban + terminal +
    file` toolset, the director's `SOUL.md` rules forbid it from executing
    work itself. It decomposes and routes only — every concrete task becomes
-   a `hermes kanban create` call to a specialist profile. The
+   a `thm kanban create` call to a specialist profile. The
    `kanban-orchestrator` skill spells this out further.
 
 7. **Don't over-decompose.** A 30-second product video does NOT need 20 tasks.

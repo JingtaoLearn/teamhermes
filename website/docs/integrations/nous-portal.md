@@ -14,7 +14,7 @@ If you only have time to set up one thing, set up this. The fastest path:
 hermes setup --portal
 ```
 
-That single command runs the Portal OAuth, sets Nous as your inference provider in `config.yaml`, and turns on the Tool Gateway. You're ready to `hermes chat` immediately after.
+That single command runs the Portal OAuth, sets Nous as your inference provider in `config.yaml`, and turns on the Tool Gateway. You're ready to `thm chat` immediately after.
 
 Don't have a subscription yet? [portal.nousresearch.com/manage-subscription](https://portal.nousresearch.com/manage-subscription) — sign up, then come back and run the command above.
 
@@ -101,7 +101,7 @@ This runs the full setup in one shot:
 2. Stores the refresh token at `~/.teamhermes/auth.json`
 3. Sets Nous as your inference provider in `~/.teamhermes/config.yaml`
 4. Turns on the Tool Gateway (web, image, TTS, browser routing)
-5. Returns you to your terminal ready to `hermes chat`
+5. Returns you to your terminal ready to `thm chat`
 
 If you don't have a subscription yet, sign up at [portal.nousresearch.com/manage-subscription](https://portal.nousresearch.com/manage-subscription) first.
 
@@ -115,7 +115,7 @@ hermes model
 # browser opens, sign in, done
 ```
 
-Your existing providers stay configured. You can switch between them with `/model` mid-session or `hermes model` between sessions — the Portal becomes one of your available providers, not your only one.
+Your existing providers stay configured. You can switch between them with `/model` mid-session or `thm model` between sessions — the Portal becomes one of your available providers, not your only one.
 
 ### Headless / SSH / remote setup
 
@@ -178,7 +178,7 @@ hermes model
 
 ### Mixing the gateway with your own backends
 
-If you already have, say, a Browserbase account and want to keep using it while routing web search and image generation through Nous, that's supported. Use `hermes tools` to pick backends per tool:
+If you already have, say, a Browserbase account and want to keep using it while routing web search and image generation through Nous, that's supported. Use `thm tools` to pick backends per tool:
 
 ```bash
 hermes tools
@@ -199,7 +199,7 @@ Manage your plan, view usage, or upgrade/cancel at any time:
 
 ## Configuration reference
 
-After `hermes setup --portal`, `~/.teamhermes/config.yaml` will look like:
+After `thm setup --portal`, `~/.teamhermes/config.yaml` will look like:
 
 ```yaml
 model:
@@ -230,7 +230,7 @@ The OAuth refresh token is stored separately at `~/.teamhermes/auth.json` (not i
 
 Hermes mints a short-lived JWT from your stored Portal refresh token on each inference call rather than reusing a long-lived API key. The token lifecycle is fully automatic — refresh, mint, retry on transient 401 — and you never see it.
 
-If the Portal invalidates the refresh token (password change, manual revoke, session expiry), the invalid refresh token is **quarantined locally** so Hermes stops replaying it and you don't see a stream of identical 401s. The next call surfaces a clear "re-authentication required" message. Run `hermes auth add nous` to log in again; the quarantine clears on the next successful login.
+If the Portal invalidates the refresh token (password change, manual revoke, session expiry), the invalid refresh token is **quarantined locally** so Hermes stops replaying it and you don't see a stream of identical 401s. The next call surfaces a clear "re-authentication required" message. Run `thm auth add nous` to log in again; the quarantine clears on the next successful login.
 
 ## Troubleshooting
 
@@ -242,11 +242,11 @@ You haven't completed the OAuth flow, or your refresh token was wiped. Run:
 hermes auth add nous --type oauth
 ```
 
-or use `hermes model` and re-select Nous Portal.
+or use `thm model` and re-select Nous Portal.
 
 ### Got a "re-authentication required" message mid-session
 
-Your Portal refresh token was invalidated (password change, manual revoke, or session expiry). Run `hermes auth add nous` and your next request will use the new credentials. Any quarantine on the old token clears automatically on successful re-login.
+Your Portal refresh token was invalidated (password change, manual revoke, or session expiry). Run `thm auth add nous` and your next request will use the new credentials. Any quarantine on the old token clears automatically on successful re-login.
 
 ### Want to use a specific provider model that the Portal doesn't expose
 
@@ -260,7 +260,7 @@ If a model is genuinely missing, [open an issue](https://github.com/NousResearch
 
 ### Bills not appearing on my Portal account
 
-Check `hermes portal status` first — if it shows you're using a different provider (`Model: currently openrouter` instead of `using Nous as inference provider`), your local config has drifted. Run `hermes model`, pick Nous Portal, and the next request will route through your subscription.
+Check `hermes portal status` first — if it shows you're using a different provider (`Model: currently openrouter` instead of `using Nous as inference provider`), your local config has drifted. Run `thm model`, pick Nous Portal, and the next request will route through your subscription.
 
 ## See also
 

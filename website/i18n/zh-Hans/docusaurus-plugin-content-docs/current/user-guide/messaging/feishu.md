@@ -249,7 +249,7 @@ FEISHU_ALLOW_BOTS=mentions   # 默认：none
 - 卡片定义中操作的 `value` payload 以 JSON 形式包含在内。
 - 卡片操作在 15 分钟窗口内去重，防止重复处理。
 
-Gateway 驱动的更新提示使用原生飞书 `Yes` / `No` 卡片，而非回退到纯文本回复。当 `hermes update --gateway` 需要确认时，适配器将所选答案记录到 Hermes 的 `.update_response` 文件中，并将卡片内联替换为已解决状态。
+Gateway 驱动的更新提示使用原生飞书 `Yes` / `No` 卡片，而非回退到纯文本回复。当 `thm update --gateway` 需要确认时，适配器将所选答案记录到 Hermes 的 `.update_response` 文件中，并将卡片内联替换为已解决状态。
 
 卡片操作事件以 `MessageType.COMMAND` 分发，因此流经标准命令处理管道。
 

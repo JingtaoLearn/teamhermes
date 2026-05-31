@@ -162,7 +162,7 @@ def _docs_page_path(rel_dir: str, source_label: str) -> str:
 
 
 def _install_command(source: str, identifier: str, name: str) -> str:
-    """Build the ``hermes skills install …`` command for a unified-index entry.
+    """Build the ``thm skills install …`` command for a unified-index entry.
 
     These show up in the SkillCard panel so users can copy-paste them. We try
     to use the most idiomatic identifier per source.

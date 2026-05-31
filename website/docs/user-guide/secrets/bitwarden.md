@@ -6,7 +6,7 @@ Pull API keys from [Bitwarden Secrets Manager](https://bitwarden.com/products/se
 
 1. You create a **machine account** in Bitwarden Secrets Manager, give it read access to a project, and generate an **access token**.
 2. Hermes stores that single token in `~/.teamhermes/.env` as `BWS_ACCESS_TOKEN`.
-3. Every time `hermes` (or the gateway, or a cron job) starts, after `~/.teamhermes/.env` has loaded, Hermes calls `bws secret list <project_id>` and sets the returned keys into `os.environ`.
+3. Every time `thm` (or the gateway, or a cron job) starts, after `~/.teamhermes/.env` has loaded, Hermes calls `bws secret list <project_id>` and sets the returned keys into `os.environ`.
 4. By default Hermes **overrides** values already in your environment, so Bitwarden is the source of truth — rotate a key once in the web app and every Hermes process picks it up on next start. Flip `override_existing: false` in config if you want `.env` to win instead.
 
 The `bws` binary is auto-downloaded into `~/.teamhermes/bin/` on first use — no `apt`, no `brew`, no `sudo`.
@@ -61,7 +61,7 @@ hermes secrets bitwarden setup \
 hermes secrets bitwarden status
 ```
 
-From now on, every `hermes` invocation pulls fresh secrets at startup. You'll see a one-line summary in stderr the first time secrets are applied in a process.
+From now on, every `thm` invocation pulls fresh secrets at startup. You'll see a one-line summary in stderr the first time secrets are applied in a process.
 
 ## CLI
 
@@ -96,7 +96,7 @@ secrets:
 | `access_token_env` | `BWS_ACCESS_TOKEN` | Env var name that holds the bootstrap token. Change this if you already use `BWS_ACCESS_TOKEN` for something else. |
 | `project_id` | `""` | UUID of the project to sync from. |
 | `server_url` | `""` | Bitwarden region or self-hosted endpoint. Empty = `bws` default (US Cloud, `https://vault.bitwarden.com`). Set to `https://vault.bitwarden.eu` for EU Cloud, or your own URL for self-hosted. Plumbed into the `bws` subprocess as `BWS_SERVER_URL`. |
-| `cache_ttl_seconds` | `300` | How long an in-process fetch result is reused. Set to `0` to disable caching. Cache is per-process; new `hermes` invocations start fresh. |
+| `cache_ttl_seconds` | `300` | How long an in-process fetch result is reused. Set to `0` to disable caching. Cache is per-process; new `thm` invocations start fresh. |
 | `override_existing` | `true` | When true, Bitwarden values overwrite anything already in env (so rotation in the web app actually takes effect). Flip to `false` if you want `.env` / shell exports to win locally. |
 | `auto_install` | `true` | When true, `bws` is auto-downloaded into `~/.teamhermes/bin/` on first use. |
 

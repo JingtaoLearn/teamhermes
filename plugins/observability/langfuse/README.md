@@ -10,7 +10,7 @@ pip install langfuse
 hermes plugins enable observability/langfuse
 ```
 
-Or check the box in the interactive `hermes plugins` UI.
+Or check the box in the interactive `thm plugins` UI.
 
 ## Required credentials
 

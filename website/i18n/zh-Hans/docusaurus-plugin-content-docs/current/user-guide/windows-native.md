@@ -27,7 +27,7 @@ Hermes 可在 Windows 10 和 Windows 11 上原生运行——无需 WSL、Cygwin
 iex (irm https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.ps1)
 ```
 
-无需管理员权限。安装程序会写入 `%LOCALAPPDATA%\hermes\`，并将 `hermes` 添加到你的**用户 PATH**——安装完成后打开新终端即可使用。
+无需管理员权限。安装程序会写入 `%LOCALAPPDATA%\hermes\`，并将 `thm` 添加到你的**用户 PATH**——安装完成后打开新终端即可使用。
 
 **安装程序选项**（需要使用 scriptblock 形式传递参数）：
 
@@ -41,7 +41,7 @@ iex (irm https://raw.githubusercontent.com/NousResearch/hermes-agent/main/script
 | `-Commit` | 未设置 | 将安装固定到指定 commit SHA（覆盖 `-Branch`） |
 | `-Tag` | 未设置 | 将安装固定到指定 git tag（如 `v0.14.0`） |
 | `-NoVenv` | 关闭 | 跳过 venv 创建（高级用法——由你自行管理 Python） |
-| `-SkipSetup` | 关闭 | 跳过安装后的 `hermes setup` 向导 |
+| `-SkipSetup` | 关闭 | 跳过安装后的 `thm setup` 向导 |
 | `-HermesHome` | `%LOCALAPPDATA%\hermes` | 覆盖数据目录 |
 | `-InstallDir` | `%LOCALAPPDATA%\hermes\hermes-agent` | 覆盖代码存放位置 |
 
@@ -49,7 +49,7 @@ iex (irm https://raw.githubusercontent.com/NousResearch/hermes-agent/main/script
 
 ### 桌面安装程序（备选方案）
 
-也提供了一个轻量 GUI 安装程序——如果你更倾向于双击 `.exe` 而非打开 PowerShell，可以使用它。下载 Hermes Desktop，运行安装程序，首次启动时 GUI 会在后台调用 `install.ps1` 来配置 Python（通过 `uv`）、Node、PortableGit 以及下文描述的其余依赖引导流程。首次运行后，桌面应用与 PowerShell 安装的 `hermes` CLI 共享同一个 `%LOCALAPPDATA%\hermes\hermes-agent` 安装目录和 `%USERPROFILE%\.teamhermes` 数据目录——可以在 GUI 和 CLI 之间自由切换。
+也提供了一个轻量 GUI 安装程序——如果你更倾向于双击 `.exe` 而非打开 PowerShell，可以使用它。下载 Hermes Desktop，运行安装程序，首次启动时 GUI 会在后台调用 `install.ps1` 来配置 Python（通过 `uv`）、Node、PortableGit 以及下文描述的其余依赖引导流程。首次运行后，桌面应用与 PowerShell 安装的 `thm` CLI 共享同一个 `%LOCALAPPDATA%\hermes\hermes-agent` 安装目录和 `%USERPROFILE%\.teamhermes` 数据目录——可以在 GUI 和 CLI 之间自由切换。
 
 如果你想要熟悉的 Windows 安装体验，或者要将 Hermes 交给非开发者使用，请使用桌面安装程序；如果你已经在终端中，请使用 PowerShell 一行命令。
 
@@ -79,11 +79,11 @@ iex (irm https://raw.githubusercontent.com/NousResearch/hermes-agent/main/script
 6. **分层 `uv pip install`** — 先尝试 `.[all]`，如果 `git+https` 依赖在 GitHub 限速时失败，则逐步回退到更小的集合（`[messaging,dashboard,ext]` → `[messaging]` → `.`）。防止"单次失败导致裸安装"的故障模式。
 7. **根据 `.env` 自动安装消息 SDK** — 如果存在 `TELEGRAM_BOT_TOKEN` / `DISCORD_BOT_TOKEN` / `SLACK_BOT_TOKEN` / `SLACK_APP_TOKEN` / `WHATSAPP_ENABLED`，则运行 `python -m ensurepip --upgrade` 并针对性地调用 `pip install`，确保各平台 SDK 可正常导入。
 8. **设置 `HERMES_GIT_BASH_PATH`** 为解析后的 `bash.exe` 路径，使 Hermes 在新 shell 中能确定性地找到它。
-9. **将 `%LOCALAPPDATA%\hermes\bin` 添加到用户 PATH** — 打开新终端后即可使用 `hermes` 命令。
-10. **运行 `hermes setup`** — 正常的首次运行向导（模型、提供商、工具集）。使用 `-SkipSetup` 跳过。
+9. **将 `%LOCALAPPDATA%\hermes\bin` 添加到用户 PATH** — 打开新终端后即可使用 `thm` 命令。
+10. **运行 `thm setup`** — 正常的首次运行向导（模型、提供商、工具集）。使用 `-SkipSetup` 跳过。
 
 :::tip 在 Windows 上跳过繁琐的提供商配置
-原生 Windows 仍处于早期 beta 阶段，逐个配置工具 API key（Firecrawl、FAL、Browser Use、OpenAI TTS）是获得可用 agent 摩擦最大的部分。[Nous Portal](/user-guide/features/tool-gateway) 订阅通过一次 OAuth 登录即可覆盖模型**以及**所有这些工具。安装程序完成后，运行 `hermes setup --portal` 完成配置。
+原生 Windows 仍处于早期 beta 阶段，逐个配置工具 API key（Firecrawl、FAL、Browser Use、OpenAI TTS）是获得可用 agent 摩擦最大的部分。[Nous Portal](/user-guide/features/tool-gateway) 订阅通过一次 OAuth 登录即可覆盖模型**以及**所有这些工具。安装程序完成后，运行 `thm setup --portal` 完成配置。
 :::
 
 ## 功能矩阵
@@ -92,7 +92,7 @@ iex (irm https://raw.githubusercontent.com/NousResearch/hermes-agent/main/script
 
 | 功能 | 原生 Windows | WSL2 |
 |---|---|---|
-| CLI（`hermes chat`、`hermes setup`、`hermes gateway` 等） | ✓ | ✓ |
+| CLI（`thm chat`、`thm setup`、`hermes gateway` 等） | ✓ | ✓ |
 | 交互式 TUI（`hermes --tui`） | ✓ | ✓ |
 | 消息 gateway（Telegram、Discord、Slack、WhatsApp，15+ 平台） | ✓ | ✓ |
 | Cron 调度器 | ✓ | ✓ |
@@ -222,7 +222,7 @@ hermes gateway uninstall   # 移除 schtasks 条目、Startup 快捷方式、pid
 
 - 安装程序通过 npm 将 `agent-browser` 添加到 PATH。
 - `shutil.which("agent-browser", path=...)` 会自动找到 `.cmd` 垫片——`CreateProcessW` 无法执行无扩展名的 shebang 脚本，因此 Hermes 始终解析到 `.CMD` 包装器。不要手动调用 shebang 脚本；始终通过 `.cmd` 调用。
-- Playwright Chromium 在首次运行时自动安装（`npx playwright install chromium`）。如果安装失败，`hermes doctor` 会给出修复提示。
+- Playwright Chromium 在首次运行时自动安装（`npx playwright install chromium`）。如果安装失败，`thm doctor` 会给出修复提示。
 
 ## 在 Windows 上运行 Hermes — 实用说明
 
@@ -306,7 +306,7 @@ Remove-Item -Recurse -Force "$env:LOCALAPPDATA\hermes"
 你只在当前进程中设置了它；请关闭并重新打开 shell，或在系统属性 → 环境变量中以用户作用域设置。在新 PowerShell 窗口中用 `echo $env:EDITOR` 验证。
 
 **浏览器工具启动了，但工具调用超时。**
-Chromium 在首次运行时自动安装。如果安装失败（GitHub 限速、Playwright CDN 故障），运行 `hermes doctor`——它会检测缺失的 Chromium 并打印修复所需的确切 `npx playwright install chromium` 命令。
+Chromium 在首次运行时自动安装。如果安装失败（GitHub 限速、Playwright CDN 故障），运行 `thm doctor`——它会检测缺失的 Chromium 并打印修复所需的确切 `npx playwright install chromium` 命令。
 
 **`agent-browser` 报奇怪的 Node 版本错误。**
 安装程序在 `%LOCALAPPDATA%\hermes\node` 配置了 Node 22，但你的 PATH 中可能有更靠前的旧版系统 Node 18。要么将 Hermes 的 node 目录移到 PATH 前面，要么如果你不在其他地方使用 Node，删除系统安装。
@@ -324,6 +324,6 @@ UTF-8 stdio 垫片未激活。检查 `HERMES_DISABLE_WINDOWS_UTF8` 是否**未**
 
 - **[安装](../getting-started/installation.md)** — 完整安装页面，包括 Linux/macOS/WSL2/Termux。
 - **[Windows（WSL2）指南](./windows-wsl-quickstart.md)** — 如果你需要 POSIX 语义或 dashboard 终端面板。
-- **[CLI 参考](../reference/cli-commands.md)** — 所有 `hermes` 子命令。
+- **[CLI 参考](../reference/cli-commands.md)** — 所有 `thm` 子命令。
 - **[FAQ](../reference/faq.md)** — 常见的非 Windows 专属问题。
 - **[消息 Gateway](./messaging/index.md)** — 在 Windows 上运行 Telegram/Discord/Slack。

@@ -147,7 +147,7 @@ gateway:
   kanban:
     error_prefix:          "⚠ kanban 错误：{error}"
     subscribed_suffix:     "（已订阅 — 当 {task_id} 完成或被阻塞时将通知您）"
-    truncated_suffix:      "…（已截断；如需完整输出请在终端运行 `hermes kanban …`）"
+    truncated_suffix:      "…（已截断；如需完整输出请在终端运行 `thm kanban …`）"
     no_output:             "（无输出）"
 
   personality:
@@ -293,9 +293,9 @@ gateway:
     removed:               "↩️ 已撤销 {count} 条消息。\n已移除：「{preview}」"
 
   update:
-    platform_not_messaging:  "✗ /update 仅在消息平台可用。请在终端运行 `hermes update`。"
+    platform_not_messaging:  "✗ /update 仅在消息平台可用。请在终端运行 `thm update`。"
     not_git_repo:            "✗ 不是 git 仓库 — 无法更新。"
-    hermes_cmd_not_found:    "✗ 无法找到 `hermes` 命令。Hermes 正在运行，但更新命令无法在 PATH 上或通过当前 Python 解释器找到可执行文件。请尝试在终端中手动运行 `hermes update`。"
+    hermes_cmd_not_found:    "✗ 无法找到 `thm` 命令。Hermes 正在运行，但更新命令无法在 PATH 上或通过当前 Python 解释器找到可执行文件。请尝试在终端中手动运行 `thm update`。"
     start_failed:            "✗ 启动更新失败：{error}"
     starting:                "⚕ 正在启动 Hermes 更新…… 进度将在此处显示。"
 

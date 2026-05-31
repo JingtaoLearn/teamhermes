@@ -85,7 +85,7 @@ Catalog entries can require:
 - **OAuth** (remote MCP) — written as `auth: oauth` in your config; the MCP
   client opens a browser on first connection.
 - **OAuth** (third-party provider like Google/GitHub) — Hermes points you at
-  `hermes auth <provider>` if you haven't authenticated already.
+  `thm auth <provider>` if you haven't authenticated already.
 
 ### Tool selection at install time
 
@@ -139,7 +139,7 @@ time so you can quickly verify the upstream repo.
 Manifests pin a `manifest_version`. The catalog is forward-compatible: if a
 PR adds an entry with a newer `manifest_version` than your installed Hermes
 understands, the picker will surface a warning (`⚠ '<name>' requires a newer
-Hermes`) for that entry instead of silently hiding it. Run `hermes update`
+Hermes`) for that entry instead of silently hiding it. Run `thm update`
 to install the latest Hermes when you see that.
 
 ### Runtime `${ENV_VAR}` substitution

@@ -76,7 +76,7 @@ hermes-agent/
 │   └── trajectory.py         # 轨迹保存辅助函数
 │
 ├── hermes_cli/               # CLI 子命令与设置
-│   ├── main.py               # 入口点——所有 `hermes` 子命令（大文件）
+│   ├── main.py               # 入口点——所有 `thm` 子命令（大文件）
 │   ├── config.py             # DEFAULT_CONFIG、OPTIONAL_ENV_VARS、迁移
 │   ├── commands.py           # COMMAND_REGISTRY——斜杠命令中央定义
 │   ├── auth.py               # PROVIDER_REGISTRY、凭据解析
@@ -229,7 +229,7 @@ CLI、gateway、cron、ACP 及辅助调用共用的运行时解析器。将 `(pr
 
 ### 插件系统
 
-三种发现来源：`~/.teamhermes/plugins/`（用户级）、`.teamhermes/plugins/`（项目级）和 pip entry point。插件通过上下文 API 注册工具、hook 和 CLI 命令。存在两种专用插件类型：记忆提供者（`plugins/memory/`）和上下文引擎（`plugins/context_engine/`）。两者均为单选——每种同时只能激活一个，通过 `hermes plugins` 或 `config.yaml` 配置。
+三种发现来源：`~/.teamhermes/plugins/`（用户级）、`.teamhermes/plugins/`（项目级）和 pip entry point。插件通过上下文 API 注册工具、hook 和 CLI 命令。存在两种专用插件类型：记忆提供者（`plugins/memory/`）和上下文引擎（`plugins/context_engine/`）。两者均为单选——每种同时只能激活一个，通过 `thm plugins` 或 `config.yaml` 配置。
 
 → [插件指南](/guides/build-a-hermes-plugin)，[记忆提供者插件](./memory-provider-plugin.md)
 

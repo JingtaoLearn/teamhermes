@@ -72,7 +72,7 @@ docker run -d \
   nousresearch/hermes-agent gateway run
 ```
 
-入口点在 `exec` 主命令之前，以非 root 用户 `hermes` 在后台启动 `hermes dashboard`。Dashboard 输出在 `docker logs` 中以 `[dashboard]` 为前缀，便于与 gateway 日志区分。
+入口点在 `exec` 主命令之前，以非 root 用户 `thm` 在后台启动 `thm dashboard`。Dashboard 输出在 `docker logs` 中以 `[dashboard]` 为前缀，便于与 gateway 日志区分。
 
 | 环境变量 | 描述 | 默认值 |
 |---------------------|-------------|---------|
@@ -297,7 +297,7 @@ docker run -d \
 2. 运行 `/etc/cont-init.d/02-reconcile-profiles`（即 `hermes_cli.container_boot`）：遍历 `$HERMES_HOME/profiles/<name>/`，在 `/run/service/gateway-<profile>/` 下重建各 profile 的 gateway s6 服务槽，并仅自动启动上次记录状态为 `running` 的 profile（参见 [Per-profile gateway 监管](#per-profile-gateway-supervision)）。
 3. 启动静态的 `main-hermes` 和 `dashboard` s6-rc 服务。
 4. 将容器的 CMD 作为主程序 exec（`/opt/hermes/docker/main-wrapper.sh`），根据用户传给 `docker run` 的参数进行路由：
-   - 无参数 → `hermes`（默认）
+   - 无参数 → `thm`（默认）
    - 第一个参数是 PATH 上的可执行文件（如 `sleep`、`bash`）→ 直接 exec
    - 其他情况 → `hermes <args>`（子命令透传）
    主程序退出时容器退出，并使用其退出码。
@@ -307,12 +307,12 @@ docker run -d \
 :::
 
 :::warning 权限模型
-除非你在命令链中保留 `/init`（或等效的旧版 `docker/entrypoint.sh` shim，它会转发到 stage2 hook），否则不要覆盖镜像入口点。s6-overlay 的 `/init` 以 root 运行，以便在首次启动时对卷执行 chown，然后通过 `s6-setuidgid` 为每个受监管的服务**以及**主程序降权至 `hermes` 用户。在官方镜像内以 root 启动 `hermes gateway run` 默认会被拒绝，因为这可能在 `/opt/data` 中留下 root 所有的文件，导致后续 dashboard 或 gateway 启动失败。仅在你有意接受该风险时才设置 `HERMES_ALLOW_ROOT_GATEWAY=1`。
+除非你在命令链中保留 `/init`（或等效的旧版 `docker/entrypoint.sh` shim，它会转发到 stage2 hook），否则不要覆盖镜像入口点。s6-overlay 的 `/init` 以 root 运行，以便在首次启动时对卷执行 chown，然后通过 `s6-setuidgid` 为每个受监管的服务**以及**主程序降权至 `thm` 用户。在官方镜像内以 root 启动 `hermes gateway run` 默认会被拒绝，因为这可能在 `/opt/data` 中留下 root 所有的文件，导致后续 dashboard 或 gateway 启动失败。仅在你有意接受该风险时才设置 `HERMES_ALLOW_ROOT_GATEWAY=1`。
 :::
 
 ### Per-profile gateway 监管
 
-在容器内，每个通过 `hermes profile create <name>` 创建的 profile 都会自动在 `/run/service/gateway-<name>/` 注册一个受 s6 监管的 gateway 服务。你在宿主机上运行的生命周期命令在此同样适用：
+在容器内，每个通过 `thm profile create <name>` 创建的 profile 都会自动在 `/run/service/gateway-<name>/` 注册一个受 s6 监管的 gateway 服务。你在宿主机上运行的生命周期命令在此同样适用：
 
 ```sh
 hermes profile create coder            # 注册 gateway-coder s6 槽
@@ -329,7 +329,7 @@ hermes profile delete coder            # 拆除 s6 槽
 - `docker restart` 保留运行中的 gateway：cont-init 协调器读取 `$HERMES_HOME/profiles/<name>/gateway_state.json`，若上次记录状态为 `running` 则恢复该槽。已停止的 gateway 保持停止状态。
 - 各 profile 的 gateway 日志持久化于 `$HERMES_HOME/logs/gateways/<profile>/current`（由 `s6-log` 轮转），协调器的操作记录在每次启动时追加到 `$HERMES_HOME/logs/container-boot.log`。
 
-在容器内执行 `hermes status` 会显示 `Manager: s6 (container supervisor)`。使用 `/command/s6-svstat /run/service/gateway-<name>` 查看原始 supervisor 状态（注意 `/command/` 仅在监管树进程的 PATH 中；从 `docker exec` 调用时请传入绝对路径）。
+在容器内执行 `thm status` 会显示 `Manager: s6 (container supervisor)`。使用 `/command/s6-svstat /run/service/gateway-<name>` 查看原始 supervisor 状态（注意 `/command/` 仅在监管树进程的 PATH 中；从 `docker exec` 调用时请传入绝对路径）。
 
 ## 升级
 
@@ -581,7 +581,7 @@ model:
 
 ### "Permission denied" 错误
 
-容器的 stage2 hook 通过 `s6-setuidgid` 在每个受监管的服务内将权限降至非 root 用户 `hermes`（UID 10000）。如果宿主机的 `~/.teamhermes/` 由不同 UID 拥有，请设置 `HERMES_UID`/`HERMES_GID` 以匹配宿主机用户，或确保数据目录可写：
+容器的 stage2 hook 通过 `s6-setuidgid` 在每个受监管的服务内将权限降至非 root 用户 `thm`（UID 10000）。如果宿主机的 `~/.teamhermes/` 由不同 UID 拥有，请设置 `HERMES_UID`/`HERMES_GID` 以匹配宿主机用户，或确保数据目录可写：
 
 ```sh
 chmod -R 755 ~/.teamhermes

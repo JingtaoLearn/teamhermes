@@ -26,7 +26,7 @@ On name collision, later sources win — a user plugin named `disk-cleanup` woul
 
 ## Bundled plugins are opt-in
 
-Bundled plugins ship disabled. Discovery finds them (they appear in `hermes plugins list` and the interactive `hermes plugins` UI), but none load until you explicitly enable them:
+Bundled plugins ship disabled. Discovery finds them (they appear in `thm plugins list` and the interactive `thm plugins` UI), but none load until you explicitly enable them:
 
 ```bash
 hermes plugins enable disk-cleanup
@@ -51,7 +51,7 @@ hermes plugins disable disk-cleanup
 
 ## Currently shipped
 
-The repo ships these bundled plugins under `plugins/`. All are opt-in — enable them via `hermes plugins enable <name>`.
+The repo ships these bundled plugins under `plugins/`. All are opt-in — enable them via `thm plugins enable <name>`.
 
 | Plugin | Kind | Purpose |
 |---|---|---|
@@ -66,7 +66,7 @@ The repo ships these bundled plugins under `plugins/`. All are opt-in — enable
 | `hermes-achievements` | dashboard tab | Steam-style collectible badges generated from your real Hermes session history |
 | `kanban/dashboard` | dashboard tab | Kanban board UI for the multi-agent dispatcher — tasks, comments, fan-out, board switching. See [Kanban Multi-Agent](./kanban.md). |
 
-Memory providers (`plugins/memory/*`) and context engines (`plugins/context_engine/*`) are listed separately on [Memory Providers](./memory-providers.md) — they're managed through `hermes memory` and `hermes plugins` respectively. The full per-plugin detail for the two long-running hooks-based plugins follows.
+Memory providers (`plugins/memory/*`) and context engines (`plugins/context_engine/*`) are listed separately on [Memory Providers](./memory-providers.md) — they're managed through `hermes memory` and `thm plugins` respectively. The full per-plugin detail for the two long-running hooks-based plugins follows.
 
 ### disk-cleanup
 
@@ -112,9 +112,9 @@ Auto-tracks and removes ephemeral files created during sessions — test scripts
 
 **Safety** — cleanup only ever touches paths under `HERMES_HOME` or `/tmp/hermes-*`. Windows mounts (`/mnt/c/...`) are rejected. Well-known top-level state dirs (`logs/`, `memories/`, `sessions/`, `cron/`, `cache/`, `skills/`, `plugins/`, `disk-cleanup/` itself) are never removed even when empty — a fresh install does not get gutted on first session end.
 
-**Enabling:** `hermes plugins enable disk-cleanup` (or check the box in `hermes plugins`).
+**Enabling:** `thm plugins enable disk-cleanup` (or check the box in `thm plugins`).
 
-**Disabling again:** `hermes plugins disable disk-cleanup`.
+**Disabling again:** `thm plugins disable disk-cleanup`.
 
 ### security-guidance
 
@@ -132,9 +132,9 @@ The file is still written. The model reads the warning in the next turn's tool m
 | `SECURITY_GUIDANCE_BLOCK=1` | **block mode** — write refused, warning returned as the block reason |
 | `SECURITY_GUIDANCE_DISABLE=1` | kill switch — plugin loads but does nothing |
 
-**Enabling:** `hermes plugins enable security-guidance` (or check the box in `hermes plugins`).
+**Enabling:** `thm plugins enable security-guidance` (or check the box in `thm plugins`).
 
-**Disabling again:** `hermes plugins disable security-guidance`.
+**Disabling again:** `thm plugins disable security-guidance`.
 
 **What it does not do (yet):** the upstream Anthropic plugin has two more layers — an LLM diff review on each agent turn that touched files, and an agentic commit-time review that traces data flow across files. Neither is ported. The agent can already run those reviews on demand via `delegate_task`.
 
@@ -151,7 +151,7 @@ pip install langfuse
 hermes plugins enable observability/langfuse
 ```
 
-Or check the box in the interactive `hermes plugins` UI. Then put the credentials in `~/.teamhermes/.env`:
+Or check the box in the interactive `thm plugins` UI. Then put the credentials in `~/.teamhermes/.env`:
 
 ```bash
 HERMES_LANGFUSE_PUBLIC_KEY=pk-lf-...
@@ -168,7 +168,7 @@ HERMES_LANGFUSE_BASE_URL=https://cloud.langfuse.com   # or your self-hosted URL
 | `pre_tool_call` | Start a `tool` child observation with sanitized `args`. |
 | `post_tool_call` | Close the tool observation with sanitized `result`. `read_file` payloads get summarized (head + tail + omitted-line count) so a huge file read stays under `HERMES_LANGFUSE_MAX_CHARS`. |
 
-Session grouping keys off the Hermes session ID (or task ID for sub-agents) via `langfuse.propagate_attributes`, so everything in a single `hermes chat` session lives under one Langfuse session.
+Session grouping keys off the Hermes session ID (or task ID for sub-agents) via `langfuse.propagate_attributes`, so everything in a single `thm chat` session lives under one Langfuse session.
 
 **Verify:**
 
@@ -191,7 +191,7 @@ Hermes-prefixed and standard SDK env vars (`LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECR
 
 **Performance:** the Langfuse client is cached after the first hook call. If credentials or SDK are missing, that decision is also cached — subsequent hooks fast-return without re-checking env vars or reloading config.
 
-**Disabling:** `hermes plugins disable observability/langfuse`. The plugin module is still discovered, but no module code runs until you re-enable.
+**Disabling:** `thm plugins disable observability/langfuse`. The plugin module is still discovered, but no module code runs until you re-enable.
 
 ### google_meet
 
@@ -221,7 +221,7 @@ The agent kicks off the meeting join, streams the transcription back into its co
 
 **When to use it:** recurring standups where you want a bot to transcribe + summarize for async attendees; deposition-style interviews where you want structured notes; any case where you'd otherwise need Fireflies / Otter / Grain. When you'd rather not have an AI listening in — don't enable it.
 
-**Disabling:** `hermes plugins disable google_meet`. Any cached transcripts and recordings stay in `~/.teamhermes/cache/google_meet/` until you remove them.
+**Disabling:** `thm plugins disable google_meet`. Any cached transcripts and recordings stay in `~/.teamhermes/cache/google_meet/` until you remove them.
 
 ### hermes-achievements
 
@@ -270,7 +270,7 @@ Adds a **Steam-style achievements tab to the dashboard** — 60+ collectible, ti
 - Warm rescan reuses per-session stats for every session whose `started_at` + `last_active` fingerprint matches the checkpoint — completes in seconds even on large histories.
 - The in-memory snapshot TTL is 120s; stale requests serve the old snapshot immediately and kick a background refresh. You never wait on a spinner just because TTL expired.
 
-**Enabling:** Nothing to enable — `hermes-achievements` is a dashboard-only plugin (no lifecycle hooks, no model-visible tools). It auto-registers as a tab in `hermes dashboard` on first launch. The `plugins.enabled` config only gates lifecycle/tool plugins; dashboard plugins are discovered purely via their `dashboard/manifest.json`.
+**Enabling:** Nothing to enable — `hermes-achievements` is a dashboard-only plugin (no lifecycle hooks, no model-visible tools). It auto-registers as a tab in `thm dashboard` on first launch. The `plugins.enabled` config only gates lifecycle/tool plugins; dashboard plugins are discovered purely via their `dashboard/manifest.json`.
 
 **Opting out:** Delete or rename `plugins/hermes-achievements/dashboard/manifest.json`, or override it with a user plugin of the same name in `~/.teamhermes/plugins/hermes-achievements/` that ships no dashboard. The plugin's state files under `$HERMES_HOME/plugins/hermes-achievements/` survive — reinstalling preserves your unlock history.
 
@@ -279,7 +279,7 @@ Adds a **Steam-style achievements tab to the dashboard** — 60+ collectible, ti
 Bundled plugins are written exactly like any other Hermes plugin — see [Build a Hermes Plugin](/guides/build-a-hermes-plugin). The only differences are:
 
 - Directory lives at `<repo>/plugins/<name>/` instead of `~/.teamhermes/plugins/<name>/`
-- Manifest source is reported as `bundled` in `hermes plugins list`
+- Manifest source is reported as `bundled` in `thm plugins list`
 - User plugins with the same name override the bundled version
 
 A plugin is a good candidate for bundling when:

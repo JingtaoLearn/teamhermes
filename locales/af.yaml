@@ -147,7 +147,7 @@ gateway:
   kanban:
     error_prefix:          "⚠ kanban-fout: {error}"
     subscribed_suffix:     "(ingeteken — jy sal in kennis gestel word wanneer {task_id} voltooi of vasval)"
-    truncated_suffix:      "… (afgekap; gebruik `hermes kanban …` in jou terminale vir volle uitvoer)"
+    truncated_suffix:      "… (afgekap; gebruik `thm kanban …` in jou terminale vir volle uitvoer)"
     no_output:             "(geen uitvoer)"
 
   personality:
@@ -293,9 +293,9 @@ gateway:
     removed:               "↩️ {count} boodskap(pe) ongedaan gemaak.\nVerwyder: \"{preview}\""
 
   update:
-    platform_not_messaging:  "✗ /update is slegs beskikbaar vanaf boodskapplatforms. Voer `hermes update` vanaf die terminale uit."
+    platform_not_messaging:  "✗ /update is slegs beskikbaar vanaf boodskapplatforms. Voer `thm update` vanaf die terminale uit."
     not_git_repo:            "✗ Nie 'n git-bewaarplek nie — kan nie opdateer nie."
-    hermes_cmd_not_found:    "✗ Kon nie die `hermes`-opdrag vind nie. Hermes loop, maar die opdateeropdrag kon nie die uitvoerbare lêer op PATH of via die huidige Python-vertolker vind nie. Probeer `hermes update` met die hand in jou terminale uitvoer."
+    hermes_cmd_not_found:    "✗ Kon nie die `thm`-opdrag vind nie. Hermes loop, maar die opdateeropdrag kon nie die uitvoerbare lêer op PATH of via die huidige Python-vertolker vind nie. Probeer `thm update` met die hand in jou terminale uitvoer."
     start_failed:            "✗ Kon nie opdatering begin nie: {error}"
     starting:                "⚕ Begin Hermes-opdatering… Ek sal vordering hier stroom."
 

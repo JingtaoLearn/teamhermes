@@ -1033,7 +1033,7 @@ class TelegramAdapter(BasePlatformAdapter):
         if self.has_fatal_error and self.fatal_error_code == "telegram_polling_conflict":
             return
         # Transient 409 Conflict errors arise when the previous gateway process
-        # has been killed (e.g. during `hermes update` or `--replace` handoffs)
+        # has been killed (e.g. during `thm update` or `--replace` handoffs)
         # but its long-poll connection hasn't yet expired on Telegram's servers.
         # Telegram holds open getUpdates sessions for up to ~30s after the
         # client disconnects, so a new gateway starting immediately will receive
@@ -2542,7 +2542,7 @@ class TelegramAdapter(BasePlatformAdapter):
     ) -> SendResult:
         """Send an inline-keyboard update prompt (Yes / No buttons).
 
-        Used by the gateway ``/update`` watcher when ``hermes update --gateway``
+        Used by the gateway ``/update`` watcher when ``thm update --gateway``
         needs user input (stash restore, config migration).
         """
         if not self._bot:

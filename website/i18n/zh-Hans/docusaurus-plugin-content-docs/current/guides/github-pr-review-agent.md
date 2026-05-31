@@ -137,7 +137,7 @@ For each finding:
 - End with: APPROVE / REQUEST_CHANGES / COMMENT
 ```
 
-验证是否已加载——启动 `hermes`，你应该能在启动时的 skill 列表中看到 `code-review`。
+验证是否已加载——启动 `thm`，你应该能在启动时的 skill 列表中看到 `code-review`。
 
 ---
 

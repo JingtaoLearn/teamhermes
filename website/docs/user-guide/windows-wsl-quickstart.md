@@ -186,7 +186,7 @@ dos2unix path/to/script.sh
 
 ### "Clone inside WSL or on `/mnt/c`?"
 
-Clone inside WSL. Always, unless you have a specific reason not to. A typical Hermes workflow (`hermes chat`, tool calls that `rg`/`ripgrep` the repo, file watchers, background gateway) will be dramatically faster and more reliable against `~/code/myrepo` than `/mnt/c/Users/you/myrepo`.
+Clone inside WSL. Always, unless you have a specific reason not to. A typical Hermes workflow (`thm chat`, tool calls that `rg`/`ripgrep` the repo, file watchers, background gateway) will be dramatically faster and more reliable against `~/code/myrepo` than `/mnt/c/Users/you/myrepo`.
 
 One exception: **MCP bridges that launch Windows binaries.** If you're using `chrome-devtools-mcp` through `cmd.exe` (see [MCP guide: WSL → Windows Chrome](/guides/use-mcp-with-hermes#wsl2-bridge-hermes-in-wsl-to-windows-chrome)), Windows may complain with a `UNC` warning if Hermes's current working directory is `~`. In that case, start Hermes from somewhere under `/mnt/c/` so the Windows process has a drive-letter cwd.
 
@@ -294,7 +294,7 @@ If you're running a **Windows-native** local-model server (Ollama for Windows, L
 **"Connection refused" to my Windows-hosted Ollama / LM Studio.**
 See [WSL2 Networking](/integrations/providers#wsl2-networking-windows-users). Ninety percent of the time the server is bound to `127.0.0.1` and needs `0.0.0.0` (Ollama: `OLLAMA_HOST=0.0.0.0`), or you're missing a firewall rule.
 
-**Massive slowness on `git status` / `hermes chat` in a repo.**
+**Massive slowness on `git status` / `thm chat` in a repo.**
 You're probably working under `/mnt/c/...`. Move the repo to `~/code/...` (Linux side). Order-of-magnitude faster.
 
 **`bad interpreter: /bin/bash^M` on scripts.**
@@ -315,7 +315,7 @@ Or install `ntpdate` and run it at login.
 **DNS stops working after enabling mirrored mode, or when a VPN is connected.**
 Mirrored mode proxies host network settings into WSL — if Windows DNS is funky (VPN split-tunnel, corporate resolver), WSL inherits that. Workaround: override `resolv.conf` manually (set `generateResolvConf=false` in `/etc/wsl.conf`, then write your own `/etc/resolv.conf` with `1.1.1.1` or your VPN's DNS).
 
-**`hermes` not found after running the installer.**
+**`thm` not found after running the installer.**
 The installer adds `~/.local/bin` to your shell's PATH via `~/.bashrc`. You need to `source ~/.bashrc` (or open a new terminal) for it to take effect in the current session.
 
 **Windows Defender is slow on WSL files.**

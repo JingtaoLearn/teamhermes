@@ -133,7 +133,7 @@ Zed v0.221.x 及更新版本通过官方 ACP Registry 安装外部 agent。
 
 前提条件：
 
-- 先通过 `hermes model` 配置 Hermes provider 凭据，或在 `~/.teamhermes/.env` / `~/.teamhermes/config.yaml` 中设置。
+- 先通过 `thm model` 配置 Hermes provider 凭据，或在 `~/.teamhermes/.env` / `~/.teamhermes/config.yaml` 中设置。
 - 安装 `uv`，以便 registry 启动器可以运行 `uvx --from 'hermes-agent[acp]==<version>' hermes-acp`。
 
 在 registry 条目可用之前进行本地开发时，在 Zed 设置中使用自定义 agent 服务器：

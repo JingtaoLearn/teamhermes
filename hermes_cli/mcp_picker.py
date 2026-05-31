@@ -258,7 +258,7 @@ def _print_rows_text(rows: List[_Row]) -> None:
         print()
         for name, _, msg in future:
             print(color(
-                f"  ⚠ '{name}' requires a newer Hermes — run `hermes update` "
+                f"  ⚠ '{name}' requires a newer Hermes — run `thm update` "
                 "to install this entry.",
                 Colors.YELLOW,
             ))

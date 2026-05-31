@@ -240,7 +240,7 @@ to reclaim the space. Legacy archives are also swept by `auto_prune` after `rete
 
 ## Best Practices
 
-- **Enable checkpoints only when you need them** — `hermes chat --checkpoints` or per-profile `enabled: true`.
+- **Enable checkpoints only when you need them** — `thm chat --checkpoints` or per-profile `enabled: true`.
 - **Use `/rollback diff` before restoring** — preview what will change to pick the right checkpoint.
 - **Use `/rollback` instead of `git reset`** when you want to undo agent-driven changes only.
 - **Check `hermes checkpoints status` occasionally** if you use checkpoints regularly — shows which projects are active and what the store costs you.

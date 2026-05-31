@@ -128,7 +128,7 @@ spotify_devices({"action": "transfer", "device_id": "<id>", "play": true})
 
 **`429 Too Many Requests`** = 速率限制。等待后重试一次。如果持续发生，说明你在循环——停止。
 
-**`401 Unauthorized` 重试后仍出现** — 刷新令牌已被撤销。告知用户重新运行 `hermes auth spotify`。
+**`401 Unauthorized` 重试后仍出现** — 刷新令牌已被撤销。告知用户重新运行 `thm auth spotify`。
 
 ## URI 和 ID 格式
 

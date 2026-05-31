@@ -1,4 +1,4 @@
-"""``hermes plugins`` CLI subcommand — install, update, remove, and list plugins.
+"""``thm plugins`` CLI subcommand — install, update, remove, and list plugins.
 
 Plugins are installed from Git repositories into ``~/.teamhermes/plugins/``.
 Supports full URLs and ``owner/repo`` shorthand (resolves to GitHub).
@@ -434,7 +434,7 @@ def _install_plugin_core(identifier: str, *, force: bool) -> tuple[Path, dict, s
             if not force:
                 raise PluginOperationError(
                     f"Plugin '{plugin_name}' already exists. Use force reinstall "
-                    f"or run `hermes plugins update {plugin_name}`.",
+                    f"or run `thm plugins update {plugin_name}`.",
                 )
             shutil.rmtree(target)
 
@@ -530,7 +530,7 @@ def cmd_install(
     else:
         console.print(
             f"[dim]Plugin installed but not enabled. "
-            f"Run `hermes plugins enable {installed_name}` to activate.[/dim]",
+            f"Run `thm plugins enable {installed_name}` to activate.[/dim]",
         )
 
     console.print("[dim]Restart the gateway for the plugin to take effect:[/dim]")
@@ -738,7 +738,7 @@ def _discover_all_plugins() -> list:
     one level deeper (depth capped at 2, same as the loader).
 
     The returned ``key`` is the path-derived registry key — the value the
-    user types into ``hermes plugins enable <key>``. For category-namespaced
+    user types into ``thm plugins enable <key>``. For category-namespaced
     plugins that's ``<category>/<dirname>``; for flat plugins it's the
     manifest's ``name`` (or the directory name if the manifest omits it).
 

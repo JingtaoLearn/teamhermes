@@ -242,7 +242,7 @@ through the WebSocket regardless of the manifest's `url` field.
 
 ### Refreshing slash commands after updates
 
-When Hermes adds new commands (e.g. after `hermes update`), regenerate
+When Hermes adds new commands (e.g. after `thm update`), regenerate
 the manifest and update your Slack app:
 
 ```bash

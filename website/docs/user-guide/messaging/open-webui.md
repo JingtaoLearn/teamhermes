@@ -75,7 +75,7 @@ hermes config set API_SERVER_ENABLED true
 hermes config set API_SERVER_KEY your-secret-key
 ```
 
-`hermes config set` auto-routes the flag to `config.yaml` and the secret to `~/.teamhermes/.env`. If the gateway is already running, restart it so the change takes effect:
+`thm config set` auto-routes the flag to `config.yaml` and the secret to `~/.teamhermes/.env`. If the gateway is already running, restart it so the change takes effect:
 
 ```bash
 hermes gateway stop && hermes gateway

@@ -15,7 +15,7 @@ These tests verify the three load-bearing properties of that redirect:
   3. The supervised process itself does NOT recurse — the
      ``HERMES_S6_SUPERVISED_CHILD`` sentinel breaks the loop.
 
-Every ``docker exec`` runs as ``hermes`` per the conftest module
+Every ``docker exec`` runs as ``thm`` per the conftest module
 docstring; see ``tests/docker/conftest.py`` for rationale.
 """
 from __future__ import annotations

@@ -41,7 +41,7 @@ hermes chat
 
 ## Configuration
 
-After running `hermes model`, your `~/.teamhermes/config.yaml` will contain:
+After running `thm model`, your `~/.teamhermes/config.yaml` will contain:
 
 ```yaml
 model:
@@ -90,7 +90,7 @@ bedrock:
 
 ## Available Models
 
-Bedrock models use **inference profile IDs** for on-demand invocation. The `hermes model` picker shows these automatically, with recommended models at the top:
+Bedrock models use **inference profile IDs** for on-demand invocation. The `thm model` picker shows these automatically, with recommended models at the top:
 
 | Model | ID | Notes |
 |-------|-----|-------|

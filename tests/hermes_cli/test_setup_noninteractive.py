@@ -51,7 +51,7 @@ class TestNonInteractiveSetup:
         mock_run_setup.assert_called_once_with(args)
 
     def test_cmd_setup_defers_no_tty_handling_to_setup_wizard(self):
-        """Bare `hermes setup` should reach setup.py, which prints headless guidance."""
+        """Bare `thm setup` should reach setup.py, which prints headless guidance."""
         from hermes_cli.main import cmd_setup
 
         args = _make_setup_args(non_interactive=False)
@@ -124,7 +124,7 @@ class TestNonInteractiveSetup:
         assert "Configuration reset to defaults." in out
 
     def test_chat_first_run_headless_skips_setup_prompt(self, capsys):
-        """Bare `hermes` should not prompt for input when no provider exists and stdin is headless."""
+        """Bare `thm` should not prompt for input when no provider exists and stdin is headless."""
         from hermes_cli.main import cmd_chat
 
         args = _make_chat_args()
@@ -145,7 +145,7 @@ class TestNonInteractiveSetup:
         assert "hermes config set model.provider custom" in out
 
     def test_main_accepts_tts_setup_section(self, monkeypatch):
-        """`hermes setup tts` should parse and dispatch like other setup sections."""
+        """`thm setup tts` should parse and dispatch like other setup sections."""
         from hermes_cli import main as main_mod
 
         received = {}

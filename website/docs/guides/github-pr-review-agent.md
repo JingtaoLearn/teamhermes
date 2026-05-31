@@ -137,7 +137,7 @@ For each finding:
 - End with: APPROVE / REQUEST_CHANGES / COMMENT
 ```
 
-Verify it loaded — start `hermes` and you should see `code-review` in the skills list at startup.
+Verify it loaded — start `thm` and you should see `code-review` in the skills list at startup.
 
 ---
 

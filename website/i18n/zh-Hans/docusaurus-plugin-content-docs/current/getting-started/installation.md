@@ -30,7 +30,7 @@ curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scri
 iex (irm https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.ps1)
 ```
 
-安装程序处理**一切**：`uv`、Python 3.11、Node.js 22、`ripgrep`、`ffmpeg`，**以及一个便携式 Git Bash**（PortableGit——一个自包含的 Git-for-Windows 发行版，附带 `bash.exe` 和 Hermes 用于 shell 命令的完整 POSIX 工具链；在 32 位 Windows 上安装程序会回退到 MinGit，后者缺少 bash，终端工具和 agent 浏览器功能将被禁用）。它将仓库克隆到 `%LOCALAPPDATA%\hermes\hermes-agent`，创建虚拟环境，并将 `hermes` 添加到**用户 PATH**。安装完成后请重启终端（或打开新的 PowerShell 窗口）以使 PATH 生效。
+安装程序处理**一切**：`uv`、Python 3.11、Node.js 22、`ripgrep`、`ffmpeg`，**以及一个便携式 Git Bash**（PortableGit——一个自包含的 Git-for-Windows 发行版，附带 `bash.exe` 和 Hermes 用于 shell 命令的完整 POSIX 工具链；在 32 位 Windows 上安装程序会回退到 MinGit，后者缺少 bash，终端工具和 agent 浏览器功能将被禁用）。它将仓库克隆到 `%LOCALAPPDATA%\hermes\hermes-agent`，创建虚拟环境，并将 `thm` 添加到**用户 PATH**。安装完成后请重启终端（或打开新的 PowerShell 窗口）以使 PATH 生效。
 
 **Git 的处理方式：**
 1. 如果 `git` 已在你的 PATH 中，安装程序将使用现有安装。
@@ -64,7 +64,7 @@ curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scri
 :::note Windows 功能对等性（早期 Beta）
 
 原生 Windows 处于**早期 beta** 阶段。除基于浏览器的 dashboard 聊天终端外，其余功能均可在 Windows 上原生运行：
-- **CLI（`hermes chat`、`hermes setup`、`hermes gateway` 等）** — 原生，使用默认终端
+- **CLI（`thm chat`、`thm setup`、`hermes gateway` 等）** — 原生，使用默认终端
 - **Gateway（Telegram、Discord、Slack 等）** — 原生，作为后台 PowerShell 进程运行
 - **Cron 调度器** — 原生
 - **浏览器工具** — 原生（通过 Node.js 使用 Chromium）
@@ -76,13 +76,13 @@ curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scri
 
 ### 安装程序做了什么
 
-安装程序自动处理一切——所有依赖（Python、Node.js、ripgrep、ffmpeg）、仓库克隆、虚拟环境、全局 `hermes` 命令配置以及 LLM 提供商配置。完成后即可开始聊天。
+安装程序自动处理一切——所有依赖（Python、Node.js、ripgrep、ffmpeg）、仓库克隆、虚拟环境、全局 `thm` 命令配置以及 LLM 提供商配置。完成后即可开始聊天。
 
 #### 安装目录结构
 
 安装程序的存放位置取决于你是以普通用户还是 root 身份安装：
 
-| 安装方式 | 代码位置 | `hermes` 二进制 | 数据目录 |
+| 安装方式 | 代码位置 | `thm` 二进制 | 数据目录 |
 |---|---|---|---|
 | pip install | Python site-packages | `~/.local/bin/hermes`（console_scripts） | `~/.teamhermes/` |
 | 用户级（git 安装程序） | `~/.teamhermes/hermes-agent/` | `~/.local/bin/hermes`（符号链接） | `~/.teamhermes/` |
@@ -151,7 +151,7 @@ hermes setup --portal
 
 ## 非 Sudo / 系统服务用户安装
 
-支持以专用非特权用户身份运行 Hermes（例如 `hermes` systemd 服务账户，或任何没有 `sudo` 权限的用户）。安装路径中真正需要 root 权限的只有 Playwright 的 `--with-deps` 步骤，该步骤通过 `apt` 安装 Chromium 所需的共享库（`libnss3`、`libxkbcommon` 等）。安装程序会检测 sudo 是否可用，并在不可用时优雅降级——它会将 Chromium 二进制安装到服务用户自己的 Playwright 缓存中，并打印管理员需要单独运行的确切命令。
+支持以专用非特权用户身份运行 Hermes（例如 `thm` systemd 服务账户，或任何没有 `sudo` 权限的用户）。安装路径中真正需要 root 权限的只有 Playwright 的 `--with-deps` 步骤，该步骤通过 `apt` 安装 Chromium 所需的共享库（`libnss3`、`libxkbcommon` 等）。安装程序会检测 sudo 是否可用，并在不可用时优雅降级——它会将 Chromium 二进制安装到服务用户自己的 Playwright 缓存中，并打印管理员需要单独运行的确切命令。
 
 **推荐的分步方式（Debian/Ubuntu）：**
 
@@ -171,7 +171,7 @@ hermes setup --portal
    curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash -s -- --skip-browser
    ```
 
-3. **使 `hermes` 对服务用户的 shell 可用。** 安装程序将启动器写入 `~/.local/bin/hermes`。系统服务账户通常具有不包含 `~/.local/bin` 的最小 PATH。可以将其添加到用户环境，或将启动器符号链接到系统位置：
+3. **使 `thm` 对服务用户的 shell 可用。** 安装程序将启动器写入 `~/.local/bin/hermes`。系统服务账户通常具有不包含 `~/.local/bin` 的最小 PATH。可以将其添加到用户环境，或将启动器符号链接到系统位置：
    ```bash
    # 方案 A — 添加到服务用户的 profile
    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
@@ -180,7 +180,7 @@ hermes setup --portal
    sudo ln -s /home/hermes/.teamhermes/hermes-agent/venv/bin/hermes /usr/local/bin/hermes
    ```
 
-4. **验证：** `hermes doctor` 现在应能正常运行。如果出现 `ModuleNotFoundError: No module named 'dotenv'`，说明你在用系统 Python 调用仓库源码中的 `hermes` 文件（`~/.teamhermes/hermes-agent/hermes`），而非 venv 启动器（`~/.teamhermes/hermes-agent/venv/bin/hermes`）——请修正步骤 3。
+4. **验证：** `thm doctor` 现在应能正常运行。如果出现 `ModuleNotFoundError: No module named 'dotenv'`，说明你在用系统 Python 调用仓库源码中的 `thm` 文件（`~/.teamhermes/hermes-agent/hermes`），而非 venv 启动器（`~/.teamhermes/hermes-agent/venv/bin/hermes`）——请修正步骤 3。
 
 同样的方式适用于 Arch（安装程序使用 pacman，具有相同的 sudo 检测逻辑）、Fedora/RHEL 和 openSUSE——这些发行版完全不支持 `--with-deps`，因此管理员始终需要单独安装系统库。安装程序会打印相应的 `dnf`/`zypper` 命令。
 
@@ -191,11 +191,11 @@ hermes setup --portal
 | 问题 | 解决方案 |
 |---------|----------|
 | `hermes: command not found` | 重新加载 shell（`source ~/.bashrc`）或检查 PATH |
-| `API key not set` | 运行 `hermes model` 配置提供商，或 `hermes config set OPENROUTER_API_KEY your_key` |
-| 更新后配置丢失 | 运行 `hermes config check`，然后运行 `hermes config migrate` |
+| `API key not set` | 运行 `thm model` 配置提供商，或 `thm config set OPENROUTER_API_KEY your_key` |
+| 更新后配置丢失 | 运行 `thm config check`，然后运行 `thm config migrate` |
 
-如需更多诊断信息，运行 `hermes doctor`——它会告诉你确切缺少什么以及如何修复。
+如需更多诊断信息，运行 `thm doctor`——它会告诉你确切缺少什么以及如何修复。
 
 ## 安装方式自动检测
 
-Hermes 会自动检测安装方式（`pip`、git 安装程序、Homebrew 或 NixOS），`hermes update` 会打印对应路径的更新命令。无需设置任何环境变量——检测基于安装目录结构（Python site-packages、`~/.teamhermes/hermes-agent/`、Homebrew 前缀或 Nix store 路径）。`hermes doctor` 也会在其环境摘要中显示检测到的安装方式。
+Hermes 会自动检测安装方式（`pip`、git 安装程序、Homebrew 或 NixOS），`thm update` 会打印对应路径的更新命令。无需设置任何环境变量——检测基于安装目录结构（Python site-packages、`~/.teamhermes/hermes-agent/`、Homebrew 前缀或 Nix store 路径）。`thm doctor` 也会在其环境摘要中显示检测到的安装方式。

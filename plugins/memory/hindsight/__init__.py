@@ -489,7 +489,7 @@ def _resolve_bank_id_template(template: str, fallback: str, **placeholders: str)
       {session}   — current session id
 
     Missing/empty placeholders are rendered as the empty string and then
-    collapsed — e.g. ``hermes-{user}`` with no user becomes ``hermes``.
+    collapsed — e.g. ``hermes-{user}`` with no user becomes ``thm``.
 
     If the template is empty, resolution falls back to *fallback*.
     Returns the sanitized bank id.

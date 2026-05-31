@@ -279,7 +279,7 @@ nc 127.0.0.1 4444
 See Recipe 3. Always add `-p no:xdist` or run single tests without xdist.
 
 ### `run_agent.py` / CLI — one-shot
-Easiest: add `breakpoint()` near the suspect line, then run `hermes` normally. Control returns to your terminal at the pause point.
+Easiest: add `breakpoint()` near the suspect line, then run `thm` normally. Control returns to your terminal at the pause point.
 
 ### `tui_gateway` subprocess (spawned by `hermes --tui`)
 The gateway runs as a child of the Node TUI. Options:

@@ -40,7 +40,7 @@ hermes auth add xai-oauth --manual-paste
 # → Paste it back into the terminal at the "Callback URL:" prompt.
 ```
 
-The same flag works on `hermes model --manual-paste` for the integrated model picker. A bare `?code=...&state=...` query fragment is accepted too if you don't want to paste the whole URL.
+The same flag works on `thm model --manual-paste` for the integrated model picker. A bare `?code=...&state=...` query fragment is accepted too if you don't want to paste the whole URL.
 
 Hermes uses the **same PKCE verifier, state and nonce** for both paths, so the upstream OAuth flow is byte-identical — `--manual-paste` is purely a transport change for the callback hop and is not a security downgrade.
 
@@ -173,11 +173,11 @@ xAI's authorize page shows this when its redirect to `127.0.0.1:<port>/callback`
 
 ### `xAI authorization timed out waiting for the local callback`
 
-Same root cause as above — the redirect never made it back. Check the tunnel is still alive (`ssh -N` doesn't show output, so look at the terminal you started it from), restart it if needed, and re-run `hermes auth add xai-oauth --no-browser`.
+Same root cause as above — the redirect never made it back. Check the tunnel is still alive (`ssh -N` doesn't show output, so look at the terminal you started it from), restart it if needed, and re-run `thm auth add xai-oauth --no-browser`.
 
 ### Tokens land in the wrong `~/.teamhermes`
 
-The tokens are written under the Linux user that ran `hermes auth add ...`. If your gateway / systemd service runs as a different user (e.g. `root` or a dedicated `hermes` user), authenticate as **that** user so the tokens land in their `~/.teamhermes/auth.json`. `sudo -u hermes -i` or equivalent.
+The tokens are written under the Linux user that ran `thm auth add ...`. If your gateway / systemd service runs as a different user (e.g. `root` or a dedicated `thm` user), authenticate as **that** user so the tokens land in their `~/.teamhermes/auth.json`. `sudo -u hermes -i` or equivalent.
 
 ## See Also
 

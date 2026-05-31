@@ -5,7 +5,7 @@
 # Background
 # ----------
 # The s6 image runs the supervised gateway/main process as the unprivileged
-# `hermes` user (UID 10000). When an operator runs `docker exec <c> hermes ...`
+# `thm` user (UID 10000). When an operator runs `docker exec <c> hermes ...`
 # the default UID is root (0), and any file the command writes under
 # $HERMES_HOME — auth.json, .env, config.yaml — ends up root-owned and
 # unreadable to the supervised gateway. The most common manifestation: the

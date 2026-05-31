@@ -49,7 +49,7 @@ hermes setup --portal                              # on the remote, open the pri
 
 # Option B: manual paste (for Cloud Shell, Codespaces, EC2 Instance Connect)
 hermes auth add nous --type oauth --manual-paste
-# Then re-run `hermes setup --portal` to wire the provider + gateway
+# Then re-run `thm setup --portal` to wire the provider + gateway
 ```
 
 See [OAuth over SSH / Remote Hosts](/guides/oauth-over-ssh) for the full walkthrough including ProxyJump chains, mosh/tmux, and ControlMaster gotchas.
@@ -95,7 +95,7 @@ You should see Hermes call `web_search` (Firecrawl-backed, through the gateway) 
 
 ## 5. Pick the model you actually want
 
-The default after `hermes setup --portal` is a sensible general-purpose model, but the whole point of the subscription is access to the full catalog. Switch with `/model` mid-session:
+The default after `thm setup --portal` is a sensible general-purpose model, but the whole point of the subscription is access to the full catalog. Switch with `/model` mid-session:
 
 ```bash
 /model anthropic/claude-sonnet-4.6     # best general-purpose agentic
@@ -176,7 +176,7 @@ For team setups where multiple humans share a machine, each human has their own 
 
 ## Troubleshooting
 
-### `hermes portal status` shows "not logged in" after `hermes setup --portal`
+### `hermes portal status` shows "not logged in" after `thm setup --portal`
 
 The OAuth flow didn't complete. Re-run it:
 
@@ -241,7 +241,7 @@ If a model is genuinely unavailable, [open an issue](https://github.com/NousRese
 
 - `model.provider` set to `openrouter`/`anthropic`/etc. instead of `nous`
 - An OAuth refresh failure that fell back to a different configured provider
-- Multiple Hermes profiles where you're using the wrong one (check `hermes profile current`)
+- Multiple Hermes profiles where you're using the wrong one (check `thm profile current`)
 
 ### Want to revoke and start clean
 

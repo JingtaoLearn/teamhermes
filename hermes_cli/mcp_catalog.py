@@ -704,12 +704,12 @@ def install_entry(entry: CatalogEntry, *, enable: bool = True) -> None:
     elif entry.auth.type == "oauth":
         if entry.auth.provider:
             # Case 2: provider-mediated (Google, GitHub, etc.). We rely on
-            # the existing `hermes auth <provider>` flow. Surface guidance
+            # the existing `thm auth <provider>` flow. Surface guidance
             # here rather than auto-running it — keeps the catalog install
             # decoupled from provider-auth lifecycle.
             print(color(
                 f"  This MCP uses {entry.auth.provider} OAuth. Run "
-                f"`hermes auth {entry.auth.provider}` if you have not "
+                f"`thm auth {entry.auth.provider}` if you have not "
                 "already authenticated.",
                 Colors.YELLOW,
             ))

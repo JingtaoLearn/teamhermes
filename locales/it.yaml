@@ -147,7 +147,7 @@ gateway:
   kanban:
     error_prefix:          "⚠ errore kanban: {error}"
     subscribed_suffix:     "(iscritto — riceverai notifica quando {task_id} verrà completato o si bloccherà)"
-    truncated_suffix:      "… (troncato; usa `hermes kanban …` nel terminale per l'output completo)"
+    truncated_suffix:      "… (troncato; usa `thm kanban …` nel terminale per l'output completo)"
     no_output:             "(nessun output)"
 
   personality:
@@ -293,9 +293,9 @@ gateway:
     removed:               "↩️ Annullati {count} messaggio/i.\nRimosso: \"{preview}\""
 
   update:
-    platform_not_messaging:  "✗ /update è disponibile solo dalle piattaforme di messaggistica. Esegui `hermes update` dal terminale."
+    platform_not_messaging:  "✗ /update è disponibile solo dalle piattaforme di messaggistica. Esegui `thm update` dal terminale."
     not_git_repo:            "✗ Non è un repository git — impossibile aggiornare."
-    hermes_cmd_not_found:    "✗ Impossibile localizzare il comando `hermes`. Hermes è in esecuzione, ma il comando di aggiornamento non ha trovato l'eseguibile nel PATH o tramite l'interprete Python attuale. Prova a eseguire `hermes update` manualmente nel terminale."
+    hermes_cmd_not_found:    "✗ Impossibile localizzare il comando `thm`. Hermes è in esecuzione, ma il comando di aggiornamento non ha trovato l'eseguibile nel PATH o tramite l'interprete Python attuale. Prova a eseguire `thm update` manualmente nel terminale."
     start_failed:            "✗ Avvio dell'aggiornamento non riuscito: {error}"
     starting:                "⚕ Avvio dell'aggiornamento di Hermes… mostrerò qui i progressi in streaming."
 

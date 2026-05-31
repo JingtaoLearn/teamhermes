@@ -10,7 +10,7 @@ body:
 
         **Before submitting**, please:
         - [ ] Search [existing issues](https://github.com/NousResearch/hermes-agent/issues) to avoid duplicates
-        - [ ] Update to the latest version (`hermes update`) and confirm the bug still exists
+        - [ ] Update to the latest version (`thm update`) and confirm the bug still exists
         - [ ] Run `hermes debug share` and paste the links below (see Debug Report section)
 
   - type: textarea
@@ -29,7 +29,7 @@ body:
       label: Steps to Reproduce
       description: Minimal steps to trigger the bug. The more specific, the faster we can fix it.
       placeholder: |
-        1. Run `hermes chat`
+        1. Run `thm chat`
         2. Send the message "..."
         3. Agent calls tool X
         4. Error appears: ...
@@ -122,7 +122,7 @@ body:
     id: hermes-version
     attributes:
       label: Hermes Version
-      description: Output of `hermes version`
+      description: Output of `thm version`
       placeholder: "2.1.0"
 
   - type: textarea

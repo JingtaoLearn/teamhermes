@@ -14,7 +14,7 @@ This repo is a security-oriented hard fork. Upstream is `https://github.com/Nous
 | Category | Rule | Approx files |
 |---|---|---|
 | Package metadata | `pyproject.toml`: name `hermes-agent` → `teamhermes`; self-referencing extras updated | 1 |
-| Console scripts | `hermes` / `hermes-agent` / `hermes-acp` → `thm` / `thm-agent` / `thm-acp` | 1 (pyproject) + downstream refs |
+| Console scripts | `thm` / `hermes-agent` / `hermes-acp` → `thm` / `thm-agent` / `thm-acp` | 1 (pyproject) + downstream refs |
 | Argparse `prog=` | `prog="hermes"` → `prog="thm"`, `prog="hermes-acp"` → `prog="thm-acp"` | ~7 |
 | Default home dir | Path literals `.teamhermes` → `.teamhermes` (`Path.home() / ".teamhermes"`, `~/.teamhermes/...`, `${HOME}/.teamhermes`) | ~890 |
 | Home dir artifacts | `.teamhermes_history` → `.teamhermes_history`, `.teamhermes_build_sha` → `.teamhermes_build_sha`, `.teamhermes_sync.*` → `.teamhermes_sync.*` | 12 |
@@ -22,7 +22,7 @@ This repo is a security-oriented hard fork. Upstream is `https://github.com/Nous
 | CLI command in text | `hermes <subcommand>` → `thm <subcommand>` in docs, shell scripts, Python strings, docker scripts | ~997 |
 | Skin engine | All 5 built-in skins: agent_name + welcome + response_label → TeamHermes | 1 file |
 | Shell scripts | `install.sh`, `setup-hermes.sh`, `setup_open_webui.sh`: command shims, output messages, temp file prefixes | 4 |
-| Docker compose | container names `hermes` → `thm` | 5 |
+| Docker compose | container names `thm` → `thm` | 5 |
 | Systemd | `hermes.service` → `thm.service` unit names | ~10 |
 | TypeScript/i18n | Web dashboard + TUI i18n brand strings + component paths | ~50 |
 
@@ -38,7 +38,7 @@ These must remain after every rebrand. The auditor regression-checks for their p
 - **LICENSE / NOTICE**: `Copyright (c) 2025 Nous Research` preserved (MIT attribution obligation)
 - **RELEASE_v*.md**: 7+ historical release notes preserved as-is
 - **Docker infrastructure**:
-  - User `hermes` (Linux UID 10000) — image filesystem identity
+  - User `thm` (Linux UID 10000) — image filesystem identity
   - `/opt/hermes` install path — image filesystem layout
   - `docker/s6-rc.d/main-hermes/` directory + `user/contents.d/main-hermes` symlink — s6-overlay infra
 - **Test fixtures**:

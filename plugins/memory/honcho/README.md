@@ -109,7 +109,7 @@ Config is read from the first file that exists:
 | 2 | `~/.teamhermes/honcho.json` | Default profile (shared host blocks) |
 | 3 | `~/.honcho/config.json` | Global (cross-app interop) |
 
-Host key is derived from the active Hermes profile: `hermes` (default) or `hermes.<profile>`.
+Host key is derived from the active Hermes profile: `thm` (default) or `hermes.<profile>`.
 
 For every key, resolution order is: **host block > root > env var > default**.
 
@@ -197,7 +197,7 @@ The Honcho session name determines which conversation bucket memory lands in. Re
 | 4 | `per-session` strategy | Hermes session ID (`20260415_a3f2b1`) |
 | 5 | `per-repo` strategy | Git root directory name (`hermes-agent`) |
 | 6 | `per-directory` strategy | Current directory basename (`src`) |
-| 7 | `global` strategy | Workspace name (`hermes`) |
+| 7 | `global` strategy | Workspace name (`thm`) |
 
 Gateway platforms always resolve via priority 3 (per-chat isolation) regardless of `sessionStrategy`. The strategy setting only affects CLI sessions.
 
@@ -207,7 +207,7 @@ If `sessionPeerPrefix` is `true`, the peer name is prepended: `eri-hermes-agent`
 
 - **`per-directory`** — basename of `$PWD`. Opening hermes in `~/code/myapp` and `~/code/other` gives two separate sessions. Same directory = same session across runs.
 - **`per-repo`** — git root directory name. All subdirectories within a repo share one session. Falls back to `per-directory` if not inside a git repo.
-- **`per-session`** — Hermes session ID (timestamp + hex). Every `hermes` invocation starts a fresh Honcho session. Falls back to `per-directory` if no session ID is available.
+- **`per-session`** — Hermes session ID (timestamp + hex). Every `thm` invocation starts a fresh Honcho session. Falls back to `per-directory` if no session ID is available.
 - **`global`** — workspace name. One session for everything. Memory accumulates across all directories and runs.
 
 ### Multi-Profile Pattern
@@ -234,9 +234,9 @@ Multiple Hermes profiles can share one workspace while maintaining separate AI i
 }
 ```
 
-Both profiles see the same user (`yourname`) in the same shared environment (`hermes`), but each AI peer builds its own observations, conclusions, and behavior patterns. The coder's memory stays code-oriented; the main agent's stays broad.
+Both profiles see the same user (`yourname`) in the same shared environment (`thm`), but each AI peer builds its own observations, conclusions, and behavior patterns. The coder's memory stays code-oriented; the main agent's stays broad.
 
-Host key is derived from the active Hermes profile: `hermes` (default) or `hermes.<profile>` (e.g. `hermes -p coder` → host key `hermes.coder`).
+Host key is derived from the active Hermes profile: `thm` (default) or `hermes.<profile>` (e.g. `hermes -p coder` → host key `hermes.coder`).
 
 ### Dialectic & Reasoning
 

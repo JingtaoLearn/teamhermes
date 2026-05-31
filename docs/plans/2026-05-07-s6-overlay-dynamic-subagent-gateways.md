@@ -19,7 +19,7 @@ clean shutdown, signal forwarding, zombie reaping). Preserve every existing
 **Architecture:** s6-overlay's `/init` is the container ENTRYPOINT, running
 s6-svscan as PID 1. Main hermes and the dashboard are declared as static
 s6-rc services at image build time. Per-profile gateways — which users create
-*after* the image is built (`hermes profile create coder` →
+*after* the image is built (`thm profile create coder` →
 `coder gateway start`) — are registered dynamically by writing service
 directories under a scandir watched by s6-svscan. A `ServiceManager` protocol
 abstracts the install/start/stop/restart surface across the init systems we
@@ -80,11 +80,11 @@ The original `Dockerfile` declared
 tini was PID 1, reaped zombies, forwarded SIGTERM to the process group. The
 old `docker/entrypoint.sh`:
 
-1. `gosu` privilege drop from root → `hermes` UID.
+1. `gosu` privilege drop from root → `thm` UID.
 2. Copied `.env.example`, `cli-config.yaml.example`, `SOUL.md` into
    `$HERMES_HOME` if missing.
 3. Synced bundled skills via `tools/skills_sync.py`.
-4. Optionally backgrounded `hermes dashboard` in a subshell when
+4. Optionally backgrounded `thm dashboard` in a subshell when
    `HERMES_DASHBOARD=1` — **not supervised**, no restart.
 5. `exec hermes "$@"` — tini's sole direct child.
 
@@ -125,7 +125,7 @@ Container-relevant callers outside `gateway.py`:
 ### Per-profile gateway spawning
 
 `hermes gateway start`, `coder gateway start` (profile alias), and
-`hermes -p <profile> gateway start` all spawn a gateway process scoped to a
+`thm -p <profile> gateway start` all spawn a gateway process scoped to a
 given profile. See
 [Profiles: Running Gateways](https://hermes-agent.nousresearch.com/docs/user-guide/profiles#running-gateways).
 On host, lifecycle is managed via per-profile systemd units
@@ -179,15 +179,15 @@ services. This is a single breaking change to the container contract.
 
 ### D2. Main hermes is an s6 service with container-exit semantics
 
-The contract "container exits when `hermes` exits" is preserved via a
+The contract "container exits when `thm` exits" is preserved via a
 service `finish` script that writes to
 `/run/s6-linux-init-container-results/exitcode` and calls
 `/run/s6/basedir/bin/halt`. All five supported invocations work:
 
 | `docker run <image> …` | Behavior |
 |---|---|
-| (no args) | `hermes` with no args, container exits when hermes exits |
-| `chat -q "..."` | `hermes chat -q "..."`, container exits with hermes exit code |
+| (no args) | `thm` with no args, container exits when hermes exits |
+| `chat -q "..."` | `thm chat -q "..."`, container exits with hermes exit code |
 | `sleep infinity` | `sleep infinity` directly (long-lived sandbox mode) |
 | `bash` | interactive `bash` directly |
 | `docker run -it … --tui` | interactive Ink TUI with real TTY — see D9 |
@@ -245,7 +245,7 @@ profile gateway," not a general-purpose process-management API.
 ### D5. Per-profile gateway service spec is fixed, not user-provided
 
 Every profile gateway has the same command shape
-(`hermes -p <profile> gateway run`, or `hermes gateway run` for the default
+(`thm -p <profile> gateway run`, or `hermes gateway run` for the default
 profile). The s6 backend generates the `run` script from a fixed template
 given the profile name — no arbitrary command list. This keeps the API
 surface tight and prevents callers from accidentally registering
@@ -282,15 +282,15 @@ without rewriting ~2,200 LOC of working code.
 
 ### D8. Profile create/delete hooks register/unregister the s6 service
 
-When `hermes profile create <name>` runs inside the container, the
+When `thm profile create <name>` runs inside the container, the
 profile-creation code path calls
 `ServiceManager.register_profile_gateway(<name>)` if
-`supports_runtime_registration()` is True. When `hermes profile delete
+`supports_runtime_registration()` is True. When `thm profile delete
 <name>` runs, it calls `unregister_profile_gateway(<name>)`. On host, both
 calls are no-ops (registration not supported; existing systemd unit
 generation continues to handle install/uninstall).
 
-Existing per-profile `hermes -p <profile> gateway start/stop/restart` CLI
+Existing per-profile `thm -p <profile> gateway start/stop/restart` CLI
 commands continue to work — in the container they dispatch to
 `ServiceManager.start/stop/restart("gateway-<profile>")`, which translates
 to `s6-svc -u`/`-d`/`-t` on the service dir.
@@ -362,7 +362,7 @@ and `COLUMNS=123` as the probe.
 | Dockerfile+entrypoint drift from linter (hadolint/shellcheck) reveals latent bugs | Low | Low | CI lint jobs catch them; fix or document ignore with rationale |
 | Stale `gateway.pid` from a dead container collides with an unrelated live PID in the restarted container | Low | Medium | Cont-init reconciliation removes `gateway.pid` and `processes.json` from every profile dir on boot, before any new gateway starts |
 | `docker restart` silently loses per-profile gateway registrations (tmpfs scandir wiped) | High (without mitigation) | High | Cont-init reconciliation re-registers from persistent `$HERMES_HOME/profiles/` and auto-starts those last seen `running`; outcome recorded to `$HERMES_HOME/logs/container-boot.log` (size-bounded, rotates to `.1` at 256 KiB) |
-| A `running` gateway that's actually broken auto-restarts into a crash loop after every container restart | Low | Medium | s6 `finish` script `max_restarts` cap (planned); follow-up: `hermes doctor` alerts when N consecutive container restarts ended in `startup_failed` |
+| A `running` gateway that's actually broken auto-restarts into a crash loop after every container restart | Low | Medium | s6 `finish` script `max_restarts` cap (planned); follow-up: `thm doctor` alerts when N consecutive container restarts ended in `startup_failed` |
 | `_s6_running()` detection works as root but silently fails for unprivileged hermes user, making runtime-registration path inert | High (without mitigation) | High | **Caught in PR review.** Detection now probes `/proc/1/comm` (world-readable) + `/run/s6/basedir`. Docker integration tests refactored to `docker exec -u hermes` so the realistic runtime user is exercised |
 | `s6-svscanctl` from hermes hits EACCES on the root-owned control FIFO | Medium | Medium | `02-reconcile-profiles` chowns `/run/service/.s6-svscan/{control,lock}` to hermes after stage1 creates them |
 | Per-service `supervise/control` FIFO is root-owned by s6-supervise, blocking `s6-svc` from hermes | Known | Medium | Surfaced cleanly as `S6CommandError` (with rc + stderr) instead of raw `CalledProcessError`. Permission fix tracked as a follow-up (small SUID helper, polling chown loop in cont-init.d, or replace `s6-svc` with `down`-marker manipulation) |
@@ -411,15 +411,15 @@ and `COLUMNS=123` as the probe.
 - [x] `docker run -it --rm hermes-agent --tui` starts the Ink TUI with
       working keyboard input, cursor control, and resize (SIGWINCH)
 - [x] Dashboard crashes are recovered by s6 within ~2s
-- [x] `hermes profile create test` inside a container creates
+- [x] `thm profile create test` inside a container creates
       `/run/service/gateway-test/`
-- [x] `hermes -p test gateway start` inside a container dispatches through s6
-- [x] `hermes -p test gateway stop` inside a container cleanly stops via s6
-- [x] `hermes profile delete test` inside a container removes
+- [x] `thm -p test gateway start` inside a container dispatches through s6
+- [x] `thm -p test gateway stop` inside a container cleanly stops via s6
+- [x] `thm profile delete test` inside a container removes
       `/run/service/gateway-test/`
 - [x] Profile gateway logs persist at
       `$HERMES_HOME/logs/gateways/test/current`
-- [x] `hermes status` inside the container shows `Manager: s6`
+- [x] `thm status` inside the container shows `Manager: s6`
 - [x] `hermes gateway start` (no `-p`) inside a container targets
       `gateway-default` and runs against the root profile
 - [x] `hermes gateway stop --all` / `... restart --all` iterate every

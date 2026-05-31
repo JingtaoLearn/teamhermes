@@ -135,7 +135,7 @@ Zed v0.221.x and newer installs external agents through the official ACP Registr
 
 Prerequisites:
 
-- Configure Hermes provider credentials first with `hermes model`, or set them in `~/.teamhermes/.env` / `~/.teamhermes/config.yaml`.
+- Configure Hermes provider credentials first with `thm model`, or set them in `~/.teamhermes/.env` / `~/.teamhermes/config.yaml`.
 - Install `uv` so the registry launcher can run `uvx --from 'hermes-agent[acp]==<version>' hermes-acp`.
 
 For local development before the registry entry is available, use a custom agent server in Zed settings:

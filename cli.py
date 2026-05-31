@@ -18,7 +18,7 @@ try:
     import hermes_bootstrap  # noqa: F401
 except ModuleNotFoundError:
     # Graceful fallback when hermes_bootstrap isn't registered in the venv
-    # yet — happens during partial ``hermes update`` where git-reset landed
+    # yet — happens during partial ``thm update`` where git-reset landed
     # new code but ``uv pip install -e .`` didn't finish.  Missing bootstrap
     # means UTF-8 stdio setup is skipped on Windows; POSIX is unaffected.
     pass
@@ -338,7 +338,7 @@ def load_cli_config() -> Dict[str, Any]:
     Environment variables take precedence over config file values.
     Returns default values if no config file exists.
 
-    If HERMES_IGNORE_USER_CONFIG=1 is set (via ``hermes chat --ignore-user-config``),
+    If HERMES_IGNORE_USER_CONFIG=1 is set (via ``thm chat --ignore-user-config``),
     the user config at ``~/.teamhermes/config.yaml`` is skipped entirely and only the
     built-in defaults plus the project-level ``cli-config.yaml`` (if any) are used.
     Credentials in ``.env`` are still loaded — this flag only suppresses
@@ -3087,7 +3087,7 @@ class HermesCLI:
         self.checkpoint_max_file_size_mb = cp_cfg.get("max_file_size_mb", 10)
         self.pass_session_id = pass_session_id
         # --ignore-rules: honor either the constructor flag or the env var set
-        # by `hermes chat --ignore-rules` in hermes_cli/main.py. When true we
+        # by `thm chat --ignore-rules` in hermes_cli/main.py. When true we
         # pass skip_context_files=True and skip_memory=True to AIAgent so
         # AGENTS.md/SOUL.md/.cursorrules and persistent memory are not loaded.
         self.ignore_rules = ignore_rules or os.environ.get("HERMES_IGNORE_RULES") == "1"
@@ -4708,7 +4708,7 @@ class HermesCLI:
 
         # When a custom_provider entry carries an explicit `model` field,
         # use it as the effective model name.  Without this, running
-        # `hermes chat --model <provider-name>` sends the provider name
+        # `thm chat --model <provider-name>` sends the provider name
         # (e.g. "my-provider") as the model string to the API instead of
         # the configured model (e.g. "qwen3.6-plus"), causing 400 errors.
         runtime_model = runtime.get("model")
@@ -4722,8 +4722,8 @@ class HermesCLI:
             if should_use_runtime_model:
                 self.model = runtime_model
 
-        # If model is still empty (e.g. user ran `hermes auth add openai-codex`
-        # without `hermes model`), fall back to the provider's first catalog
+        # If model is still empty (e.g. user ran `thm auth add openai-codex`
+        # without `thm model`), fall back to the provider's first catalog
         # model so the API call doesn't fail with "model must be non-empty".
         if not self.model and resolved_provider:
             try:
@@ -4861,7 +4861,7 @@ class HermesCLI:
         # is non-empty and we skip the DB round-trip.
         if self._resumed and self._session_db and not self.conversation_history:
             session_meta = self._session_db.get_session(self.session_id)
-            # In quiet mode (`hermes chat -Q` / --quiet, surfaced via
+            # In quiet mode (`thm chat -Q` / --quiet, surfaced via
             # tool_progress_mode == "off"), resume status lines go to stderr
             # so stdout stays machine-readable for automation wrappers that
             # do `$(hermes chat -Q --resume <id> -q "...")`. Without this,
@@ -5031,9 +5031,9 @@ class HermesCLI:
         """Show a startup banner if any unacked security advisories match.
 
         Renders a single bold-red box on stderr (so piped stdout remains
-        clean) listing the worst hit and pointing at ``hermes doctor``.
+        clean) listing the worst hit and pointing at ``thm doctor``.
         Banner-cache rate-limits this to once per 24h per advisory; full
-        remediation lives behind ``hermes doctor`` so the banner stays
+        remediation lives behind ``thm doctor`` so the banner stays
         small.
         """
         try:
@@ -7520,7 +7520,7 @@ class HermesCLI:
                 return
             provider_data = providers[selected]
             # Use the curated model list from list_authenticated_providers()
-            # (same lists as `hermes model` and gateway pickers).
+            # (same lists as `thm model` and gateway pickers).
             # Only fall back to the live provider catalog when the curated
             # list is empty (e.g. user-defined endpoints with no curated list).
             model_list = provider_data.get("models", [])
@@ -8193,7 +8193,7 @@ class HermesCLI:
     def _handle_curator_command(self, cmd: str):
         """Handle /curator slash command.
 
-        Delegates to hermes_cli.curator so the CLI and the `hermes curator`
+        Delegates to hermes_cli.curator so the CLI and the `thm curator`
         subcommand share the same handler set.
         """
         import shlex
@@ -9976,7 +9976,7 @@ class HermesCLI:
         """Handle /update — update Hermes Agent to the latest version.
 
         In the classic CLI this exits the session and relaunches as
-        ``hermes update`` so the user sees update output directly and gets
+        ``thm update`` so the user sees update output directly and gets
         the new version on next launch.
 
         Returns ``True`` when the update was confirmed (caller should trigger
@@ -10000,7 +10000,7 @@ class HermesCLI:
         ]
         raw = self._prompt_text_input_modal(
             title="⚕  Update Hermes Agent",
-            detail="This will exit the current session and run `hermes update`.",
+            detail="This will exit the current session and run `thm update`.",
             choices=choices,
         )
         if raw is None:
@@ -15125,7 +15125,7 @@ def main(
     # Handle single query mode
     if query or image:
         query, single_query_images = _collect_query_images(query, image)
-        # Kanban workers spawn with ``hermes chat -q "work kanban task <id>"``;
+        # Kanban workers spawn with ``thm chat -q "work kanban task <id>"``;
         # the actual task description lives in the task body. Mirror the
         # gateway/CLI behaviour for inbound images by scanning the body for
         # local image paths and http(s) image URLs and attaching them to the
@@ -15273,7 +15273,7 @@ def main(
             # Exit with error code if credentials or agent init fails
             sys.exit(1)
         else:
-            # Single-query mode (`hermes chat -q "…"`): skip the welcome
+            # Single-query mode (`thm chat -q "…"`): skip the welcome
             # banner. Building the banner takes ~420 ms on cold start —
             # ~200 ms of that is the version-update check, the rest is
             # toolset / skill enumeration and Rich panel rendering. None

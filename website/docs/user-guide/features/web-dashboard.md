@@ -9,7 +9,7 @@ description: "Browser-based dashboard for managing configuration, API keys, sess
 The web dashboard is a browser-based UI for managing your Hermes Agent installation. Instead of editing YAML files or running CLI commands, you can configure settings, manage API keys, and monitor sessions from a clean web interface.
 
 :::tip
-Hosted-mode auth uses Nous Portal OAuth; if you also want the dashboard to talk to a real backend, `hermes setup --portal` wires up the model and tool gateway too. See [Nous Portal](/integrations/nous-portal).
+Hosted-mode auth uses Nous Portal OAuth; if you also want the dashboard to talk to a real backend, `thm setup --portal` wires up the model and tool gateway too. See [Nous Portal](/integrations/nous-portal).
 :::
 
 ## Quick Start
@@ -54,9 +54,9 @@ pip install 'hermes-agent[web,pty]'
 
 The `web` extra pulls in FastAPI/Uvicorn; `pty` pulls in `ptyprocess` (POSIX) or `pywinpty` (native Windows — note that the embedded TUI itself still requires WSL). `pip install hermes-agent[all]` includes both extras and is the easiest path if you also want messaging/voice/etc.
 
-When you run `hermes dashboard` without the dependencies, it will tell you what to install. If the frontend hasn't been built yet and `npm` is available, it builds automatically on first launch.
+When you run `thm dashboard` without the dependencies, it will tell you what to install. If the frontend hasn't been built yet and `npm` is available, it builds automatically on first launch.
 
-The Chat tab is intentionally off for a plain `hermes dashboard` launch. Start the dashboard with `hermes dashboard --tui` or set `HERMES_DASHBOARD_TUI=1` when you want the embedded browser chat pane.
+The Chat tab is intentionally off for a plain `thm dashboard` launch. Start the dashboard with `thm dashboard --tui` or set `HERMES_DASHBOARD_TUI=1` when you want the embedded browser chat pane.
 
 ## Pages
 
@@ -116,7 +116,7 @@ Fields with known valid values (terminal backend, skin, approval mode, etc.) ren
 - **Import** — uploads a JSON config file to replace the current values
 
 :::tip
-Config changes take effect on the next agent session or gateway restart. The web dashboard edits the same `config.yaml` file that `hermes config set` and the gateway read from.
+Config changes take effect on the next agent session or gateway restart. The web dashboard edits the same `config.yaml` file that `thm config set` and the gateway read from.
 :::
 
 ### API Keys
@@ -310,9 +310,9 @@ This is intended for hosted deployments (typically Fly.io) where the dashboard i
 
 | Flags | Auth gate | Use case |
 |-------|-----------|----------|
-| `hermes dashboard` (default — binds to `127.0.0.1`) | OFF | Local development |
-| `hermes dashboard --host 0.0.0.0` | **ON** | Production / Fly.io deployment |
-| `hermes dashboard --host 192.168.1.10 --insecure` | OFF | Trusted LAN; user opts into legacy session-token auth |
+| `thm dashboard` (default — binds to `127.0.0.1`) | OFF | Local development |
+| `thm dashboard --host 0.0.0.0` | **ON** | Production / Fly.io deployment |
+| `thm dashboard --host 192.168.1.10 --insecure` | OFF | Trusted LAN; user opts into legacy session-token auth |
 
 The gate is on if and only if:
 
@@ -323,7 +323,7 @@ Setting `--insecure` keeps the existing single-process session-token behaviour �
 
 ### Fail-closed semantics
 
-If the gate would engage but **no** `DashboardAuthProvider` is registered (no Nous plugin, no custom plugin), `hermes dashboard` refuses to bind with an explicit error message. There is no "default-deny but accept everything" fallback — a misconfigured gated dashboard never starts.
+If the gate would engage but **no** `DashboardAuthProvider` is registered (no Nous plugin, no custom plugin), `thm dashboard` refuses to bind with an explicit error message. There is no "default-deny but accept everything" fallback — a misconfigured gated dashboard never starts.
 
 ### Default provider: Nous Research
 
@@ -506,7 +506,7 @@ The frontend is built with React 19, TypeScript, Tailwind CSS v4, and shadcn/ui-
 
 ## Automatic Build on Update
 
-When you run `hermes update`, the web frontend is automatically rebuilt if `npm` is available. This keeps the dashboard in sync with code updates. If `npm` isn't installed, the update skips the frontend build and `hermes dashboard` will build it on first launch.
+When you run `thm update`, the web frontend is automatically rebuilt if `npm` is available. This keeps the dashboard in sync with code updates. If `npm` isn't installed, the update skips the frontend build and `thm dashboard` will build it on first launch.
 
 ## Themes & plugins
 

@@ -312,7 +312,7 @@ def get_service_manager() -> ServiceManager:
 # ---------------------------------------------------------------------------
 # S6ServiceManager (container-only)
 #
-# Per-profile gateways are registered dynamically when `hermes profile create`
+# Per-profile gateways are registered dynamically when `thm profile create`
 # runs inside the container (Phase 4). Static services (main-hermes, dashboard)
 # live in /etc/s6-overlay/s6-rc.d/ and are NOT managed by this class — they're
 # part of the image, not runtime-created.
@@ -340,7 +340,7 @@ S6_SERVICE_PREFIX = "gateway-"
 _S6_BIN_DIR = "/command"
 
 
-# UID/GID of the in-image ``hermes`` user. Hardcoded to match what
+# UID/GID of the in-image ``thm`` user. Hardcoded to match what
 # ``stage2-hook.sh`` enforces (the runtime invariant — see also
 # tests/docker/test_uid_remap.py). The container starts s6-supervise
 # under root and immediately drops to this UID via ``s6-setuidgid``.
@@ -359,7 +359,7 @@ def _seed_supervise_skeleton(svc_dir: Path) -> None:
     ``0700``. It also ``mkfifo``s ``<svc>/supervise/control`` with mode
     ``0600``. Because s6-supervise runs as PID 1's effective UID (root)
     these dirs end up root-owned mode 0700, and an unprivileged client
-    (the ``hermes`` user — UID 10000 — running every Hermes runtime
+    (the ``thm`` user — UID 10000 — running every Hermes runtime
     operation via ``s6-setuidgid``) gets ``EACCES`` on any ``s6-svc``,
     ``s6-svstat``, or ``s6-svwait`` invocation against the slot.
 
@@ -505,7 +505,7 @@ class GatewayNotRegisteredError(S6Error):
         self.profile = profile
         super().__init__(
             f"no such gateway {profile!r}: register it with "
-            f"`hermes profile create {profile}` first, or pass "
+            f"`thm profile create {profile}` first, or pass "
             "an existing profile name via `-p <name>`",
             service=f"gateway-{profile}",
         )
