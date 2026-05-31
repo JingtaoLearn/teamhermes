@@ -42,7 +42,16 @@ These must remain after every rebrand. The auditor regression-checks for their p
   - `/opt/hermes` install path — image filesystem layout
   - `docker/s6-rc.d/main-hermes/` directory + `user/contents.d/main-hermes` symlink — s6-overlay infra
 - **Git branch naming convention** (`cli.py:1042/1324/1385` constants like `hermes-{id}` / `hermes/*` prefix): kanban/session branches in existing repos use this prefix; renaming breaks state lookup on existing branches. Treated as deployment identity, same class as `hermes-gateway`.
-- **systemd `hermes-gateway` service name** (`_SERVICE_BASE = "hermes-gateway"` in hermes_cli/gateway.py and all downstream references in toolsets/tools/tests/docs): existing deployments depend on this unit name — renaming breaks them. Treated as deployment infrastructure identity, same as Docker user `hermes` and `/opt/hermes`.
+- **Deployment-configured platform integrations**: Slack slash commands (`/hermes`, `gateway/platforms/slack.py`), wecom/feishu/qqbot QR URL `source=hermes`/`from=hermes&tp=hermes` query params, matrix default account fallback `"hermes"`, gateway restart-command regex patterns (`restart hermes` in base.py:1287-1288). Users registered these in third-party services; renaming breaks existing deployments.
+- **API wire-protocol fields**: api_server.py JSON keys (`owned_by: hermes`, `error.hermes`, `response_data.hermes`) — same class as X-Hermes-* headers.
+- **XDG state paths**: `~/.local/state/hermes/` (gateway/status.py) — same class as /opt/hermes; existing locks live there.
+- **External backend tags**: portal_tags.py `product=hermes-agent` / `hermes-client-v*` (Nous backend identifier), gemini X-Goog-Api-Client `gl-python/hermes` — backend routing/billing identifiers. *(gemini one is FIX, but tag in portal_tags is WHITELIST — backend telemetry.)*
+- **OAuth redirect URL fragments**: agent/google_oauth.py `#hermes` — registered redirect at Google OAuth console; renaming breaks login.
+- **Logger names**: `hermes.lint.lsp` (agent/lsp/eventlog.py) — users have log-filter rules referencing this; renaming breaks their setup.
+- **ACP protocol identifiers**: copilot_acp_client `name: hermes-agent`, acp_adapter/auth.py `TERMINAL_SETUP_AUTH_METHOD_ID`, codex_app_server_session `hermes-tools` MCP server name — wire-protocol identity.
+- **User config profile/skill naming patterns**: `hermes-security` profile (file_safety.py), `hermes-config-*` / `hermes-dashboard-*` skill name patterns (curator.py) — same class as plugins/hermes-*/.
+- **Verbatim contributor quotes**: `website/src/data/userStories.json` references to "Hermes" in user-quoted excerpts — changing misrepresents contributors. Ethical preserve.
+- - **systemd `hermes-gateway` service name** (`_SERVICE_BASE = "hermes-gateway"` in hermes_cli/gateway.py and all downstream references in toolsets/tools/tests/docs): existing deployments depend on this unit name — renaming breaks them. Treated as deployment infrastructure identity, same as Docker user `hermes` and `/opt/hermes`.
 - - **Plugin directory names** (treated as IDs, not brand strings): `plugins/hermes-achievements/`, `plugins/hermes-yuanbao/`, any other `plugins/hermes-*` — the directory name AND in-doc headings referring to the plugin by name (e.g. `# Hermes Achievements`) are package identity, not brand
 - **Test fixtures**:
   - `test_openclaw_migration.py` "hermes" test data (tests migration FROM old brand)
