@@ -81,8 +81,8 @@ This isn't a quality bar — it's a coupling-and-maintenance decision. Memory pr
 ### Clone and install
 
 ```bash
-git clone --recurse-submodules https://github.com/NousResearch/hermes-agent.git
-cd hermes-agent
+git clone --recurse-submodules https://github.com/JingtaoLearn/teamhermes.git
+cd teamhermes
 
 # Create venv with Python 3.11
 uv venv venv --python 3.11
@@ -134,7 +134,7 @@ pytest tests/ -v
 ## Project Structure
 
 ```
-hermes-agent/
+teamhermes/
 ├── run_agent.py              # AIAgent class — core conversation loop, tool dispatch, session persistence
 ├── cli.py                    # HermesCLI class — interactive TUI, prompt_toolkit integration
 ├── model_tools.py            # Tool orchestration (thin layer over tools/registry.py)
