@@ -41,6 +41,7 @@ These must remain after every rebrand. The auditor regression-checks for their p
   - User `thm` (Linux UID 10000) — image filesystem identity
   - `/opt/hermes` install path — image filesystem layout
   - `docker/s6-rc.d/main-hermes/` directory + `user/contents.d/main-hermes` symlink — s6-overlay infra
+- **Git branch naming convention** (`cli.py:1042/1324/1385` constants like `hermes-{id}` / `hermes/*` prefix): kanban/session branches in existing repos use this prefix; renaming breaks state lookup on existing branches. Treated as deployment identity, same class as `hermes-gateway`.
 - **systemd `hermes-gateway` service name** (`_SERVICE_BASE = "hermes-gateway"` in hermes_cli/gateway.py and all downstream references in toolsets/tools/tests/docs): existing deployments depend on this unit name — renaming breaks them. Treated as deployment infrastructure identity, same as Docker user `hermes` and `/opt/hermes`.
 - - **Plugin directory names** (treated as IDs, not brand strings): `plugins/hermes-achievements/`, `plugins/hermes-yuanbao/`, any other `plugins/hermes-*` — the directory name AND in-doc headings referring to the plugin by name (e.g. `# Hermes Achievements`) are package identity, not brand
 - **Test fixtures**:
