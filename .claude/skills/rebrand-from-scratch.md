@@ -21,16 +21,20 @@ description: Use this skill when the user asks to "rebrand", "apply the rebrand"
 
 If any precondition fails: STOP, write `.claude/state/blocker.md` explaining why, return `BLOCKED: <reason>`.
 
-## Architecture — use a dynamic workflow
+## Architecture — Claude Code Dynamic Workflows
 
-This task touches ~1,900 files across 5 semantic phases. A skill alone (single-context Claude) will run out of context. Use Claude Code's **dynamic workflow** runtime to fan out work across subagents:
+This task touches ~1,900 files across 5 semantic phases. Use Claude Code's **dynamic workflow** runtime (https://code.claude.com/docs/en/workflows) — the JS script orchestrates subagents at scale (up to 16 concurrent, 1000 total) and is **resumable in the same session**, perfect for this scope.
 
-- Each phase is one workflow stage
-- Phases 2 and 4 (the big ones) split into parallel subagents by directory subtree
-- Audit + smoke runs are sequential gates between phases
-- Final report writing is one final stage
+- Each phase = one workflow stage
+- P2 and P4 (the big ones) split into parallel subagents by directory subtree (~8 and ~16 agents respectively)
+- Audit + smoke = sequential gates between phases
+- Final report = last stage
 
-The user MUST trigger this skill with the `workflow` keyword in their prompt so Claude opens the workflow planner. If they didn't, ask them to re-prompt with `workflow`.
+**Trigger**: the user MUST include the keyword `workflow` in the prompt so Claude opens the workflow planner. The orchestrator handles this.
+
+**Execution mode**: this skill is designed for **interactive tmux mode**, NOT `claude -p`. In `-p` mode, Workflows submit-then-exit without runtime taking over (verified empirically 2026-05-31). The orchestrator launches `claude --permission-mode bypassPermissions` inside tmux, sends the workflow prompt, monitors via `tmux capture-pane` + `tail .claude/state/events.jsonl`, and presses `s` in `/workflows` UI to save the script to `.claude/workflows/rebrand.js` once green.
+
+**Persistence**: the saved `rebrand.js` becomes the reusable asset — future upstream tags re-run via `/rebrand` slash command (auto-registered from the saved workflow file).
 
 ## The five phases (semantic contract)
 
