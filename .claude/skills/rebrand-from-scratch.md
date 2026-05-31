@@ -121,16 +121,56 @@ Then write `REBRAND_REPORT.md` at repo root summarizing:
 
 Commit: `rebrand: P5 argparse prog + final report`
 
-## Verification gates between phases
+## Audit-fix loop — autonomous classification
 
-After each commit, invoke the `rebrand-auditor` subagent for that phase only:
-- After P1: check pyproject.toml is well-formed and contains expected name/scripts
-- After P2: residual `\.hermes\b` only in whitelist-allowed contexts
-- After P3: no `\.hermes_history`/`\.hermes_build_sha`/`\.hermes_sync\.` remaining
-- After P4: full audit per CLAUDE.md whitelist
-- After P5: full audit + smoke + full pytest
+After each phase commit, invoke the `rebrand-auditor` subagent. If it returns FAIL, **do not stop after 3 cycles**. Loop until PASS, using these classification rules autonomously to decide FIX vs WHITELIST for each residual:
 
-If any audit returns FAIL: read `.claude/state/audit-report.md`, apply mechanical fixes, re-audit. Max 3 cycles per phase. After 3, STOP and report.
+### WHITELIST (keep `hermes`/`Hermes`) — anything matching these patterns:
+
+1. **Code identifiers**: any Python module name, class, function, variable, type alias. Includes `hermes_*` modules and `Hermes*` / `*hermes*` names. Renaming breaks `import` statements and `getattr` lookups.
+2. **Environment variables**: `HERMES_*`. Users' .env files depend on these.
+3. **Protocol identifiers**: HTTP headers (`X-Hermes-*`), JSON wire fields (`owned_by: hermes`, `error.hermes`), URL query params registered with external services (`source=hermes`, `from=hermes`), MCP server names, ACP names/method IDs, MCP/ACP tool names.
+4. **Deploy-configured integrations**: systemd unit names (e.g. `hermes-gateway`), Slack slash commands (`/hermes`), bot mention patterns, OAuth redirect URL fragments, logger names (people have log-filter rules), git branch naming conventions used by kanban/session features.
+5. **Filesystem identity**: Docker user `hermes` (UID 10000), `/opt/hermes`, `~/.local/state/hermes/`, `%LOCALAPPDATA%\hermes`, `docker/s6-rc.d/main-hermes/`, plugin directories `plugins/hermes-*/`, container/sandbox naming conventions like `hermes-{uuid}`, tmp prefixes (`/tmp/hermes-*`, `hermes-ssh`, `hermes-cmd-stt-`, etc.).
+6. **External backend identifiers**: tags sent to upstream services that affect routing/billing (`product=hermes-agent` in Nous portal tags, `hermes-client-v*`).
+7. **Upstream attribution**: `NousResearch/hermes-agent` URLs, `nousresearch/hermes-agent` Docker image refs, model names (`Hermes-3`, `Hermes-4`, `Nous Hermes`, `nousresearch/hermes-*`), `LICENSE`, `NOTICE`, `RELEASE_v*.md`.
+8. **Verbatim contributor content**: user-quoted excerpts in `website/src/data/userStories.json` and similar — editing misrepresents contributors.
+9. **User-configurable naming patterns**: skill name patterns like `hermes-config-*`, `hermes-dashboard-*`, profile names like `hermes-security` — same class as plugin dir names.
+10. **Test fixtures testing the old brand**: `test_openclaw_migration.py`, `test_dingtalk.py`, `test_matrix_mention.py`.
+
+### FIX (change to `TeamHermes`/`thm`/`teamhermes`) — anything matching these:
+
+1. **User-facing brand strings**: `Hermes` in docs, READMEs, i18n locale yaml hint strings, CLI help text, banner/welcome messages, skin engine branding, error messages users see.
+2. **CLI command in text**: standalone `hermes <subcmd>` in docs, scripts, comments, docstrings, plugin READMEs.
+3. **Install commands**: `pip install hermes-agent`, `brew upgrade hermes-agent`, `uv pip install hermes-agent` → `teamhermes`. EXCEPT upstream attribution Docker images and git+URL.
+4. **Code comments and docstrings** referencing "Hermes" as the product (visible via pydoc/help() or to anyone reading code).
+5. **Argparse `prog=`, description=, help=** strings.
+6. **Outgoing User-Agent headers**: `Hermes-Agent/...`, `Hermes-Watcher/...`, `gl-python/hermes` → `TeamHermes-*` / `gl-python/teamhermes` (our outward identity).
+7. **Process protection patterns**: `pkill hermes`, `pgrep -f hermes` in our own scripts must become `thm` so they protect the renamed binary.
+8. **Website project metadata**: `projectName: 'hermes-agent'` in build configs → `'teamhermes'`.
+9. **Shell scripts and shim names**: `./hermes` venv shim, `setup-hermes.sh` → `./thm`, `setup-thm.sh`.
+
+### When in doubt — apply the heuristic
+
+- **Is it persistent state / wire-protocol / deployment-registered identifier?** → WHITELIST. Renaming breaks something existing.
+- **Is it text a user reads (docs, comments, help text, error messages, banners)?** → FIX. Brand consistency.
+- **Is it our outward identifier (User-Agent, build config)?** → FIX. We are TeamHermes.
+
+If a residual fits neither pattern clearly, classify conservatively as **WHITELIST** and document the choice in the audit report as `EXPECTED (deferred, ambiguous - flag for orchestrator)`. Continue with the rest. Do not stop the loop for a single ambiguous item — the orchestrator can revisit those at final review.
+
+### When to genuinely stop
+
+Stop the audit-fix loop and report `BLOCKED` only when:
+- Audit FAILS with 0 actual residuals (auditor disagrees with itself)
+- Same exact residual persists across 3 consecutive fix cycles (Claude can't seem to apply the fix correctly)
+- Audit catches a regression in the WHITELIST INTACT section
+- pip install requires permission approval and you cannot proceed to smoke-tester
+
+Otherwise: keep looping autonomously. Each cycle is one commit `rebrand: P<n> audit fixes (cycle N)`.
+
+### Whitelist additions during the loop
+
+If the loop encounters a residual that should be permanently whitelisted (not just deferred), the executing Claude may add it to `CLAUDE.md` directly with a `contract: whitelist <thing> (<reason>)` commit, then continue. Cite the classification rule (e.g. "matches WHITELIST rule 3: protocol identifier"). The orchestrator reviews these commits at final review.
 
 ## Test gate (final)
 
