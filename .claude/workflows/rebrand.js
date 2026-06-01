@@ -13,7 +13,7 @@ export const meta = {
     { title: 'P4 audit' },
     { title: 'P5 argparse+report' },
     { title: 'P5 audit' },
-    { title: 'Smoke + tests' },
+    { title: 'P6 Smoke + tests + CI sweep' },
   ],
 }
 
@@ -118,12 +118,36 @@ async function runAudit(phaseLabel, phaseDescription) {
       `For each residual, apply the FIX/WHITELIST classification rules autonomously:\n` +
       `- If WHITELIST: edit CLAUDE.md to add the entry under the existing whitelist section, commit as "contract: whitelist <thing> (matches rule <N>)".\n` +
       `- If FIX: apply the mechanical substitution per the rule.\n` +
-      `Then commit the fix batch as: "rebrand: ${phaseLabel} audit fixes (cycle ${cycle})". Return JSON {filesChanged, commitSha, summary}.`,
+      `Then commit the fix batch as: "${COMMIT_PREFIX}rebrand: ${phaseLabel} audit fixes (cycle ${cycle})". Return JSON {filesChanged, commitSha, summary}.`,
       { label: `fix:${phaseLabel}:cycle${cycle}`, phase: `${phaseLabel} audit`, schema: PHASE_RESULT_SCHEMA }
     )
   }
 }
 
+
+// --- Dry-run flag: presence of .claude/state/dry-run.flag → DRY_RUN=true ---
+const dryRunCheck = await agent(
+  `Check if file .claude/state/dry-run.flag exists. Use: test -f .claude/state/dry-run.flag && echo true || echo false. Return JSON {dryRun: <true|false>}.`,
+  { label: 'dry-run-check', schema: { type: 'object', required: ['dryRun'], properties: { dryRun: { type: 'boolean' } } } }
+)
+const DRY_RUN = !!dryRunCheck?.dryRun
+const COMMIT_PREFIX = DRY_RUN ? '[DRY-RUN] ' : ''
+log(`Mode: ${DRY_RUN ? 'DRY-RUN' : 'LIVE'}`)
+
+const P6_FIX_SCHEMA = {
+  type: 'object',
+  required: ['verdict', 'fixedCount', 'remainingFailures', 'bucketTally', 'notes'],
+  properties: {
+    verdict: { enum: ['PROGRESS', 'DONE', 'BLOCKED'] },
+    fixedCount: { type: 'integer' },
+    remainingFailures: { type: 'integer' },
+    bucketTally: {
+      type: 'object',
+      properties: { A: {type:'integer'}, B: {type:'integer'}, C: {type:'integer'}, D: {type:'integer'} }
+    },
+    notes: { type: 'string' },
+  },
+}
 
 // ---------------- Phase 1 ----------------
 phase('P1 metadata')
@@ -133,7 +157,7 @@ const p1 = await agent(
   `- In every dependency-extras list, change "hermes-agent[xxx]" to "teamhermes[xxx]" (all ~15 occurrences across lines 141-211).\n` +
   `- In [project.scripts]: hermes = ... → thm = ...; hermes-agent = ... → thm-agent = ...; hermes-acp = ... → thm-acp = ...\n` +
   `DO NOT touch: project authors, license, urls, dependencies referring to upstream packages, py-modules list (those are import names), packages.find include list.\n` +
-  `After editing, run: git add pyproject.toml && git commit -m "rebrand: P1 package metadata (teamhermes, thm/thm-agent/thm-acp)".\n` +
+  `After editing, run: git add pyproject.toml && git commit -m "${COMMIT_PREFIX}rebrand: P1 package metadata (teamhermes, thm/thm-agent/thm-acp)".\n` +
   `Return JSON {filesChanged, commitSha, summary}.`,
   { label: 'p1:metadata', schema: PHASE_RESULT_SCHEMA }
 )
@@ -163,7 +187,7 @@ const p2Results = await parallel(P2_SUBTREES.map(sub => () => agent(
 const p2Total = p2Results.filter(Boolean).reduce((s, r) => s + (r.filesChanged || 0), 0)
 log(`P2: ${p2Total} files edited across ${p2Results.filter(Boolean).length} subtrees — committing`)
 await agent(
-  `Run: git add -A && git diff --cached --stat | tail -1 && git commit -m "rebrand: P2 default home dir .hermes -> .teamhermes" || echo "nothing to commit". Return JSON {filesChanged:0, commitSha:"<sha or empty>", summary:"P2 commit"}.`,
+  `Run: git add -A && git diff --cached --stat | tail -1 && git commit -m "${COMMIT_PREFIX}rebrand: P2 default home dir .hermes -> .teamhermes" || echo "nothing to commit". Return JSON {filesChanged:0, commitSha:"<sha or empty>", summary:"P2 commit"}.`,
   { label: 'p2:commit', phase: 'P2 home dir', schema: PHASE_RESULT_SCHEMA }
 )
 await runAudit('P2', 'residual \\.hermes\\b path literals only in whitelist-allowed contexts (LICENSE/NOTICE/RELEASE_v*.md, test fixtures, docker/s6-rc.d/main-hermes/, .hermes_history/_build_sha/_sync.* deferred to P3)')
@@ -176,7 +200,7 @@ const p3 = await agent(
   `  .hermes_build_sha → .teamhermes_build_sha\n` +
   `  .hermes_sync.<anything> → .teamhermes_sync.<anything>\n` +
   `Use rg to find all occurrences across the repo (skip .git/, .venv/, node_modules/, __pycache__/, *.egg-info/, .claude/, docker/s6-rc.d/main-hermes/, LICENSE, NOTICE, RELEASE_v*.md). Edit each file. ~12 files expected.\n` +
-  `Commit: git add -A && git commit -m "rebrand: P3 home dir artifacts (.hermes_history etc.)".\n` +
+  `Commit: git add -A && git commit -m "${COMMIT_PREFIX}rebrand: P3 home dir artifacts (.hermes_history etc.)".\n` +
   `Return JSON {filesChanged, commitSha, summary}.`,
   { label: 'p3:artifacts', schema: PHASE_RESULT_SCHEMA }
 )
@@ -220,7 +244,7 @@ const p4Results = await parallel(P4_SUBTREES.map(sub => () => agent(
 const p4Total = p4Results.filter(Boolean).reduce((s, r) => s + (r.filesChanged || 0), 0)
 log(`P4: ${p4Total} files edited across ${p4Results.filter(Boolean).length} subtrees — committing`)
 await agent(
-  `Run: git add -A && git diff --cached --stat | tail -1 && git commit -m "rebrand: P4 brand string Hermes -> TeamHermes and CLI hermes -> thm" || echo "nothing to commit". Return JSON {filesChanged:0, commitSha:"<sha or empty>", summary:"P4 commit"}.`,
+  `Run: git add -A && git diff --cached --stat | tail -1 && git commit -m "${COMMIT_PREFIX}rebrand: P4 brand string Hermes -> TeamHermes and CLI hermes -> thm" || echo "nothing to commit". Return JSON {filesChanged:0, commitSha:"<sha or empty>", summary:"P4 commit"}.`,
   { label: 'p4:commit', phase: 'P4 brand+CLI', schema: PHASE_RESULT_SCHEMA }
 )
 await runAudit('P4', 'full whitelist audit per CLAUDE.md: \\bHermes\\b residuals only in whitelist contexts; \\bhermes\\b in text only where the whitelist allows; all preserved identifiers/URLs/env vars still present')
@@ -237,15 +261,15 @@ const p5 = await agent(
   `  ## Whitelist verified preserved\n  - [x] NousResearch/hermes-agent URL\n  - [x] hermes_* Python modules\n  - [x] Hermes* class/function names\n  - [x] HERMES_* env vars\n  - [x] LICENSE / NOTICE unchanged\n  - [x] RELEASE_v*.md unchanged\n  - [x] docker user hermes, /opt/hermes, docker/s6-rc.d/main-hermes/\n  - [x] test fixtures in test_openclaw_migration.py, test_dingtalk.py, test_matrix_mention.py\n` +
   `  ## Smoke + tests\n  - (to be filled by smoke-tester; leave placeholders for now)\n\n` +
   `Use the actual git stats from the prior commits to fill counts where possible (git show --stat HEAD~4..HEAD).\n` +
-  `Commit: git add -A && git commit -m "rebrand: P5 argparse prog + final report".\n` +
+  `Commit: git add -A && git commit -m "${COMMIT_PREFIX}rebrand: P5 argparse prog + final report".\n` +
   `Return JSON {filesChanged, commitSha, summary}.`,
   { label: 'p5:argparse+report', schema: PHASE_RESULT_SCHEMA }
 )
 log(`P5: ${p5?.summary}`)
 await runAudit('P5', 'full whitelist audit AND no remaining prog="hermes" / prog="hermes-acp" in any *.py')
 
-// ---------------- Smoke + tests ----------------
-phase('Smoke + tests')
+// ---------------- P6 Smoke + tests + CI sweep ----------------
+phase('P6 Smoke + tests + CI sweep')
 const smoke = await agent(
   `Run the smoke-tester procedure exactly as documented in your agent definition. Write .claude/state/smoke-report.md. ` +
   `Return JSON via StructuredOutput: { verdict: "PASS"|"FAIL", passed: <int>, failed: <int>, skipped: <int>, newRegressions: <int>, notes: "<short>" }.`,
@@ -268,6 +292,44 @@ const smoke = await agent(
 )
 log(`Smoke verdict: ${smoke?.verdict} (${smoke?.passed}P / ${smoke?.failed}F / ${smoke?.skipped}S, ${smoke?.newRegressions} new regressions)`)
 
+if (smoke?.verdict === 'PASS' && smoke?.newRegressions === 0) {
+  log('P6 smoke green, no failures — skipping sweep')
+} else if (smoke?.verdict === 'BLOCKED') {
+  throw new Error(`P6 smoke BLOCKED: ${smoke?.notes}`)
+} else {
+  const MAX_SWEEP_CYCLES = 16
+  let lastRemaining = -1
+  let stallStreak = 0
+  for (let cycle = 1; cycle <= MAX_SWEEP_CYCLES; cycle++) {
+    const fix = await agent(
+      `${CONTRACT}\n\nP6 CI sweep — cycle ${cycle}/${MAX_SWEEP_CYCLES}.\n` +
+      `Read .claude/state/failures.list (current remaining failures only — do NOT re-run full pytest).\n` +
+      `Also read .claude/state/p6-resume.list if it exists (items the orchestrator already handled — SKIP these).\n` +
+      `Follow the Phase 6 procedure in .claude/skills/rebrand-from-scratch.md exactly: classify each failure into Bucket A/B/C/D, apply the targeted fix, re-run that single test to verify, then re-run the remaining failures-list to update .claude/state/failures.list.\n` +
+      (DRY_RUN
+        ? `DRY-RUN MODE: do NOT edit files, do NOT commit. Instead write .claude/state/p6-plan.md with one section per failure: {bucket, target_file, proposed_fix_summary}. Return JSON with fixedCount:0, remainingFailures:<initial count>, verdict:"DONE".\n`
+        : `Commit the batch as: "${COMMIT_PREFIX}rebrand: P6 CI-sweep cycle ${cycle} (bucket tally A/B/C/D)".\n`) +
+      `Return JSON {verdict, fixedCount, remainingFailures, bucketTally:{A,B,C,D}, notes}.`,
+      { label: `p6-fix:cycle${cycle}`, phase: 'P6 sweep', agentType: 'rebrand-fixer', schema: P6_FIX_SCHEMA }
+    )
+
+    if (DRY_RUN) { log(`P6 dry-run: ${fix?.remainingFailures} failures classified into plan`); break }
+    if (fix?.verdict === 'DONE' || fix?.remainingFailures === 0) { log(`P6 sweep DONE on cycle ${cycle}`); break }
+    if (fix?.verdict === 'BLOCKED') {
+      await agent(
+        `Write .claude/state/p6-resume.list with the current contents of .claude/state/failures.list, prefixed with a header line "# BLOCKED at cycle ${cycle}: ${fix?.notes}". Return JSON {filesChanged:1, commitSha:"", summary:"resume list written"}.`,
+        { label: 'p6-blocked', schema: PHASE_RESULT_SCHEMA }
+      )
+      throw new Error(`P6 sweep BLOCKED at cycle ${cycle}: ${fix?.notes}. See .claude/state/p6-resume.list for orchestrator handoff.`)
+    }
+    if (fix?.remainingFailures === lastRemaining) {
+      stallStreak++
+      if (stallStreak >= 3) throw new Error(`P6 sweep stalled: ${fix?.remainingFailures} failures unchanged across 3 cycles`)
+    } else { stallStreak = 0; lastRemaining = fix?.remainingFailures ?? -1 }
+    if (cycle === MAX_SWEEP_CYCLES) throw new Error(`P6 sweep exhausted ${MAX_SWEEP_CYCLES} cycles, ${fix?.remainingFailures} failures remain`)
+  }
+}
+
 // ---------------- Handoff state ----------------
 await agent(
   `Update .claude/state/upstream-tag to contain exactly: v2026.5.29.2\n` +
@@ -275,6 +337,13 @@ await agent(
   `Return JSON {filesChanged, commitSha:"", summary:"handoff state written"}.`,
   { label: 'handoff', schema: PHASE_RESULT_SCHEMA }
 )
+
+if (DRY_RUN) {
+  await agent(
+    `Write .claude/state/dry-run-summary.md listing every commit on this branch with subject starting "[DRY-RUN]" (use: git log --grep='^\\[DRY-RUN\\]' --oneline). Add at the end: "To revert: git reset --hard v2026.5.29.2". Return JSON {filesChanged:1, commitSha:"", summary:"dry-run summary written"}.`,
+    { label: 'dry-run-summary', schema: PHASE_RESULT_SCHEMA }
+  )
+}
 
 return {
   upstreamTag: 'v2026.5.29.2',
