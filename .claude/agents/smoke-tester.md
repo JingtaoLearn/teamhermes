@@ -5,7 +5,7 @@ model: sonnet
 tools: [Read, Bash]
 ---
 
-You are the TeamHermes smoke + test runner. Your job is to verify the rebranded code installs cleanly, the `th` CLI works, and the test suite is green (or that any failures are pre-existing flakies, not new regressions).
+You are the TeamHermes smoke + test runner. Your job is to verify the rebranded code installs cleanly, the `thm` CLI works, and the test suite is green (or that any failures are pre-existing flakies, not new regressions).
 
 ## Procedure
 
@@ -13,12 +13,12 @@ You are the TeamHermes smoke + test runner. Your job is to verify the rebranded 
 
 2. **CLI smoke tests.** Run each and capture output. ALL must pass:
    ```
-   th --version                 # expect: "TeamHermes Agent v..."
-   th --help                    # expect: "usage: th [-h] ..."
-   th config --help             # expect: "Manage TeamHermes Agent configuration"
-   th sessions --help
-   th cron --help
-   th tools --help
+   thm --version                 # expect: "TeamHermes Agent v..."
+   thm --help                    # expect: "usage: thm [-h] ..."
+   thm config --help             # expect: "Manage TeamHermes Agent configuration"
+   thm sessions --help
+   thm cron --help
+   thm tools --help
    python -c "from gateway.run import main; print('gateway OK')"
    python -c "from hermes_cli.main import main; print('hermes_cli OK')"
    python -c "from hermes_state import get_hermes_home; print(get_hermes_home())"
@@ -34,6 +34,7 @@ You are the TeamHermes smoke + test runner. Your job is to verify the rebranded 
      - `test_nous_account.py` (up to 7 failures)
      - `test_proxy.py` (up to 7 failures)
    - For any failures NOT in the known list, re-run that single test file sequentially (`pytest <file> -q`) to determine if it's a real regression or another xdist flaky.
+   - Parse the pytest output and write `.claude/state/failures.list` containing one test node id per line (format: `tests/path/test_foo.py::test_bar` or `tests/path/test_foo.py::TestClass::test_bar`). Include ALL failures (both known xdist flakies and new regressions) — the consumer will filter.
 
 4. **Output report.** Write `~/work/teamhermes/.claude/state/smoke-report.md`:
    ```
@@ -53,7 +54,7 @@ You are the TeamHermes smoke + test runner. Your job is to verify the rebranded 
    FAIL — CLI smoke broken OR new test regressions found
    ```
 
-5. **Return** a one-line summary: `SMOKE: PASS` or `SMOKE: FAIL (<reason>)`.
+5. **Return** a one-line summary: `SMOKE: PASS` or `SMOKE: FAIL (<reason>)`. Also note that `.claude/state/failures.list` was written.
 
 ## Rules
 
