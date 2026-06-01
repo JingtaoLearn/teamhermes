@@ -189,6 +189,16 @@ Stop the audit-fix loop and report `BLOCKED` only when:
 
 Otherwise: keep looping autonomously. Each cycle is one commit `rebrand: P<n> audit fixes (cycle N)`.
 
+### Hard file-scope rule for fix cycles
+
+The audit-report.md is a **closed work list**. The fix-cycle agent:
+
+- **MUST** only edit files explicitly listed in the audit report's residual section.
+- **MUST NOT** re-grep the repo for additional residuals during a fix cycle.
+- **MUST NOT** edit any file not named in the report, even if it looks like it has a residual.
+
+Why: the auditor has already applied the WHITELIST taxonomy. Files NOT listed are either compliant or whitelisted. Re-grepping past the audit report has produced regressions like rewriting wire-protocol UA strings (`hermes-cli/<version>` in `providers/base.py`) or internal help text containing whitelisted symbols (`hermes_cli/main.py` references to the `hermes_cli` package). If the fix-cycle agent thinks the auditor missed something, leave it — the **next** cycle's audit pass will catch it, and a new audit report will explicitly authorize the edit.
+
 ### Whitelist additions during the loop
 
 If the loop encounters a residual that should be permanently whitelisted (not just deferred), the executing Claude may add it to `CLAUDE.md` directly with a `contract: whitelist <thing> (<reason>)` commit, then continue. Cite the classification rule (e.g. "matches WHITELIST rule 3: protocol identifier"). The orchestrator reviews these commits at final review.
