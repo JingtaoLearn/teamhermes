@@ -7,7 +7,7 @@
       "Bash(wget*)", "Bash(scp*)",
       "Edit(LICENSE)", "Edit(NOTICE)", "Edit(.git/**)"
     ],
-    "ask": [
+    "allow": [
       "Bash(pip install*)", "Bash(uv pip install*)"
     ]
   },
