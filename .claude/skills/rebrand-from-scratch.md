@@ -176,6 +176,127 @@ If the loop encounters a residual that should be permanently whitelisted (not ju
 
 After Phase 5, invoke `smoke-tester` subagent. Pass = ready for orchestrator handoff. Fail outside known xdist flakies = STOP and report.
 
+## Phase 6 — Full pytest sweep + bidirectional assertion fix (MANDATORY)
+
+**Why this phase exists:** Smoke tests verify the binary launches and config loads. They do NOT catch the ~80 unit-test failures the rebrand reliably introduces. Skipping this phase ships a green local repo with a red CI — every time. (Verified 2026-06-01: 78 unique unit-test failures after a "smoke-clean" rebrand.)
+
+### Run the gate
+
+```bash
+source .venv/bin/activate   # ensure full extras installed: .[messaging,web]
+pytest tests/ -q -n 4 --timeout=60 2>&1 | tee .claude/state/pytest-sweep.log
+```
+
+If installs are needed first:
+```bash
+uv pip install -e '.[messaging,web]' pytest-timeout pytest-xdist pytest-asyncio
+```
+
+Extract `FAILED tests/...` lines into `.claude/state/failures.list` for the fix loop.
+
+### The bidirectional fix taxonomy
+
+CI failures after rebrand split into FOUR buckets. Classify each before editing.
+
+**Bucket A — Test stale, code correct.** Test asserts the OLD brand string; code now correctly emits the NEW one. Example: `test_auth_nous_provider.py` expects `'hermes auth add nous'`, code emits `'thm auth add nous'`. **Fix the test.**
+
+**Bucket B — Code stale, test correct.** Test asserts the NEW brand string; code still emits OLD. P2/P4 missed this file. Example: `test_proxy_mode.py` expects header `X-TeamHermes-Session-Id`, code still sends `X-Hermes-Session-Id`. **Fix the code.** This bucket is the most dangerous — it's a real rebrand residual that smoke tests cannot see.
+
+**Bucket C — Compatibility-preserved surface, code wrongly rebranded.** Test asserts the OLD string because that string is on the contract whitelist (PyPI distribution name in ACP registry, Homebrew formula name, etc.). P1–P4 incorrectly changed code to new brand. **Revert the code to old; test is the source of truth.** Look for these in `scripts/release.py` (PyPI/uvx package strings), `plugins/memory/supermemory/__init__.py` (default container tag — historically `hermes`), `docker/s6-rc.d/*/run` (user is `hermes` but binary is `thm` — mixed line `s6-setuidgid hermes thm dashboard`).
+
+**Bucket D — Real source bug introduced by rebrand.** Renames left a variable reference dangling, e.g. function renamed `_resolve_hermes_bin` → kept inner `hermes_bin` local but parameter became `thm_bin` → `NameError`. **Read the file, fix the bug.** These pass syntax check but blow up at runtime; only the failing test surfaces them.
+
+### Decision heuristic (apply per-failure, in order)
+
+1. Is the test asserting a **preserved-compatibility surface** (PyPI distribution name, Homebrew tap, Docker user, ACP uvx `package` field, supermemory container tag, mixed s6 lines)? → Bucket C, revert code.
+2. Is the test asserting a **NEW brand string** and the code still emits OLD? → Bucket B, fix code.
+3. Is the test asserting an **OLD brand string** and code emits NEW correctly per contract (visible to users, CLI hint text, error messages, banner)? → Bucket A, fix test.
+4. Does the failure stack-trace mention `NameError`, `AttributeError`, `KeyError` on a `hermes`-ish identifier inside production code? → Bucket D, debug and fix the source.
+5. Honcho `host=` / `workspace_id=` defaults: these are **logical host keys** for the memory plugin's wire protocol. The legitimate value is the **old name** (`hermes`) — host keys are external-protocol-shaped. → Bucket C, revert code to `"hermes"`.
+
+### Known recurring hotspots (verified 2026-06-01)
+
+Files almost guaranteed to need a Bucket-C or Bucket-D fix on every rebrand:
+
+| File | Issue class | Fix direction |
+|---|---|---|
+| `plugins/memory/honcho/client.py` | `host` / `workspace_id` defaults wrongly rebranded | Code → `"hermes"` |
+| `plugins/memory/supermemory/__init__.py` | `_DEFAULT_CONTAINER_TAG` wrongly rebranded | Code → `"hermes"` |
+| `scripts/release.py` | ACP registry uvx `package` field | Code → `"hermes-agent[acp]=={ver}"` |
+| `docker/s6-rc.d/dashboard/run` | Test wants `s6-setuidgid <user> <binary>` — user stays `hermes`, binary becomes `thm` | Test asserts new mixed line |
+| `tests/test_termux_all_extra_compat.py` | Self-reference uses new package name `teamhermes[termux]` | Test → `teamhermes[...]` |
+| `tools/approval.py` `DANGEROUS_PATTERNS` | `killall hermes` / `pkill hermes` still in the wild → must trigger | Regex needs both `hermes` AND `thm` |
+| `plugins/google_meet/meet_bot.py` `_looks_like_human_speaker` | Filter ignored `"thm agent"` echo speaker | Code → add `"thm agent"` to filter set |
+| `gateway/run.py` `_resolve_hermes_bin` | Local var still `hermes_bin` after refactor → `NameError` | Code → rename to match new parameter |
+| `agent/skill_utils.py` skill-system-prompt | Toolset-gated skills wrongly leaked into prompt | Code → restore gating logic |
+| `tools/cronjob_tools.py` `profile` description | Hint command was rebranded inconsistently | Code → spell as `thm profile` |
+| `hermes_cli/config.py` | Stale identifier reference | Code → match new symbol |
+
+When the suite first runs after the rebrand, grep for `hermes` in failing-test source lines AND in the actual-output strings — the direction tells you the bucket.
+
+### The autonomous fix loop
+
+```
+while True:
+    pytest <failure-list> -q
+    if 0 failed: break
+    for each failure:
+        classify per heuristic above (A/B/C/D)
+        apply targeted fix
+        re-run that single test → must go green
+    commit batch: "rebrand: P5.5 CI-sweep fixes (<N> tests, buckets A/B/C/D)"
+    re-run full failure list
+    if still failing same items 3 cycles in a row: STOP, report BLOCKED
+```
+
+Maximum: ~5 cycles in practice. Each cycle clears 10–30 failures.
+
+### Verification
+
+Before declaring P5.5 done:
+
+```bash
+# 1. Original failure list now clean
+pytest $(cat .claude/state/failures.list | tr '\n' ' ') -q
+
+# 2. No regressions in adjacent suites
+pytest tests/cron tests/gateway tests/hermes_cli tests/agent tests/honcho_plugin \
+       tests/cli tests/tools tests/plugins tests/scripts -q -n 4 --timeout=60
+```
+
+Both must end with `0 failed` (xdist-flaky timeouts are acceptable IFF rerunning the same test alone passes).
+
+Commit: `rebrand: P6 CI-sweep clean (NN tests fixed, buckets: <A=...,B=...,C=...,D=...>)`
+
+### CRITICAL: Bucket-C reversals have a blast radius
+
+When reverting a Bucket-C (compatibility-preserved surface) change, **never trust the single failing test as proof of correctness**. The same module almost certainly has other tests/call-sites that depend on the value you just changed.
+
+Mandatory checklist before declaring a Bucket-C fix done:
+
+```bash
+# 1. What else in the codebase reads this symbol?
+rg "<SYMBOL_YOU_CHANGED>" --type py
+
+# 2. What else in tests asserts on its value?
+rg "_DEFAULT_FOO|FOO == \"hermes\"|FOO == \"thm\"" tests/
+
+# 3. Run the WHOLE module's tests, not just the single failing one
+pytest path/to/module/ -q
+
+# 4. If the module has integration tests touching the same symbol,
+#    run them too:
+pytest tests/integration -k <relevant_keyword> -q
+```
+
+Verified 2026-06-01: reverting `supermemory._DEFAULT_CONTAINER_TAG` from `thm` back to `hermes` for one failing test silently set up ~15 other tests in the same module to fail (they assert `_container_tag == "hermes_<profile>"` and the default flows through into that calculation). The fix was correct in isolation but the blast radius was uninspected. Always scan the radius before committing a Bucket-C reversal.
+
+### Cost guardrails
+
+- Budget Claude Code at ≥ $20 per CI sweep — first pass typically lands at $6, but the bidirectional taxonomy needs an explicit prompt and at least one re-pass to clear the second-direction failures.
+- If the first pass returns `subtype=success` but `git diff` only touches `tests/`, it missed Bucket B/C/D entirely. Re-prompt with explicit "must change source code, not only tests" before accepting the result.
+- The agent loop hits `error_max_budget_usd` cleanly — that's fine. Take what landed, manually finish the last handful (each is a one-line patch). Don't burn another $15 to save 6 trivial edits.
+
 ## Handoff
 
 When all phases green:
@@ -207,7 +328,7 @@ When all phases green:
 - When unsure → mark RESIDUAL in audit, let orchestrator decide. Don't improvise.
 - All workflow agents must inherit the whitelist from CLAUDE.md (the workflow script must pass CLAUDE.md context to each spawned agent's prompt).
 
-## Phase 6 — Squash to single commit (final step)
+## Phase 7 — Squash to single commit (final step)
 
 After audit passes, smoke tests pass, and REBRAND_REPORT.md is committed:
 

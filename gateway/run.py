@@ -1486,8 +1486,8 @@ def _resolve_hermes_bin() -> Optional[list[str]]:
     import shutil
 
     thm_bin = shutil.which("thm")
-    if hermes_bin:
-        return [hermes_bin]
+    if thm_bin:
+        return [thm_bin]
 
     try:
         import importlib.util
