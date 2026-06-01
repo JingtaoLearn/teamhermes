@@ -87,8 +87,10 @@ async function runAudit(phaseLabel, phaseDescription) {
   let sameResidualStreak = 0
   for (let cycle = 1; cycle <= MAX_CYCLES; cycle++) {
     const audit = await agent(
-      `${CONTRACT}\n\n${CLASSIFICATION_RULES}\n\nRun the rebrand-auditor procedure for phase: ${phaseDescription}.\n` +
-      `Apply the FIX/WHITELIST classification rules above when judging each residual. Write .claude/state/audit-report.md with each residual classified.\n` +
+      `${CONTRACT}\n\n${CLASSIFICATION_RULES}\n\nRun the rebrand-auditor procedure SCOPED TO PHASE ${phaseLabel} ONLY.\n` +
+      `Phase scope: ${phaseDescription}.\n` +
+      `CRITICAL: per the auditor's scope-limited rule, run ONLY the grep categories that match this phase scope. Do NOT report residuals belonging to later phases (e.g. when auditing P2 home dir, do NOT report \\bHermes\\b brand strings or pyproject.toml comments — those belong to P4).\n` +
+      `Apply the FIX/WHITELIST classification rules above when judging in-scope residuals. Write .claude/state/audit-report.md with each in-scope residual classified.\n` +
       `Return JSON via StructuredOutput: { verdict: "PASS"|"FAIL", residuals: <int>, notes: "<short>" }.`,
       { label: `audit:${phaseLabel}:cycle${cycle}`, phase: `${phaseLabel} audit`, schema: AUDIT_SCHEMA, agentType: 'rebrand-auditor' }
     )
@@ -115,10 +117,12 @@ async function runAudit(phaseLabel, phaseDescription) {
 
     await agent(
       `${CONTRACT}\n\n${CLASSIFICATION_RULES}\n\nThe ${phaseLabel} audit reported ${audit?.residuals} residuals. Read .claude/state/audit-report.md.\n` +
-      `For each residual, apply the FIX/WHITELIST classification rules autonomously:\n` +
-      `- If WHITELIST: edit CLAUDE.md to add the entry under the existing whitelist section, commit as "contract: whitelist <thing> (matches rule <N>)".\n` +
+      `IMPORTANT scope rule: only act on residuals IN-SCOPE for phase ${phaseLabel} (${phaseDescription}). If the audit report contains items obviously belonging to a later phase (e.g. \\bHermes\\b brand strings reported during P2 home dir audit), SKIP those — note them in your summary as "deferred to later phase" but DO NOT edit them now. Editing out-of-scope items breaks the phase contract.\n` +
+      `For each IN-SCOPE residual, apply the FIX/WHITELIST classification rules autonomously:\n` +
+      `- If WHITELIST: edit CLAUDE.md to add the entry under the existing whitelist section, commit as "${COMMIT_PREFIX}contract: whitelist <thing> (matches rule <N>)".\n` +
       `- If FIX: apply the mechanical substitution per the rule.\n` +
-      `Then commit the fix batch as: "${COMMIT_PREFIX}rebrand: ${phaseLabel} audit fixes (cycle ${cycle})". Return JSON {filesChanged, commitSha, summary}.`,
+      `If after filtering there are ZERO in-scope residuals to fix, do nothing and return JSON {filesChanged:0, commitSha:"", summary:"all reported residuals out-of-scope, deferred to later phase"}.\n` +
+      `Otherwise commit the fix batch as: "${COMMIT_PREFIX}rebrand: ${phaseLabel} audit fixes (cycle ${cycle})". Return JSON {filesChanged, commitSha, summary}.`,
       { label: `fix:${phaseLabel}:cycle${cycle}`, phase: `${phaseLabel} audit`, schema: PHASE_RESULT_SCHEMA }
     )
   }
