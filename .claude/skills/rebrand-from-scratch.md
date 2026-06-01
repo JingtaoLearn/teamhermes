@@ -123,6 +123,12 @@ Also covered in this phase:
 
 Commit per sub-batch or one squash commit: `rebrand: P4 brand string Hermes -> TeamHermes and CLI hermes -> thm`
 
+### Phase 2 finalize sweep (deterministic safety net)
+
+After the parallel-subtree P2 commit, run `.claude/scripts/p2-sweep.py` as a second pass. Verified necessary 2026-06-01: parallel agents using `rg + Edit each carefully` on a subtree with 100+ candidates converge to ~20% coverage and stop (no signal to keep going). The sweep script does a deterministic Python regex replace with the canonical exclude list (LICENSE/NOTICE/main-hermes/test fixtures/binary extensions) and the same lookbehind/lookahead pattern as the auditor (`(?<![A-Za-z0-9_])\.hermes(?![A-Za-z0-9_])`) so it cannot touch `hermes_cli`, `HERMES_HOME`, or `.hermes_history` (the latter is P3's mapping). On a clean v2026.5.29.2 it lands ~919 files / ~4478 lines that the parallel pass missed, and the audit then comes back clean on the first cycle.
+
+The workflow runs this automatically between the P2 subtree commit and the P2 audit gate — see `.claude/workflows/rebrand.js` `p2:finalize-sweep` agent.
+
 ### Phase 5 — Argparse + final report
 
 Find every `prog="hermes"` and `prog="hermes-acp"` in Python — replace with `prog="thm"` and `prog="thm-acp"`. (~7 files.)

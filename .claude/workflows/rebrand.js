@@ -191,9 +191,21 @@ const p2Results = await parallel(P2_SUBTREES.map(sub => () => agent(
 const p2Total = p2Results.filter(Boolean).reduce((s, r) => s + (r.filesChanged || 0), 0)
 log(`P2: ${p2Total} files edited across ${p2Results.filter(Boolean).length} subtrees — committing`)
 await agent(
-  `Run: git add -A && git diff --cached --stat | tail -1 && git commit -m "${COMMIT_PREFIX}rebrand: P2 default home dir .hermes -> .teamhermes" || echo "nothing to commit". Return JSON {filesChanged:0, commitSha:"<sha or empty>", summary:"P2 commit"}.`,
+  `Run: git add -A && git diff --cached --stat | tail -1 && git commit -m "${COMMIT_PREFIX}rebrand: P2 default home dir .hermes -> .teamhermes (subtree parallel pass)" || echo "nothing to commit". Return JSON {filesChanged:0, commitSha:"<sha or empty>", summary:"P2 subtree commit"}.`,
   { label: 'p2:commit', phase: 'P2 home dir', schema: PHASE_RESULT_SCHEMA }
 )
+
+// P2 finalize sweep — parallel subtree agents reliably miss many \.hermes\b hits
+// when the subtree has 100+ candidates (they sample and stop, no convergence pressure).
+// Run a deterministic Python batch-replace as a safety net BEFORE the audit gate.
+await agent(
+  `${CONTRACT}\n\nPHASE 2 FINALIZE SWEEP — deterministic batch replace for any \\.hermes\\b path literals the parallel subtree agents missed. Use the script .claude/scripts/p2-sweep.py (already in repo). If the script does not exist, create it with the canonical content from .claude/skills/rebrand-from-scratch.md "Phase 2 finalize sweep" section.\n\n` +
+  `Run: \`python .claude/scripts/p2-sweep.py | tee .claude/state/p2-sweep.log\` and read the total line.\n` +
+  `Commit: \`git add -A && git commit -m "${COMMIT_PREFIX}rebrand: P2 finalize sweep (deterministic batch replace)" || echo "nothing to commit"\`.\n` +
+  `Return JSON {filesChanged: <count from script>, commitSha: "<sha or empty>", summary: "P2 sweep: <count> files batch-replaced"}.`,
+  { label: 'p2:finalize-sweep', phase: 'P2 home dir', schema: PHASE_RESULT_SCHEMA }
+)
+
 await runAudit('P2', 'residual \\.hermes\\b path literals only in whitelist-allowed contexts (LICENSE/NOTICE/RELEASE_v*.md, test fixtures, docker/s6-rc.d/main-hermes/, .hermes_history/_build_sha/_sync.* deferred to P3)')
 
 // ---------------- Phase 3 ----------------
