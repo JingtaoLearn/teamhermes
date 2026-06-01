@@ -223,13 +223,78 @@ If the loop encounters a residual that should be permanently whitelisted (not ju
 
 After Phase 5, invoke `smoke-tester` subagent. Pass = ready for orchestrator handoff. Fail outside known xdist flakies = STOP and report.
 
-## Phase 6 — Full pytest sweep + bidirectional assertion fix (MANDATORY)
+## Phase 6 — Iterative convergence CI sweep (MANDATORY)
 
-**Why this phase exists:** Smoke tests verify the binary launches and config loads. They do NOT catch the ~80 unit-test failures the rebrand reliably introduces. Skipping this phase ships a green local repo with a red CI — every time. (Verified 2026-06-01: 78 unique unit-test failures after a "smoke-clean" rebrand.)
+**Why this phase exists:** Smoke tests verify the binary launches and config loads. They do NOT catch the ~80–250 unit-test failures the rebrand reliably introduces. Skipping this phase ships a green local repo with a red CI — every time. (Verified 2026-06-01: 78–131 unique unit-test failures after a "smoke-clean" rebrand; v5 dry-run gave up after one cycle with 131 still failing.)
 
-### Run the gate
+### Convergence contract (FINAL — do not negotiate)
 
-The smoke-tester subagent has already run the full suite and emitted `.claude/state/failures.list`. The fix loop reads this file — do NOT re-run full pytest each cycle, only re-run the remaining failures list.
+**Cycle budget:** Hard cap **16 cycles**.
+
+- **Cycle 1** = the smoke-tester's full `pytest -n auto` run. It writes `.claude/state/failures.list` (one pytest nodeid per line).
+- **Cycles 2–16** = targeted rerun ONLY of the nodeids in `failures.list`:
+  `pytest $(cat .claude/state/failures.list | tr '\n' ' ') -q`
+- After every cycle: **rewrite** `failures.list` with the current remaining failures (could shrink, stay the same, or grow if a fix broke something).
+- **Converged** when `failures.list` is empty → P6 PASS.
+- **Exhausted** when cycle 16 finishes with non-empty `failures.list` → P6 STOP. Write remaining to `.claude/state/p6-blocked.md` and exit non-zero. Do NOT declare PASS.
+
+### Per-cycle workflow
+
+1. **Run pytest** (targeted from cycle 2 on) → capture the new failures list.
+2. **Classify** every failure into Bucket A/B/C/D and write `.claude/state/p6-cycle-N-buckets.md` BEFORE editing anything:
+   - **A** — test assertion stale (test expects "hermes" but production correctly outputs "thm") → **fix the test**
+   - **B** — production code stale (production still outputs "hermes" but test correctly expects "thm") → **fix the code**
+   - **C** — compatibility surface incorrectly rebranded (wire-protocol header, OAuth URL, model id, PyPI distribution name, etc — must REVERT in production)
+   - **D** — rebrand introduced a real bug (NameError, broken import, dangling local) → **fix the source**
+3. **Apply fixes in order A → B → D → C.** C is last because it has the highest blast radius (see below).
+4. **Re-run only the just-fixed testids** to verify each fix individually before the batch commit.
+5. **Re-run the remaining failure list** to refresh `.claude/state/failures.list`.
+6. Commit: `[DRY-RUN] P6 cycle N: bucket A=x B=y C=z D=w, fixed M, remaining K` (omit `[DRY-RUN] ` in live mode).
+
+### Scope fence (hard rules — fix-agent MUST obey)
+
+**MAY edit:**
+- Source files referenced by a failing test (traced via the test's import graph or stack trace), OR
+- The test file itself
+
+**MAY NOT:**
+- Edit any file touched by a P1–P5 phase commit unless it appears in a failures.list trace (avoid undoing whitelist decisions).
+- Add new entries to `CLAUDE.md`. **The whitelist is frozen during P6.** If a failure seems to require a new whitelist entry, mark BLOCKED instead.
+- Re-grep for new patterns outside failures.list scope. P6 is a convergence loop, NOT a discovery phase.
+
+**Bucket-C blast-radius check (mandatory before any C reversal):**
+1. `rg <symbol_being_reverted>` repo-wide.
+2. `pytest <whole containing module>` (e.g. the full `tests/plugins/memory/` if reverting `supermemory._DEFAULT_CONTAINER_TAG`).
+3. If the reversal breaks **≥3 other tests in the same module**, mark BLOCKED — do not commit the reversal.
+
+### BLOCKED degradation (per-testid)
+
+A single testid that fails for **3 consecutive cycles with no progress** (same failure signature, no edit attempted to its trace):
+- Append to `.claude/state/p6-blocked.md` with one section per testid (last error tail, last classification, why blocked).
+- **Remove from `failures.list`** so the loop can keep converging on the rest.
+
+`p6-blocked.md` is part of the final P6 report regardless of how P6 exits.
+
+### Post-convergence (LIVE mode only)
+
+When `failures.list` is empty AND `DRY_RUN === false`:
+
+1. `git push origin <current-branch>` (this branch is the PR branch — e.g. `fix/ci-rebrand-residuals` = PR #6).
+2. `gh pr checks <PR#> --watch` (wait for remote CI).
+3. Write `.claude/state/p6-final-report.md` with the remote CI status.
+
+In DRY-RUN mode: skip the push, write a `[DRY-RUN] P6 CONVERGED` commit, stop.
+
+### Verification before declaring P6 done
+
+```bash
+# 1. failures.list is empty
+test ! -s .claude/state/failures.list
+
+# 2. No regressions in adjacent suites
+pytest tests/cron tests/gateway tests/hermes_cli tests/agent tests/honcho_plugin \
+       tests/cli tests/tools tests/plugins tests/scripts -q -n 4 --timeout=60
+```
 
 ### The bidirectional fix taxonomy
 

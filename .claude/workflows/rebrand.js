@@ -333,33 +333,89 @@ if (smoke?.verdict === 'PASS' && smoke?.newRegressions === 0) {
   const MAX_SWEEP_CYCLES = 16
   let lastRemaining = -1
   let stallStreak = 0
+  let converged = false
   for (let cycle = 1; cycle <= MAX_SWEEP_CYCLES; cycle++) {
     const fix = await agent(
-      `${CONTRACT}\n\nP6 CI sweep — cycle ${cycle}/${MAX_SWEEP_CYCLES}.\n` +
-      `Read .claude/state/failures.list (current remaining failures only — do NOT re-run full pytest).\n` +
-      `Also read .claude/state/p6-resume.list if it exists (items the orchestrator already handled — SKIP these).\n` +
-      `Follow the Phase 6 procedure in .claude/skills/rebrand-from-scratch.md exactly: classify each failure into Bucket A/B/C/D, apply the targeted fix, re-run that single test to verify, then re-run the remaining failures-list to update .claude/state/failures.list.\n` +
+      `${CONTRACT}\n\nP6 ITERATIVE CONVERGENCE — cycle ${cycle}/${MAX_SWEEP_CYCLES}.\n\n` +
+      `STEP 1 — Read inputs:\n` +
+      `  - .claude/state/failures.list (pytest nodeids; the ONLY work for this cycle)\n` +
+      `  - .claude/state/p6-blocked.md if it exists (testids already given up — SKIP)\n` +
+      `  - .claude/state/p6-resume.list if it exists (orchestrator-handled — SKIP)\n\n` +
+      `STEP 2 — Run targeted pytest:\n` +
+      (cycle === 1
+        ? `  Cycle 1: failures.list was written by smoke-tester from the full sweep. Trust it.\n`
+        : `  pytest $(cat .claude/state/failures.list | tr '\\n' ' ') -q --no-header 2>&1 | tee .claude/state/p6-cycle-${cycle}.log\n` +
+          `  Then rewrite failures.list with the current failing nodeids only.\n`) +
+      `  If failures.list is empty → return {verdict:"DONE", fixedCount:0, remainingFailures:0, bucketTally:{A:0,B:0,C:0,D:0}, notes:"converged"}.\n\n` +
+      `STEP 3 — Classify EVERY remaining failure into Bucket A/B/C/D BEFORE editing anything. Write .claude/state/p6-cycle-${cycle}-buckets.md with one section per failure: nodeid, bucket, root file path, one-line reason.\n` +
+      `  A = test assertion stale (test wants "hermes", code correctly emits "thm") → fix the test\n` +
+      `  B = production code stale (test wants "thm", code still emits "hermes") → fix the code\n` +
+      `  C = compatibility surface incorrectly rebranded (wire protocol, OAuth URL, model id, PyPI dist name, etc — must REVERT in production)\n` +
+      `  D = real bug introduced by rebrand (NameError, broken import, dangling local) → fix the source\n\n` +
+      `STEP 4 — SCOPE FENCE (HARD RULES — violating these voids the cycle):\n` +
+      `  MAY EDIT: source files referenced by a failing test's trace, OR the test file itself.\n` +
+      `  MAY NOT: edit any file touched by P1-P5 phase commits unless it appears in failures.list trace.\n` +
+      `  MAY NOT: add new entries to CLAUDE.md (whitelist is FROZEN during P6; if a failure seems to need a new whitelist, mark that testid BLOCKED).\n` +
+      `  MAY NOT: re-grep for new patterns outside failures.list scope. P6 is convergence, not discovery.\n\n` +
+      `STEP 5 — Apply fixes in order A → B → D → C (C LAST because highest blast risk).\n` +
+      `  For each Bucket-C reversal BEFORE committing:\n` +
+      `    a. rg <symbol> repo-wide\n` +
+      `    b. pytest the WHOLE containing module\n` +
+      `    c. If reversal breaks ≥3 other tests in that module → mark this testid BLOCKED, do NOT commit the reversal.\n` +
+      `  After each fix re-run that single nodeid; must go green before moving on.\n\n` +
+      `STEP 6 — Per-testid BLOCKED degradation: any testid that failed for 3 consecutive cycles with no progress (track via .claude/state/p6-cycle-N-buckets.md history) → append to .claude/state/p6-blocked.md AND remove from failures.list so the loop can keep going.\n\n` +
+      `STEP 7 — Rewrite .claude/state/failures.list with current remaining failures.\n\n` +
       (DRY_RUN
-        ? `DRY-RUN MODE: do NOT edit files, do NOT commit. Instead write .claude/state/p6-plan.md with one section per failure: {bucket, target_file, proposed_fix_summary}. Return JSON with fixedCount:0, remainingFailures:<initial count>, verdict:"DONE".\n`
-        : `Commit the batch as: "${COMMIT_PREFIX}rebrand: P6 CI-sweep cycle ${cycle} (bucket tally A/B/C/D)".\n`) +
-      `Return JSON {verdict, fixedCount, remainingFailures, bucketTally:{A,B,C,D}, notes}.`,
+        ? `DRY-RUN MODE: do NOT edit production files, do NOT commit. Write .claude/state/p6-plan.md with full classification. Return JSON {verdict:"DONE", fixedCount:0, remainingFailures:<count>, bucketTally, notes:"dry-run classification only"}.\n`
+        : `STEP 8 — Commit: "${COMMIT_PREFIX}P6 cycle ${cycle}: bucket A=<x> B=<y> C=<z> D=<w>, fixed <M>, remaining <K>".\n`) +
+      `Return JSON {verdict:"DONE"|"PROGRESS"|"BLOCKED", fixedCount, remainingFailures, bucketTally:{A,B,C,D}, notes}.`,
       { label: `p6-fix:cycle${cycle}`, phase: 'P6 sweep', agentType: 'rebrand-fixer', schema: P6_FIX_SCHEMA }
     )
 
-    if (DRY_RUN) { log(`P6 dry-run: ${fix?.remainingFailures} failures classified into plan`); break }
-    if (fix?.verdict === 'DONE' || fix?.remainingFailures === 0) { log(`P6 sweep DONE on cycle ${cycle}`); break }
+    if (DRY_RUN) { log(`P6 dry-run cycle ${cycle}: ${fix?.remainingFailures} failures classified into plan`); break }
+    if (fix?.verdict === 'DONE' || fix?.remainingFailures === 0) { log(`P6 CONVERGED on cycle ${cycle}`); converged = true; break }
     if (fix?.verdict === 'BLOCKED') {
       await agent(
-        `Write .claude/state/p6-resume.list with the current contents of .claude/state/failures.list, prefixed with a header line "# BLOCKED at cycle ${cycle}: ${fix?.notes}". Return JSON {filesChanged:1, commitSha:"", summary:"resume list written"}.`,
+        `Write .claude/state/p6-resume.list with the current contents of .claude/state/failures.list, prefixed with a header line "# BLOCKED at cycle ${cycle}: ${fix?.notes}". Also ensure .claude/state/p6-blocked.md exists (touch if not). Return JSON {filesChanged:1, commitSha:"", summary:"resume list written"}.`,
         { label: 'p6-blocked', schema: PHASE_RESULT_SCHEMA }
       )
-      throw new Error(`P6 sweep BLOCKED at cycle ${cycle}: ${fix?.notes}. See .claude/state/p6-resume.list for orchestrator handoff.`)
+      throw new Error(`P6 sweep BLOCKED at cycle ${cycle}: ${fix?.notes}. See .claude/state/p6-resume.list and p6-blocked.md.`)
     }
     if (fix?.remainingFailures === lastRemaining) {
       stallStreak++
-      if (stallStreak >= 3) throw new Error(`P6 sweep stalled: ${fix?.remainingFailures} failures unchanged across 3 cycles`)
+      if (stallStreak >= 3) {
+        await agent(
+          `P6 stalled at ${fix?.remainingFailures} failures across 3 cycles. Move ALL remaining nodeids in .claude/state/failures.list into .claude/state/p6-blocked.md (append, with header "# STALLED at cycle ${cycle}"), then truncate failures.list to empty. Return JSON {filesChanged:2, commitSha:"", summary:"stall → blocked list"}.`,
+          { label: 'p6-stall-degrade', schema: PHASE_RESULT_SCHEMA }
+        )
+        throw new Error(`P6 stalled: ${fix?.remainingFailures} failures unchanged across 3 cycles → moved to p6-blocked.md`)
+      }
     } else { stallStreak = 0; lastRemaining = fix?.remainingFailures ?? -1 }
-    if (cycle === MAX_SWEEP_CYCLES) throw new Error(`P6 sweep exhausted ${MAX_SWEEP_CYCLES} cycles, ${fix?.remainingFailures} failures remain`)
+    if (cycle === MAX_SWEEP_CYCLES) {
+      await agent(
+        `P6 exhausted ${MAX_SWEEP_CYCLES} cycles. Write .claude/state/p6-blocked.md with the current failures.list contents, header "# EXHAUSTED at cycle ${MAX_SWEEP_CYCLES}, ${fix?.remainingFailures} remain". Return JSON {filesChanged:1, commitSha:"", summary:"exhaust written"}.`,
+        { label: 'p6-exhausted', schema: PHASE_RESULT_SCHEMA }
+      )
+      throw new Error(`P6 exhausted ${MAX_SWEEP_CYCLES} cycles, ${fix?.remainingFailures} failures remain — see .claude/state/p6-blocked.md`)
+    }
+  }
+
+  // Post-convergence push (LIVE only)
+  if (converged && !DRY_RUN) {
+    await agent(
+      `P6 converged. Push to the current branch and watch CI:\n` +
+      `  branch=$(git rev-parse --abbrev-ref HEAD)\n` +
+      `  git push origin "$branch"\n` +
+      `  pr=$(gh pr list --head "$branch" --json number --jq '.[0].number')\n` +
+      `  gh pr checks "$pr" --watch | tee .claude/state/p6-final-report.md\n` +
+      `Return JSON {filesChanged:1, commitSha:"", summary:"pushed and CI watched"}.`,
+      { label: 'p6-push+watch', phase: 'P6 sweep', schema: PHASE_RESULT_SCHEMA }
+    )
+  } else if (converged && DRY_RUN) {
+    await agent(
+      `Write a [DRY-RUN] convergence marker: \`git commit --allow-empty -m "${COMMIT_PREFIX}P6 CONVERGED (dry-run, no push)"\`. Return JSON {filesChanged:0, commitSha:"<sha>", summary:"dry-run converged marker"}.`,
+      { label: 'p6-dryrun-converged', schema: PHASE_RESULT_SCHEMA }
+    )
   }
 }
 
