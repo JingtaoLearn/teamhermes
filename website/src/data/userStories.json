@@ -2559,7 +2559,7 @@
     "date": "",
     "category": "creative",
     "headline": "Chatting with Hermes on a 1969 Teletype Model 33 at 110 baud",
-    "quote": "I made a minimal login shell that talks to Hermes Agent via the gateway web service, or by running `hermes chat`. Hooked the shell up to an autologin getty on a serial port. Connected the serial port via 20mA current loop at 110 baud, to a 1969 Teletype Model 33. Chatting away!",
+    "quote": "I made a minimal login shell that talks to Hermes Agent via the gateway web service, or by running `thm chat`. Hooked the shell up to an autologin getty on a serial port. Connected the serial port via 20mA current loop at 110 baud, to a 1969 Teletype Model 33. Chatting away!",
     "size": "lg"
   },
   {

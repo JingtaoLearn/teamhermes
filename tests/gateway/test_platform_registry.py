@@ -436,7 +436,7 @@ class TestApplyYamlConfigFnDispatch:
     """
 
     def _write_config(self, tmp_path, content: str):
-        hermes_home = tmp_path / ".hermes"
+        hermes_home = tmp_path / ".teamhermes"
         hermes_home.mkdir()
         (hermes_home / "config.yaml").write_text(content, encoding="utf-8")
         return hermes_home
@@ -668,7 +668,7 @@ class TestPluginPlatformSharedKeyBridge:
     """
 
     def _write_config(self, tmp_path, content: str):
-        hermes_home = tmp_path / ".hermes"
+        hermes_home = tmp_path / ".teamhermes"
         hermes_home.mkdir()
         (hermes_home / "config.yaml").write_text(content, encoding="utf-8")
         return hermes_home
@@ -723,7 +723,7 @@ class TestPluginEnablementGate:
     """
 
     def _write_config(self, tmp_path, content: str = ""):
-        hermes_home = tmp_path / ".hermes"
+        hermes_home = tmp_path / ".teamhermes"
         hermes_home.mkdir()
         (hermes_home / "config.yaml").write_text(content, encoding="utf-8")
         return hermes_home

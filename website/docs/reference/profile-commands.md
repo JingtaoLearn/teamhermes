@@ -4,15 +4,15 @@ sidebar_position: 7
 
 # Profile Commands Reference
 
-This page covers all commands related to [Hermes profiles](../user-guide/profiles.md). For general CLI commands, see [CLI Commands Reference](./cli-commands.md).
+This page covers all commands related to [TeamHermes profiles](../user-guide/profiles.md). For general CLI commands, see [CLI Commands Reference](./cli-commands.md).
 
-## `hermes profile`
+## `thm profile`
 
 ```bash
-hermes profile <subcommand>
+thm  profile <subcommand>
 ```
 
-Top-level command for managing profiles. Running `hermes profile` without a subcommand shows help.
+Top-level command for managing profiles. Running `thm profile` without a subcommand shows help.
 
 | Subcommand | Description |
 |------------|-------------|
@@ -29,10 +29,10 @@ Top-level command for managing profiles. Running `hermes profile` without a subc
 | `update` | Re-pull a distribution-managed profile and re-apply its bundle. |
 | `info` | Show distribution metadata for a profile (origin URL, commit, last update). |
 
-## `hermes profile list`
+## `thm profile list`
 
 ```bash
-hermes profile list
+thm  profile list
 ```
 
 Lists all profiles. The currently active profile is marked with `*`.
@@ -40,7 +40,7 @@ Lists all profiles. The currently active profile is marked with `*`.
 **Example:**
 
 ```bash
-$ hermes profile list
+ profile list
   default
 * work
   dev
@@ -49,13 +49,13 @@ $ hermes profile list
 
 No options.
 
-## `hermes profile use`
+## `thm profile use`
 
 ```bash
-hermes profile use <name>
+thm  profile use <name>
 ```
 
-Sets `<name>` as the active profile. All subsequent `hermes` commands (without `-p`) will use this profile.
+Sets `<name>` as the active profile. All subsequent `thm` commands (without `-p`) will use this profile.
 
 | Argument | Description |
 |----------|-------------|
@@ -64,14 +64,14 @@ Sets `<name>` as the active profile. All subsequent `hermes` commands (without `
 **Example:**
 
 ```bash
-hermes profile use work
-hermes profile use default
+thm  profile use work
+thm  profile use default
 ```
 
-## `hermes profile create`
+## `thm profile create`
 
 ```bash
-hermes profile create <name> [options]
+thm  profile create <name> [options]
 ```
 
 Creates a new profile.
@@ -83,8 +83,8 @@ Creates a new profile.
 | `--clone-all` | Copy everything (config, memories, skills, sessions, state) from the current profile. |
 | `--clone-from <profile>` | Clone from a specific profile instead of the current one. Used with `--clone` or `--clone-all`. |
 | `--no-alias` | Skip wrapper script creation. |
-| `--description "<text>"` | One- or two-sentence description of what this profile is good at. Used by the kanban orchestrator to route tasks based on role instead of profile name alone. Skip and add later via `hermes profile describe`. Persisted in `<profile_dir>/profile.yaml`. |
-| `--no-skills` | Create an **empty** profile with zero bundled skills enabled. Writes a `.no-skills` marker into the profile so future `hermes update` runs won't re-seed the bundled set, and refuses to combine with `--clone` / `--clone-all` (which would copy skills in anyway). Useful for narrow orchestrator profiles or sandbox profiles that should not inherit the full skill catalog. |
+| `--description "<text>"` | One- or two-sentence description of what this profile is good at. Used by the kanban orchestrator to route tasks based on role instead of profile name alone. Skip and add later via `thm profile describe`. Persisted in `<profile_dir>/profile.yaml`. |
+| `--no-skills` | Create an **empty** profile with zero bundled skills enabled. Writes a `.no-skills` marker into the profile so future `thm update` runs won't re-seed the bundled set, and refuses to combine with `--clone` / `--clone-all` (which would copy skills in anyway). Useful for narrow orchestrator profiles or sandbox profiles that should not inherit the full skill catalog. |
 
 Creating a profile does **not** make that profile directory the default project/workspace directory for terminal commands. If you want a profile to start in a specific project, set `terminal.cwd` in that profile's `config.yaml`.
 
@@ -92,22 +92,22 @@ Creating a profile does **not** make that profile directory the default project/
 
 ```bash
 # Blank profile — needs full setup
-hermes profile create mybot
+thm  profile create mybot
 
 # Clone config only from current profile
-hermes profile create work --clone
+thm  profile create work --clone
 
 # Clone everything from current profile
-hermes profile create backup --clone-all
+thm  profile create backup --clone-all
 
 # Clone config from a specific profile
-hermes profile create work2 --clone --clone-from work
+thm  profile create work2 --clone --clone-from work
 ```
 
-## `hermes profile describe`
+## `thm profile describe`
 
 ```bash
-hermes profile describe [<name>] [options]
+thm  profile describe [<name>] [options]
 ```
 
 Read or set a profile's description. The description is consumed by the kanban orchestrator to route tasks based on what each profile is good at, rather than guessing from the profile name alone. Persisted in `<profile_dir>/profile.yaml` so it survives reboots and is shared with the gateway.
@@ -126,22 +126,22 @@ With no flags, prints the current description (or `(no description set for '<nam
 
 ```bash
 # Read the current description
-hermes profile describe researcher
+thm  profile describe researcher
 
 # Set it explicitly
-hermes profile describe researcher --text "Reads source code and writes findings."
+thm  profile describe researcher --text "Reads source code and writes findings."
 
 # Let the LLM generate one
-hermes profile describe researcher --auto
+thm  profile describe researcher --auto
 
 # Fill in descriptions for every profile that doesn't have one
-hermes profile describe --all --auto
+thm  profile describe --all --auto
 ```
 
-## `hermes profile delete`
+## `thm profile delete`
 
 ```bash
-hermes profile delete <name> [options]
+thm  profile delete <name> [options]
 ```
 
 Deletes a profile and removes its shell alias.
@@ -154,23 +154,23 @@ Deletes a profile and removes its shell alias.
 **Example:**
 
 ```bash
-hermes profile delete mybot
-hermes profile delete mybot --yes
+thm  profile delete mybot
+thm  profile delete mybot --yes
 ```
 
 :::warning
 This permanently deletes the profile's entire directory including all config, memories, sessions, and skills. Cannot delete the currently active profile.
 :::
 
-## `hermes profile show`
+## `thm profile show`
 
 ```bash
-hermes profile show <name>
+thm  profile show <name>
 ```
 
 Displays details about a profile including its home directory, configured model, gateway status, skills count, and configuration file status.
 
-This shows the profile's Hermes home directory, not the terminal working directory. Terminal commands start from `terminal.cwd` (or the launch directory on the local backend when `cwd: "."`).
+This shows the profile's TeamHermes home directory, not the terminal working directory. Terminal commands start from `terminal.cwd` (or the launch directory on the local backend when `cwd: "."`).
 
 | Argument | Description |
 |----------|-------------|
@@ -179,9 +179,9 @@ This shows the profile's Hermes home directory, not the terminal working directo
 **Example:**
 
 ```bash
-$ hermes profile show work
+ profile show work
 Profile: work
-Path:    ~/.hermes/profiles/work
+Path:    ~/.teamhermes/profiles/work
 Model:   anthropic/claude-sonnet-4 (anthropic)
 Gateway: stopped
 Skills:  12
@@ -190,13 +190,13 @@ SOUL.md: exists
 Alias:   ~/.local/bin/work
 ```
 
-## `hermes profile alias`
+## `thm profile alias`
 
 ```bash
-hermes profile alias <name> [options]
+thm  profile alias <name> [options]
 ```
 
-Regenerates the shell alias script at `~/.local/bin/<name>`. Useful if the alias was accidentally deleted or if you need to update it after moving your Hermes installation.
+Regenerates the shell alias script at `~/.local/bin/<name>`. Useful if the alias was accidentally deleted or if you need to update it after moving your TeamHermes installation.
 
 | Argument / Option | Description |
 |-------------------|-------------|
@@ -207,20 +207,20 @@ Regenerates the shell alias script at `~/.local/bin/<name>`. Useful if the alias
 **Example:**
 
 ```bash
-hermes profile alias work
+thm  profile alias work
 # Creates/updates ~/.local/bin/work
 
-hermes profile alias work --name mywork
+thm  profile alias work --name mywork
 # Creates ~/.local/bin/mywork
 
-hermes profile alias work --remove
+thm  profile alias work --remove
 # Removes the wrapper script
 ```
 
-## `hermes profile rename`
+## `thm profile rename`
 
 ```bash
-hermes profile rename <old-name> <new-name>
+thm  profile rename <old-name> <new-name>
 ```
 
 Renames a profile. Updates the directory and shell alias.
@@ -233,15 +233,15 @@ Renames a profile. Updates the directory and shell alias.
 **Example:**
 
 ```bash
-hermes profile rename mybot assistant
-# ~/.hermes/profiles/mybot → ~/.hermes/profiles/assistant
+thm  profile rename mybot assistant
+# ~/.teamhermes/profiles/mybot → ~/.teamhermes/profiles/assistant
 # ~/.local/bin/mybot → ~/.local/bin/assistant
 ```
 
-## `hermes profile export`
+## `thm profile export`
 
 ```bash
-hermes profile export <name> [options]
+thm  profile export <name> [options]
 ```
 
 Exports a profile as a compressed tar.gz archive.
@@ -254,16 +254,16 @@ Exports a profile as a compressed tar.gz archive.
 **Example:**
 
 ```bash
-hermes profile export work
+thm  profile export work
 # Creates work.tar.gz in the current directory
 
-hermes profile export work -o ./work-2026-03-29.tar.gz
+thm  profile export work -o ./work-2026-03-29.tar.gz
 ```
 
-## `hermes profile import`
+## `thm profile import`
 
 ```bash
-hermes profile import <archive> [options]
+thm  profile import <archive> [options]
 ```
 
 Imports a profile from a tar.gz archive.
@@ -276,10 +276,10 @@ Imports a profile from a tar.gz archive.
 **Example:**
 
 ```bash
-hermes profile import ./work-2026-03-29.tar.gz
+thm  profile import ./work-2026-03-29.tar.gz
 # Infers profile name from the archive
 
-hermes profile import ./work-2026-03-29.tar.gz --name work-restored
+thm  profile import ./work-2026-03-29.tar.gz --name work-restored
 ```
 
 ## Distribution commands
@@ -301,16 +301,16 @@ The recipient's user data (memories, sessions, auth, their own edits to
 updates.
 
 :::info
-`hermes profile export` / `import` are still the right commands for
+`thm profile export` / `import` are still the right commands for
 **local backup and restore** of a profile on your own machine. Distribution
 (`install` / `update` / `info`) is a separate concept: ship a profile via
 git so someone else can install it.
 :::
 
-### `hermes profile install`
+### `thm profile install`
 
 ```bash
-hermes profile install <source> [--name <name>] [--alias] [--force] [--yes]
+thm  profile install <source> [--name <name>] [--alias] [--force] [--yes]
 ```
 
 Installs a profile distribution from a git URL or a local directory.
@@ -319,7 +319,7 @@ Installs a profile distribution from a git URL or a local directory.
 |--------|-------------|
 | `<source>` | Git URL (`github.com/user/repo`, `https://...`, `git@...`, `ssh://`, `git://`) or a local directory containing `distribution.yaml` at its root. |
 | `--name NAME` | Override the profile name from the manifest. |
-| `--alias` | Also create a shell wrapper (e.g. `telemetry` → `hermes -p telemetry`). |
+| `--alias` | Also create a shell wrapper (e.g. `telemetry` → `thm  -p telemetry`). |
 | `--force` | Overwrite an existing profile of the same name. User data is still preserved. |
 | `-y`, `--yes` | Skip the manifest-preview confirmation prompt. |
 
@@ -331,22 +331,22 @@ cron jobs before asking for confirmation. Required env vars go into a
 
 ```bash
 # Install from a GitHub repo (shorthand)
-hermes profile install github.com/kyle/telemetry-distribution --alias
+thm  profile install github.com/kyle/telemetry-distribution --alias
 
 # Install from a full HTTPS git URL
-hermes profile install https://github.com/kyle/telemetry-distribution.git
+thm  profile install https://github.com/kyle/telemetry-distribution.git
 
 # Install from SSH
-hermes profile install git@github.com:kyle/telemetry-distribution.git
+thm  profile install git@github.com:kyle/telemetry-distribution.git
 
 # Install from a local directory during development
-hermes profile install ./telemetry/
+thm  profile install ./telemetry/
 ```
 
-### `hermes profile update`
+### `thm profile update`
 
 ```bash
-hermes profile update <name> [--force-config] [--yes]
+thm  profile update <name> [--force-config] [--yes]
 ```
 
 Re-clones the distribution from its recorded source and applies updates.
@@ -356,21 +356,21 @@ overwritten; user data (memories, sessions, auth, .env) is never touched.
 `config.yaml` is preserved by default to keep your local overrides.
 Pass `--force-config` to reset it to the distribution's shipped config.
 
-### `hermes profile info`
+### `thm profile info`
 
 ```bash
-hermes profile info <name>
+thm  profile info <name>
 ```
 
 Prints the profile's distribution manifest — name, version, required
-Hermes version, author, env var requirements, the source URL/path, and
+TeamHermes version, author, env var requirements, the source URL/path, and
 the `Installed:` timestamp recorded when the distribution was last
 `install`-ed or `update`-d. Useful for checking what a shared profile
 needs before installing it, and for spotting "this profile was installed
 6 months ago and hasn't been updated."
 
-`hermes profile list` also shows the distribution name and version in a
-`Distribution` column, and `hermes profile show <name>` / `delete <name>`
+`thm profile list` also shows the distribution name and version in a
+`Distribution` column, and `thm profile show <name>` / `delete <name>`
 surface the source URL so you can tell at a glance which profiles came
 from a git repo vs. were created locally.
 
@@ -384,10 +384,10 @@ transparently.
 
 ```bash
 # Uses your SSH key, the same as any other `git clone`
-hermes profile install git@github.com:your-org/internal-assistant.git
+thm  profile install git@github.com:your-org/internal-assistant.git
 
 # Uses your git credential helper
-hermes profile install https://github.com/your-org/internal-assistant.git
+thm  profile install https://github.com/your-org/internal-assistant.git
 ```
 
 If a clone prompts for credentials interactively in your terminal during
@@ -422,7 +422,7 @@ distribution_owned:   # optional; defaults to SOUL.md, config.yaml,
 
 `hermes_requires` supports `>=`, `<=`, `==`, `!=`, `>`, `<`, or a bare
 version (treated as `>=`). Install fails with a clear error if the current
-Hermes version doesn't satisfy the spec.
+TeamHermes version doesn't satisfy the spec.
 
 `distribution_owned` is optional. If set, only those paths are replaced on
 update; anything else in the profile stays user-owned. If omitted, the
@@ -435,20 +435,20 @@ Authoring a distribution is just a git push:
 1. In your profile directory, create `distribution.yaml` with at least `name`
    and `version`.
 2. Initialize a git repo (or use an existing one) and push to GitHub /
-   GitLab / any host Hermes can clone from.
-3. Tell recipients to run `hermes profile install <your-repo-url>`.
+   GitLab / any host TeamHermes can clone from.
+3. Tell recipients to run `thm profile install <your-repo-url>`.
 
 Use git tags for versioned releases — recipients who clone `HEAD` get your
 latest state, and you can always bump `version:` in the manifest.
 
-## `hermes -p` / `hermes --profile`
+## `thm  -p` / `thm  --profile`
 
 ```bash
-hermes -p <name> <command> [options]
-hermes --profile <name> <command> [options]
+thm  -p <name> <command> [options]
+thm  --profile <name> <command> [options]
 ```
 
-Global flag to run any Hermes command under a specific profile without changing the sticky default. This overrides the active profile for the duration of the command.
+Global flag to run any TeamHermes command under a specific profile without changing the sticky default. This overrides the active profile for the duration of the command.
 
 | Option | Description |
 |--------|-------------|
@@ -457,16 +457,16 @@ Global flag to run any Hermes command under a specific profile without changing 
 **Examples:**
 
 ```bash
-hermes -p work chat -q "Check the server status"
-hermes --profile dev gateway start
-hermes -p personal skills list
-hermes -p work config edit
+thm  -p work chat -q "Check the server status"
+thm  --profile dev gateway start
+thm  -p personal skills list
+thm  -p work config edit
 ```
 
-## `hermes completion`
+## `thm  completion`
 
 ```bash
-hermes completion <shell>
+thm  completion <shell>
 ```
 
 Generates shell completion scripts. Includes completions for profile names and profile subcommands.
@@ -479,18 +479,18 @@ Generates shell completion scripts. Includes completions for profile names and p
 
 ```bash
 # Install completions
-hermes completion bash >> ~/.bashrc
-hermes completion zsh >> ~/.zshrc
-hermes completion fish > ~/.config/fish/completions/hermes.fish
+thm  completion bash >> ~/.bashrc
+thm  completion zsh >> ~/.zshrc
+thm  completion fish > ~/.config/fish/completions/hermes.fish
 
 # Reload shell
 source ~/.bashrc
 ```
 
 After installation, tab completion works for:
-- `hermes profile <TAB>` — subcommands (list, use, create, etc.)
-- `hermes profile use <TAB>` — profile names
-- `hermes -p <TAB>` — profile names
+- `thm profile <TAB>` — subcommands (list, use, create, etc.)
+- `thm profile use <TAB>` — profile names
+- `thm  -p <TAB>` — profile names
 
 ## See also
 

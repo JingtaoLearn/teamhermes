@@ -1,5 +1,5 @@
 """Tests for issue #26670 — concurrent hermes.exe detection and improved
-quarantine retry / reboot-deferred fallback during `hermes update` on Windows.
+quarantine retry / reboot-deferred fallback during `thm update` on Windows.
 
 These tests force ``_is_windows`` to return ``True`` via patching so the
 Windows-specific code paths can be exercised on any host.
@@ -306,7 +306,7 @@ def test_format_message_mentions_pids_and_remediation(tmp_path):
     assert "1234" in msg
     assert "5678" in msg
     assert "hermes.exe" in msg
-    assert "Hermes Desktop" in msg
+    assert "TeamHermes Desktop" in msg
     assert "--force" in msg
     # Mentions the file that would have been overwritten
     assert str(tmp_path / "hermes.exe") in msg
@@ -415,7 +415,7 @@ def test_quarantine_actionable_warning_when_everything_fails(
     # New message format: no raw "[WinError 32]" dump; instead names the cause
     # and tells the user what to do.
     assert "another process" in captured.lower()
-    assert "Hermes Desktop" in captured or "gateway" in captured.lower()
+    assert "TeamHermes Desktop" in captured or "gateway" in captured.lower()
 
 
 # ---------------------------------------------------------------------------

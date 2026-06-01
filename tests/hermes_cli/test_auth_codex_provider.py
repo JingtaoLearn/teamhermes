@@ -1,4 +1,4 @@
-"""Tests for Codex auth — tokens stored in Hermes auth store (~/.hermes/auth.json)."""
+"""Tests for Codex auth — tokens stored in TeamHermes auth store (~/.teamhermes/auth.json)."""
 
 import json
 import time
@@ -26,7 +26,7 @@ from hermes_cli.auth import (
 
 
 def _setup_hermes_auth(hermes_home: Path, *, access_token: str = "access", refresh_token: str = "refresh"):
-    """Write Codex tokens into the Hermes auth store."""
+    """Write Codex tokens into the TeamHermes auth store."""
     hermes_home.mkdir(parents=True, exist_ok=True)
     auth_store = {
         "version": 1,
@@ -307,7 +307,7 @@ def test_save_codex_tokens_syncs_manual_device_code_entries(tmp_path, monkeypatc
     """Re-auth must also refresh ``manual:device_code`` pool entries.
 
     Regression for #33538: a user who hit #33000 before the #33164 fix landed
-    would have run ``hermes auth add openai-codex`` as a workaround, leaving
+    would have run ``thm auth add openai-codex`` as a workaround, leaving
     a pool entry with ``source="manual:device_code"``.  On every subsequent
     re-auth via setup/model picker, the singleton-seeded ``device_code`` entry
     got refreshed but the ``manual:device_code`` entry stayed stale, recreating
@@ -405,7 +405,7 @@ def test_import_codex_cli_tokens_missing(tmp_path, monkeypatch):
 
 
 def test_codex_tokens_not_written_to_shared_file(tmp_path, monkeypatch):
-    """Verify _save_codex_tokens writes only to Hermes auth store, not ~/.codex/."""
+    """Verify _save_codex_tokens writes only to TeamHermes auth store, not ~/.codex/."""
     hermes_home = tmp_path / "hermes"
     codex_home = tmp_path / "codex-cli"
     hermes_home.mkdir(parents=True, exist_ok=True)
@@ -417,10 +417,10 @@ def test_codex_tokens_not_written_to_shared_file(tmp_path, monkeypatch):
 
     _save_codex_tokens({"access_token": "hermes-at", "refresh_token": "hermes-rt"})
 
-    # ~/.codex/auth.json should NOT exist — _save_codex_tokens only touches Hermes store
+    # ~/.codex/auth.json should NOT exist — _save_codex_tokens only touches TeamHermes store
     assert not (codex_home / "auth.json").exists()
 
-    # Hermes auth store should have the tokens
+    # TeamHermes auth store should have the tokens
     data = _read_codex_tokens()
     assert data["tokens"]["access_token"] == "hermes-at"
 

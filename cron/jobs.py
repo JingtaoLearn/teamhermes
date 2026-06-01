@@ -1,8 +1,8 @@
 """
 Cron job storage and management.
 
-Jobs are stored in ~/.hermes/cron/jobs.json
-Output is saved to ~/.hermes/cron/output/{job_id}/{timestamp}.md
+Jobs are stored in ~/.teamhermes/cron/jobs.json
+Output is saved to ~/.teamhermes/cron/output/{job_id}/{timestamp}.md
 """
 
 import copy
@@ -296,13 +296,13 @@ def parse_schedule(schedule: str) -> Dict[str, Any]:
 
 
 def _ensure_aware(dt: datetime) -> datetime:
-    """Return a timezone-aware datetime in Hermes configured timezone.
+    """Return a timezone-aware datetime in TeamHermes configured timezone.
 
     Backward compatibility:
     - Older stored timestamps may be naive.
     - Naive values are interpreted as *system-local wall time* (the timezone
       `datetime.now()` used when they were created), then converted to the
-      configured Hermes timezone.
+      configured TeamHermes timezone.
 
     This preserves relative ordering for legacy naive timestamps across
     timezone changes and avoids false not-due results.
@@ -508,7 +508,7 @@ def _normalize_profile(profile: Optional[str]) -> Optional[str]:
     """Normalize and validate an optional cron job profile name.
 
     Empty / None disables per-job profile selection. Otherwise the profile name
-    is canonicalized with the same rules as ``hermes -p`` and must refer to an
+    is canonicalized with the same rules as ``thm -p`` and must refer to an
     existing profile at create/update time. ``default`` is the built-in root
     profile and is always valid.
     """
@@ -523,7 +523,7 @@ def _normalize_profile(profile: Optional[str]) -> Optional[str]:
     normalized = normalize_profile_name(raw)
     # resolve_profile_env validates the canonical name and checks that named
     # profiles exist. Store only the stable profile id, not the filesystem path,
-    # so profile directories can move with the Hermes root.
+    # so profile directories can move with the TeamHermes root.
     resolve_profile_env(normalized)
     return normalized
 
@@ -568,7 +568,7 @@ def create_job(
                 delivered verbatim. Without ``no_agent``, its stdout is
                 injected into the agent's prompt as context (data-collection /
                 change-detection pattern). Paths resolve under
-                ~/.hermes/scripts/; ``.sh`` / ``.bash`` files run via bash,
+                ~/.teamhermes/scripts/; ``.sh`` / ``.bash`` files run via bash,
                 anything else via Python.
         context_from: Optional job ID (or list of job IDs) whose most recent output
                       is injected into the prompt as context before each run.
@@ -586,7 +586,7 @@ def create_job(
                 With ``no_agent=True``, ``workdir`` is still applied as the
                 script's cwd so relative paths inside the script behave
                 predictably.
-        profile: Optional Hermes profile name. When set, the job runs with
+        profile: Optional TeamHermes profile name. When set, the job runs with
                 that profile's HERMES_HOME so profile-specific config,
                 credentials, scripts, skills, and memory paths resolve
                 consistently. ``default`` selects the root profile; empty /

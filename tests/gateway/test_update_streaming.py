@@ -1,6 +1,6 @@
 """Tests for /update live streaming, prompt forwarding, and gateway IPC.
 
-Tests the new --gateway mode for hermes update, including:
+Tests the new --gateway mode for thm update, including:
 - _gateway_prompt() file-based IPC
 - _watch_update_progress() output streaming and prompt detection
 - Message interception for update prompt responses
@@ -67,7 +67,7 @@ class TestGatewayPrompt:
     def test_writes_prompt_file_and_reads_response(self, tmp_path):
         """Writes .update_prompt.json, reads .update_response, returns answer."""
         import threading
-        hermes_home = tmp_path / ".hermes"
+        hermes_home = tmp_path / ".teamhermes"
         hermes_home.mkdir()
 
         # Simulate the response arriving after a short delay
@@ -91,7 +91,7 @@ class TestGatewayPrompt:
     def test_prompt_file_content(self, tmp_path):
         """Verifies the prompt JSON structure."""
         import threading
-        hermes_home = tmp_path / ".hermes"
+        hermes_home = tmp_path / ".teamhermes"
         hermes_home.mkdir()
 
         prompt_data = None
@@ -121,7 +121,7 @@ class TestGatewayPrompt:
 
     def test_timeout_returns_default(self, tmp_path):
         """Returns default when no response within timeout."""
-        hermes_home = tmp_path / ".hermes"
+        hermes_home = tmp_path / ".teamhermes"
         hermes_home.mkdir()
 
         with patch.dict(os.environ, {"HERMES_HOME": str(hermes_home)}):
@@ -132,7 +132,7 @@ class TestGatewayPrompt:
 
     def test_empty_response_returns_default(self, tmp_path):
         """Empty response file returns default."""
-        hermes_home = tmp_path / ".hermes"
+        hermes_home = tmp_path / ".teamhermes"
         hermes_home.mkdir()
         (hermes_home / ".update_response").write_text("")
 
@@ -208,7 +208,7 @@ class TestRestoreStashWithInputFn:
 
 
 class TestUpdateCommandGatewayFlag:
-    """Verify the gateway spawns hermes update --gateway."""
+    """Verify the gateway spawns thm update --gateway."""
 
     @pytest.mark.asyncio
     async def test_spawns_with_gateway_flag(self, tmp_path):

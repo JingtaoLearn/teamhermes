@@ -12,14 +12,14 @@ AI-native cross-session user modeling with multi-pass dialectic reasoning, sessi
 ## Setup
 
 ```bash
-hermes honcho setup    # full interactive wizard (cloud or local)
-hermes memory setup    # generic picker, also works
+thm honcho setup    # full interactive wizard (cloud or local)
+thm memory setup    # generic picker, also works
 ```
 
 Or manually:
 ```bash
-hermes config set memory.provider honcho
-echo "HONCHO_API_KEY=***" >> ~/.hermes/.env
+thm config set memory.provider honcho
+echo "HONCHO_API_KEY=***" >> ~/.teamhermes/.env
 ```
 
 ## Architecture Overview
@@ -105,11 +105,11 @@ Config is read from the first file that exists:
 
 | Priority | Path | Scope |
 |----------|------|-------|
-| 1 | `$HERMES_HOME/honcho.json` | Profile-local (isolated Hermes instances) |
-| 2 | `~/.hermes/honcho.json` | Default profile (shared host blocks) |
+| 1 | `$HERMES_HOME/honcho.json` | Profile-local (isolated TeamHermes instances) |
+| 2 | `~/.teamhermes/honcho.json` | Default profile (shared host blocks) |
 | 3 | `~/.honcho/config.json` | Global (cross-app interop) |
 
-Host key is derived from the active Hermes profile: `hermes` (default) or `hermes.<profile>`.
+Host key is derived from the active TeamHermes profile: `thm` (default) or `hermes.<profile>`.
 
 For every key, resolution order is: **host block > root > env var > default**.
 
@@ -154,9 +154,9 @@ In gateway deployments (Telegram, Discord, Slack, etc.) each user arrives with a
 
 **Host vs root semantics.** All three keys are accepted at both root and `hosts.<host>` levels. Host-level wins. For maps and prefixes, host-level *replaces* the root value as a whole (not merge), so a host can intentionally own its identity universe or wipe it with `userPeerAliases: {}` / `runtimePeerPrefix: ""`.
 
-**Deployment shapes** (`hermes honcho setup` asks one prompt to set these):
+**Deployment shapes** (`thm honcho setup` asks one prompt to set these):
 
-- **Single-operator** — `pinUserPeer: true`. All gateway users → `peerName`. Recommended for personal use where you connect Hermes to your own Telegram/Discord/etc.
+- **Single-operator** — `pinUserPeer: true`. All gateway users → `peerName`. Recommended for personal use where you connect TeamHermes to your own Telegram/Discord/etc.
 - **Multi-user gateway** — `pinUserPeer: false`, optional `runtimePeerPrefix`. Each runtime user → own peer. Recommended for bots serving many humans.
 - **Hybrid** — `pinUserPeer: false`, `userPeerAliases` mapping the operator's runtime IDs to `peerName`. Multi-user gateway where YOU are routed but others stay distinct.
 
@@ -194,10 +194,10 @@ The Honcho session name determines which conversation bucket memory lands in. Re
 | 1 | Manual map (`sessions` config) | `"myproject-main"` |
 | 2 | `/title` command (mid-session rename) | `"refactor-auth"` |
 | 3 | Gateway session key (Telegram, Discord, etc.) | `"agent-main-telegram-dm-8439114563"` |
-| 4 | `per-session` strategy | Hermes session ID (`20260415_a3f2b1`) |
+| 4 | `per-session` strategy | TeamHermes session ID (`20260415_a3f2b1`) |
 | 5 | `per-repo` strategy | Git root directory name (`hermes-agent`) |
 | 6 | `per-directory` strategy | Current directory basename (`src`) |
-| 7 | `global` strategy | Workspace name (`hermes`) |
+| 7 | `global` strategy | Workspace name (`thm`) |
 
 Gateway platforms always resolve via priority 3 (per-chat isolation) regardless of `sessionStrategy`. The strategy setting only affects CLI sessions.
 
@@ -205,23 +205,23 @@ If `sessionPeerPrefix` is `true`, the peer name is prepended: `eri-hermes-agent`
 
 #### What each strategy produces
 
-- **`per-directory`** — basename of `$PWD`. Opening hermes in `~/code/myapp` and `~/code/other` gives two separate sessions. Same directory = same session across runs.
+- **`per-directory`** — basename of `$PWD`. Opening thm in `~/code/myapp` and `~/code/other` gives two separate sessions. Same directory = same session across runs.
 - **`per-repo`** — git root directory name. All subdirectories within a repo share one session. Falls back to `per-directory` if not inside a git repo.
-- **`per-session`** — Hermes session ID (timestamp + hex). Every `hermes` invocation starts a fresh Honcho session. Falls back to `per-directory` if no session ID is available.
+- **`per-session`** — TeamHermes session ID (timestamp + hex). Every `thm` invocation starts a fresh Honcho session. Falls back to `per-directory` if no session ID is available.
 - **`global`** — workspace name. One session for everything. Memory accumulates across all directories and runs.
 
 ### Multi-Profile Pattern
 
-Multiple Hermes profiles can share one workspace while maintaining separate AI identities. Config resolution is **host block > root > env var > default** — host blocks inherit from root, so shared settings only need to be declared once:
+Multiple TeamHermes profiles can share one workspace while maintaining separate AI identities. Config resolution is **host block > root > env var > default** — host blocks inherit from root, so shared settings only need to be declared once:
 
 ```json
 {
   "apiKey": "***",
-  "workspace": "hermes",
+  "workspace": "thm",
   "peerName": "yourname",
   "hosts": {
-    "hermes": {
-      "aiPeer": "hermes",
+    "thm": {
+      "aiPeer": "thm",
       "recallMode": "hybrid",
       "sessionStrategy": "per-directory"
     },
@@ -234,9 +234,9 @@ Multiple Hermes profiles can share one workspace while maintaining separate AI i
 }
 ```
 
-Both profiles see the same user (`yourname`) in the same shared environment (`hermes`), but each AI peer builds its own observations, conclusions, and behavior patterns. The coder's memory stays code-oriented; the main agent's stays broad.
+Both profiles see the same user (`yourname`) in the same shared environment (`thm`), but each AI peer builds its own observations, conclusions, and behavior patterns. The coder's memory stays code-oriented; the main agent's stays broad.
 
-Host key is derived from the active Hermes profile: `hermes` (default) or `hermes.<profile>` (e.g. `hermes -p coder` → host key `hermes.coder`).
+Host key is derived from the active TeamHermes profile: `thm` (default) or `hermes.<profile>` (e.g. `thm -p coder` → host key `hermes.coder`).
 
 ### Dialectic & Reasoning
 
@@ -307,31 +307,31 @@ Presets:
 
 | Command | Description |
 |---------|-------------|
-| `hermes honcho setup` | Full interactive setup wizard |
-| `hermes honcho status` | Show resolved config for active profile |
-| `hermes honcho enable` / `disable` | Toggle Honcho for active profile |
-| `hermes honcho mode <mode>` | Change recall or observation mode |
-| `hermes honcho peer --user <name>` | Update user peer name |
-| `hermes honcho peer --ai <name>` | Update AI peer name |
-| `hermes honcho tokens --context <N>` | Set context token budget |
-| `hermes honcho tokens --dialectic <N>` | Set dialectic max chars |
-| `hermes honcho map <name>` | Map current directory to a session name |
-| `hermes honcho sync` | Create host blocks for all Hermes profiles |
+| `thm honcho setup` | Full interactive setup wizard |
+| `thm honcho status` | Show resolved config for active profile |
+| `thm honcho enable` / `disable` | Toggle Honcho for active profile |
+| `thm honcho mode <mode>` | Change recall or observation mode |
+| `thm honcho peer --user <name>` | Update user peer name |
+| `thm honcho peer --ai <name>` | Update AI peer name |
+| `thm honcho tokens --context <N>` | Set context token budget |
+| `thm honcho tokens --dialectic <N>` | Set dialectic max chars |
+| `thm honcho map <name>` | Map current directory to a session name |
+| `thm honcho sync` | Create host blocks for all TeamHermes profiles |
 
 ## Example Config
 
 ```json
 {
   "apiKey": "***",
-  "workspace": "hermes",
+  "workspace": "thm",
   "peerName": "username",
   "contextCadence": 2,
   "dialecticCadence": 3,
   "dialecticDepth": 2,
   "hosts": {
-    "hermes": {
+    "thm": {
       "enabled": true,
-      "aiPeer": "hermes",
+      "aiPeer": "thm",
       "recallMode": "hybrid",
       "observation": {
         "user": { "observeMe": true, "observeOthers": true },

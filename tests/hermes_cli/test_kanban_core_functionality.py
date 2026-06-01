@@ -32,7 +32,7 @@ from hermes_cli.kanban import run_slash
 
 @pytest.fixture
 def kanban_home(tmp_path, monkeypatch):
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".teamhermes"
     home.mkdir()
     monkeypatch.setenv("HERMES_HOME", str(home))
     # Existing crash-detection tests pre-date the grace window; pin to 0
@@ -207,7 +207,7 @@ def test_per_task_max_retries_overrides_dispatcher_limit(kanban_home, all_assign
 
     Three-tier resolution order:
       1. ``task.max_retries`` (set via ``create_task(max_retries=N)`` /
-         ``hermes kanban create --max-retries N``)
+         ``thm kanban create --max-retries N``)
       2. ``failure_limit`` kwarg passed by the caller (gateway threads
          this from ``kanban.failure_limit`` config)
       3. ``DEFAULT_FAILURE_LIMIT``
@@ -1234,7 +1234,7 @@ def test_spawned_event_emitted_with_pid(kanban_home, all_assignees_spawnable):
 def test_migration_renames_legacy_event_kinds(tmp_path, monkeypatch):
     """A DB created with the old vocab must have its event rows renamed
     in place on init_db()."""
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".teamhermes"
     home.mkdir()
     monkeypatch.setenv("HERMES_HOME", str(home))
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -1274,10 +1274,10 @@ def test_migration_renames_legacy_event_kinds(tmp_path, monkeypatch):
 
 def test_list_profiles_on_disk(tmp_path, monkeypatch):
     """list_profiles_on_disk returns the implicit default profile plus
-    named profiles under ~/.hermes/profiles/ that contain a config.yaml."""
+    named profiles under ~/.teamhermes/profiles/ that contain a config.yaml."""
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     monkeypatch.delenv("HERMES_HOME", raising=False)
-    profiles = tmp_path / ".hermes" / "profiles"
+    profiles = tmp_path / ".teamhermes" / "profiles"
     profiles.mkdir(parents=True)
     for name in ("researcher", "writer"):
         d = profiles / name
@@ -1309,9 +1309,9 @@ def test_known_assignees_merges_disk_and_board(tmp_path, monkeypatch):
     """known_assignees unions profiles on disk with currently-assigned
     names, and reports per-status counts."""
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
-    profiles = tmp_path / ".hermes" / "profiles"
+    profiles = tmp_path / ".teamhermes" / "profiles"
     profiles.mkdir(parents=True)
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / ".hermes"))
+    monkeypatch.setenv("HERMES_HOME", str(tmp_path / ".teamhermes"))
 
     for name in ("researcher", "writer"):
         d = profiles / name
@@ -1377,7 +1377,7 @@ def test_parse_duration_rejects_garbage():
 
 
 def test_cli_create_max_runtime_via_duration(kanban_home):
-    """`hermes kanban create --max-runtime 2h` should persist 7200 seconds."""
+    """`thm kanban create --max-runtime 2h` should persist 7200 seconds."""
     out = run_slash("create 'long task' --max-runtime 2h --json")
     data = json.loads(out)
     tid = data["id"]
@@ -2196,7 +2196,7 @@ def test_claim_task_recovers_from_invariant_leak(kanban_home):
 def test_cli_create_on_fresh_home_auto_inits(tmp_path, monkeypatch):
     """First CLI action on an empty HERMES_HOME must not error with
     'no such table: tasks' — init_db auto-runs now."""
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".teamhermes"
     home.mkdir()
     monkeypatch.setenv("HERMES_HOME", str(home))
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -2222,7 +2222,7 @@ def test_cli_create_on_fresh_home_auto_inits(tmp_path, monkeypatch):
 def test_connect_auto_inits_fresh_db(tmp_path, monkeypatch):
     """Calling connect() on a fresh HERMES_HOME must create the
     schema. Previously callers had to remember kb.init_db() first."""
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".teamhermes"
     home.mkdir()
     monkeypatch.setenv("HERMES_HOME", str(home))
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -2332,7 +2332,7 @@ def test_migration_backfill_idempotent_under_re_run(tmp_path, monkeypatch):
     """init_db must be safe to re-run repeatedly. Each call should leave
     at most one run row per in-flight task, even if called while a
     dispatcher is simultaneously claiming."""
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".teamhermes"
     home.mkdir()
     monkeypatch.setenv("HERMES_HOME", str(home))
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -3072,7 +3072,7 @@ def test_default_spawn_dedupes_kanban_worker_from_task_skills(kanban_home, monke
 
 
 def test_cli_create_skill_flag_repeatable(kanban_home):
-    """`hermes kanban create --skill a --skill b` persists the list."""
+    """`thm kanban create --skill a --skill b` persists the list."""
     out = run_slash(
         "create 'multi-skill' --assignee linguist "
         "--skill translation --skill github-code-review --json"
@@ -3094,7 +3094,7 @@ def test_cli_create_without_skill_flag_leaves_none(kanban_home):
 
 
 def test_cli_show_renders_skills(kanban_home):
-    """`hermes kanban show <id>` prints a skills row when present."""
+    """`thm kanban show <id>` prints a skills row when present."""
     out = run_slash(
         "create 'show-test' --assignee x "
         "--skill translation --json"
@@ -3500,7 +3500,7 @@ def test_cli_create_no_warn_unassigned(kanban_home, monkeypatch, capsys):
 
 
 def test_cli_daemon_without_force_prints_deprecation_exits_2(kanban_home, capsys):
-    """`hermes kanban daemon` (no --force) is a deprecation stub."""
+    """`thm kanban daemon` (no --force) is a deprecation stub."""
     from hermes_cli import kanban as kb_cli
     ns = argparse.Namespace(
         force=False, interval=60.0, max=None, failure_limit=3,
@@ -3543,7 +3543,7 @@ def test_cli_daemon_help_marks_deprecated():
                     break
     assert found_deprecation, (
         "daemon subparser help should be marked DEPRECATED so users see "
-        "the migration guidance in `hermes kanban --help` output"
+        "the migration guidance in `thm kanban --help` output"
     )
 
 

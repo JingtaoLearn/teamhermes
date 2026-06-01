@@ -24,7 +24,7 @@ from hermes_cli.config import (
 @pytest.fixture
 def container_env(tmp_path, monkeypatch):
     """Set up a fake HERMES_HOME with .container-mode file."""
-    hermes_home = tmp_path / ".hermes"
+    hermes_home = tmp_path / ".teamhermes"
     hermes_home.mkdir()
     monkeypatch.setenv("HERMES_HOME", str(hermes_home))
     monkeypatch.delenv("HERMES_DEV", raising=False)
@@ -62,7 +62,7 @@ def test_get_container_exec_info_none_inside_container(container_env):
 
 def test_get_container_exec_info_none_without_file(tmp_path, monkeypatch):
     """Returns None when .container-mode doesn't exist (native mode)."""
-    hermes_home = tmp_path / ".hermes"
+    hermes_home = tmp_path / ".teamhermes"
     hermes_home.mkdir()
     monkeypatch.setenv("HERMES_HOME", str(hermes_home))
     monkeypatch.delenv("HERMES_DEV", raising=False)
@@ -98,7 +98,7 @@ def test_get_container_exec_info_defaults():
     import tempfile
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        hermes_home = Path(tmpdir) / ".hermes"
+        hermes_home = Path(tmpdir) / ".teamhermes"
         hermes_home.mkdir()
         (hermes_home / ".container-mode").write_text(
             "# minimal file with no keys\n"

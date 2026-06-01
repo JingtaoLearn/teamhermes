@@ -5,7 +5,7 @@ Provides PID-file based detection of whether the gateway daemon is running,
 used by send_message's check_fn to gate availability in the CLI.
 
 The PID file lives at ``{HERMES_HOME}/gateway.pid``.  HERMES_HOME defaults to
-``~/.hermes`` but can be overridden via the environment variable.  This means
+``~/.teamhermes`` but can be overridden via the environment variable.  This means
 separate HERMES_HOME directories naturally get separate PID files — a property
 that will be useful when we add named profiles (multiple agents running
 concurrently under distinct configurations).
@@ -165,7 +165,7 @@ def _read_process_cmdline(pid: int) -> Optional[str]:
 
 
 def _looks_like_gateway_process(pid: int) -> bool:
-    """Return True when the live PID still looks like the Hermes gateway."""
+    """Return True when the live PID still looks like the TeamHermes gateway."""
     cmdline = _read_process_cmdline(pid)
     if not cmdline:
         return False
@@ -173,7 +173,7 @@ def _looks_like_gateway_process(pid: int) -> bool:
     patterns = (
         "hermes_cli.main gateway",
         "hermes_cli/main.py gateway",
-        "hermes gateway",
+        "thm gateway",
         "hermes-gateway",
         "gateway/run.py",
     )
@@ -194,7 +194,7 @@ def _record_looks_like_gateway(record: dict[str, Any]) -> bool:
     patterns = (
         "hermes_cli.main gateway",
         "hermes_cli/main.py gateway",
-        "hermes gateway",
+        "thm gateway",
         "gateway/run.py",
     )
     return any(pattern in cmdline for pattern in patterns)

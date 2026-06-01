@@ -21,7 +21,7 @@ import pytest
 
 @pytest.fixture
 def fake_hermes(tmp_path, monkeypatch):
-    """Build a two-profile Hermes layout and point HERMES_HOME at
+    """Build a two-profile TeamHermes layout and point HERMES_HOME at
     the hermes-security profile (matching the original-incident shape).
     """
     root = tmp_path / "fake-hermes"
@@ -206,7 +206,7 @@ class TestSkillManageCrossProfileErrorUX:
         assert "default" in err
         assert "coder" in err
         # Switch-profiles hint
-        assert "hermes -p" in err
+        assert "thm -p" in err
 
     def test_genuinely_missing_skill_keeps_helpful_hint(
         self, fake_hermes, monkeypatch
@@ -230,7 +230,7 @@ class TestSkillManageCrossProfileErrorUX:
 class TestSystemPromptActiveProfile:
     def test_default_profile_line_in_prompt(self, tmp_path, monkeypatch):
         """When active profile is 'default', the prompt names it and warns
-        about ~/.hermes/profiles/<name>/."""
+        about ~/.teamhermes/profiles/<name>/."""
         # Don't set HERMES_HOME — falls back to default.
         import agent.file_safety as fs
         monkeypatch.setattr(fs, "_hermes_home_path", lambda: tmp_path / "fake")
@@ -251,9 +251,9 @@ class TestSystemPromptActiveProfile:
         # explicit user direction.
         from pathlib import Path
         src = Path("agent/system_prompt.py").read_text()
-        assert "Active Hermes profile" in src
+        assert "Active TeamHermes profile" in src
         assert "cross_profile=True" in src
-        assert "~/.hermes/profiles/" in src
+        assert "~/.teamhermes/profiles/" in src
         # Both branches present (default and named profile).
-        assert "Active Hermes profile: default" in src
-        assert "Active Hermes profile: {active_profile}" in src
+        assert "Active TeamHermes profile: default" in src
+        assert "Active TeamHermes profile: {active_profile}" in src

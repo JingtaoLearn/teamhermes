@@ -388,7 +388,7 @@ def test_normalize_env_dict_rejects_complex_values():
 def test_security_args_include_setuid_setgid_for_privdrop(monkeypatch):
     """The default (run_as_host_user=False) invocation must include SETUID and
     SETGID caps so the image's init can drop from root to a non-root user
-    (e.g. via ``s6-setuidgid`` in the bundled Hermes image, or ``gosu``/``su``
+    (e.g. via ``s6-setuidgid`` in the bundled TeamHermes image, or ``gosu``/``su``
     in user-provided images).
 
     Without these caps the privilege-drop helper fails with

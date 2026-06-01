@@ -715,7 +715,7 @@ def test_write_credential_pool_preserves_known_provider_owned_oauth_state(tmp_pa
 
 def test_load_pool_prefers_dotenv_over_stale_os_environ(tmp_path, monkeypatch):
     """Regression for #18254: stale OPENROUTER_API_KEY in os.environ (inherited
-    from a parent shell) must NOT shadow the fresh key in ~/.hermes/.env when
+    from a parent shell) must NOT shadow the fresh key in ~/.teamhermes/.env when
     seeding the credential pool. Before the fix, `get_env_value()` preferred
     os.environ and silently wrote the stale value into auth.json, causing
     persistent 401 errors after key rotation.
@@ -727,7 +727,7 @@ def test_load_pool_prefers_dotenv_over_stale_os_environ(tmp_path, monkeypatch):
     # Simulate the bug: parent shell exported a stale test key
     monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-STALE-from-shell")
 
-    # User edited ~/.hermes/.env with the fresh key
+    # User edited ~/.teamhermes/.env with the fresh key
     (hermes_home / ".env").write_text(
         "OPENROUTER_API_KEY=sk-or-FRESH-from-dotenv\n"
     )
@@ -747,7 +747,7 @@ def test_load_pool_prefers_dotenv_over_stale_os_environ(tmp_path, monkeypatch):
 
 
 def test_load_pool_falls_back_to_os_environ_when_dotenv_empty(tmp_path, monkeypatch):
-    """When ~/.hermes/.env does not define OPENROUTER_API_KEY (typical Docker /
+    """When ~/.teamhermes/.env does not define OPENROUTER_API_KEY (typical Docker /
     K8s / systemd deployment), seeding must still pick up the key from
     os.environ. Guards against regressions that would break production
     deployments relying on runtime-injected env vars.
@@ -1185,12 +1185,12 @@ def test_load_pool_prefers_anthropic_env_token_over_file_backed_oauth(tmp_path, 
 def test_load_pool_api_key_path_skips_oauth_autodiscovery(tmp_path, monkeypatch):
     """API-key auth path: autodiscovered OAuth creds must NOT be seeded.
 
-    When the user picks "Anthropic API key" at `hermes setup`,
+    When the user picks "Anthropic API key" at `thm setup`,
     `save_anthropic_api_key()` writes ANTHROPIC_API_KEY and zeros
     ANTHROPIC_TOKEN.  That env-var pattern is the explicit signal that the
     user opted into the API-key path and explicitly OUT of the OAuth
     masquerade (Claude Code identity injection + `mcp_` tool-name rewrite
-    + claude-cli user-agent).  Autodiscovered Claude Code / Hermes PKCE
+    + claude-cli user-agent).  Autodiscovered Claude Code / TeamHermes PKCE
     tokens from other tools' credential files must NOT be silently mixed
     into the anthropic pool — otherwise rotation on a 401/429 could flip
     the session onto OAuth credentials mid-conversation.
@@ -1241,7 +1241,7 @@ def test_load_pool_api_key_path_prunes_stale_oauth_entries(tmp_path, monkeypatch
 
     Without this, a user who logs into OAuth (seeding `claude_code` or
     `hermes_pkce` into auth.json) and later switches to the API key at
-    `hermes setup` would still have those OAuth entries dormant on disk.
+    `thm setup` would still have those OAuth entries dormant on disk.
     Pool rotation on a transient 401 could revive them and flip the
     session onto the OAuth masquerade.
     """
@@ -1292,7 +1292,7 @@ def test_load_pool_oauth_path_still_autodiscovers(tmp_path, monkeypatch):
     """OAuth path: ANTHROPIC_TOKEN set, autodiscovery still fires.
 
     Regression guard: the API-key gate must not affect users who chose the
-    OAuth path at `hermes setup`.  When ANTHROPIC_TOKEN is set (and
+    OAuth path at `thm setup`.  When ANTHROPIC_TOKEN is set (and
     ANTHROPIC_API_KEY is empty), autodiscovered Claude Code creds should
     still be seeded into the pool as before.
     """
@@ -2182,7 +2182,7 @@ def test_sync_codex_entry_from_auth_store_adopts_newer_tokens(tmp_path, monkeypa
     assert entry.access_token == "access-OLD"
     assert entry.refresh_token == "refresh-OLD"
 
-    # Simulate `hermes auth openai-codex` replacing the token pair on disk.
+    # Simulate `thm auth openai-codex` replacing the token pair on disk.
     _write_auth_store(tmp_path, _codex_auth_store("access-NEW", "refresh-NEW"))
 
     synced = pool._sync_codex_entry_from_auth_store(entry)
@@ -2213,7 +2213,7 @@ def test_codex_exhausted_entry_recovers_via_auth_store_sync(tmp_path, monkeypatc
     """An exhausted Codex entry should recover when auth.json has newer tokens.
 
     Reproduces the Discord report (p1aceho1der, Apr 2026): after a Codex
-    rate-limit reset the user ran `hermes model` to reauth, but the pool
+    rate-limit reset the user ran `thm model` to reauth, but the pool
     entry stayed marked EXHAUSTED with last_error_reset_at many hours in
     the future — so `_available_entries` kept returning empty and every
     request failed with "no available entries (all exhausted or empty)".
@@ -2247,7 +2247,7 @@ def test_codex_exhausted_entry_recovers_via_auth_store_sync(tmp_path, monkeypatc
     available_before = pool._available_entries(clear_expired=True, refresh=False)
     assert available_before == []
 
-    # Simulate `hermes model` / `hermes auth` refreshing the tokens.
+    # Simulate `thm model` / `thm auth` refreshing the tokens.
     _write_auth_store(tmp_path, _codex_auth_store("access-FRESH", "refresh-FRESH"))
 
     available = pool._available_entries(clear_expired=True, refresh=False)

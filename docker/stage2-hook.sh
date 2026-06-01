@@ -25,7 +25,7 @@ INSTALL_DIR="/opt/hermes"
 # privileges so the chown checks below see real metadata and the later
 # `s6-setuidgid hermes mkdir -p` block doesn't EACCES on root-owned
 # ancestors. Without this, custom HERMES_HOME paths whose parents only
-# root can create (e.g. `HERMES_HOME=/home/hermes/.hermes` in a Compose
+# root can create (e.g. `HERMES_HOME=/home/hermes/.teamhermes` in a Compose
 # file, or any path under a fresh / not pre-populated by the image)
 # fail on first boot with `mkdir: cannot create directory '/...': Permission
 # denied` and the cont-init hook exits non-zero. Idempotent — `mkdir -p`
@@ -71,7 +71,7 @@ if [ "$needs_chown" = true ]; then
     # their existing ownership.
     chown hermes:hermes "$HERMES_HOME" 2>/dev/null || \
         echo "[stage2] Warning: chown $HERMES_HOME failed (rootless container?) — continuing"
-    # Hermes-owned subdirs: recursive chown is safe here because these are
+    # TeamHermes-owned subdirs: recursive chown is safe here because these are
     # created and managed exclusively by hermes (see the s6-setuidgid mkdir
     # -p block below for the canonical list).
     for sub in cron sessions logs hooks memories skills skins plans workspace home profiles; do
@@ -80,7 +80,7 @@ if [ "$needs_chown" = true ]; then
                 echo "[stage2] Warning: chown $HERMES_HOME/$sub failed (rootless container?) — continuing"
         fi
     done
-    # Hermes-owned trees under $INSTALL_DIR must be re-chowned when the UID
+    # TeamHermes-owned trees under $INSTALL_DIR must be re-chowned when the UID
     # is remapped — otherwise:
     #   - .venv: lazy_deps.py cannot install platform packages (discord.py,
     #     telegram, slack, etc.) with EACCES (#15012, #21100)
@@ -140,7 +140,7 @@ s6-setuidgid hermes mkdir -p \
     "$HERMES_HOME/workspace" \
     "$HERMES_HOME/home"
 
-# --- Install-method stamp (read by detect_install_method() in hermes status) ---
+# --- Install-method stamp (read by detect_install_method() in thm status) ---
 # Preserved from the tini-era entrypoint (PR #27843). Must be written as
 # the hermes user so ownership matches the file's documented owner.
 # tee is invoked directly via s6-setuidgid (no `sh -c` wrapper) for the
@@ -192,14 +192,14 @@ fi
 # The image's Dockerfile runs `npx playwright install chromium`, which
 # populates ``$PLAYWRIGHT_BROWSERS_PATH`` (=/opt/hermes/.playwright) with
 # a ``chromium_headless_shell-<build>/chrome-headless-shell-linux64/``
-# directory. agent-browser (the runtime CLI Hermes spawns for the
+# directory. agent-browser (the runtime CLI TeamHermes spawns for the
 # browser tool) doesn't recognise this layout in its own cache scan and
 # fails with "Auto-launch failed: Chrome not found" — even though the
 # binary is right there (#15697).
 #
 # Fix: locate the binary at boot and export ``AGENT_BROWSER_EXECUTABLE_PATH``
 # via /run/s6/container_environment so the `with-contenv` shebang on
-# main-wrapper.sh propagates it into the supervised ``hermes`` process
+# main-wrapper.sh propagates it into the supervised ``thm`` process
 # and thence to agent-browser subprocesses.
 #
 # - Skipped when the user has already set ``AGENT_BROWSER_EXECUTABLE_PATH``

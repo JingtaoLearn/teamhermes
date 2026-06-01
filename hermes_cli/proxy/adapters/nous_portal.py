@@ -1,6 +1,6 @@
 """Nous Portal upstream adapter.
 
-Reads the user's Nous OAuth state from ``~/.hermes/auth.json`` through the
+Reads the user's Nous OAuth state from ``~/.teamhermes/auth.json`` through the
 shared runtime resolver, refreshes the access token and resolves the
 ``agent_key`` compatibility credential when needed, then exposes the upstream
 base URL plus bearer for the proxy server to forward to.
@@ -104,7 +104,7 @@ class NousPortalAdapter(UpstreamAdapter):
             state = self._read_state()
             if state is None:
                 raise RuntimeError(
-                    "Not logged into Nous Portal. Run `hermes auth add nous` first."
+                    "Not logged into Nous Portal. Run `thm auth add nous` first."
                 )
 
             try:
@@ -135,7 +135,7 @@ class NousPortalAdapter(UpstreamAdapter):
             if not agent_key:
                 raise RuntimeError(
                     "Nous Portal refresh did not return a usable agent_key. "
-                    "Try `hermes auth add nous` to re-authenticate."
+                    "Try `thm auth add nous` to re-authenticate."
                 )
 
             base_url = (

@@ -6,7 +6,7 @@ it is restarted under supervision. The restart-after-crash test lives in
 Phase 2 Task 2.5; this file only locks the opt-in surface (which must
 not change between tini and s6).
 
-Every ``docker exec`` here runs as the unprivileged ``hermes`` user
+Every ``docker exec`` here runs as the unprivileged ``thm`` user
 (via :func:`docker_exec`/:func:`docker_exec_sh` in conftest), matching
 the realistic runtime context. See the conftest module docstring.
 """
@@ -58,7 +58,7 @@ def test_dashboard_slot_reports_down_when_disabled(
 ) -> None:
     """Without HERMES_DASHBOARD, s6-svstat should report the dashboard
     slot as DOWN (not up-with-sleep-infinity, which would
-    false-positive `hermes doctor` and any other health check).
+    false-positive `thm doctor` and any other health check).
 
     Locks the PR #30136 review item I3 fix: cont-init.d/03-dashboard-toggle
     writes a `down` marker file in the live service-dir when

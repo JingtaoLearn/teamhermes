@@ -17,14 +17,14 @@ from pathlib import Path
 @pytest.fixture
 def memory_env(tmp_path, monkeypatch):
     """Set up a fake HERMES_HOME with memory files."""
-    hermes_home = tmp_path / ".hermes"
+    hermes_home = tmp_path / ".teamhermes"
     memories = hermes_home / "memories"
     memories.mkdir(parents=True)
     monkeypatch.setenv("HERMES_HOME", str(hermes_home))
 
     # Create sample memory files
     (memories / "MEMORY.md").write_text(
-        "§\nHermes repo is at ~/.hermes/hermes-agent\n§\nUser prefers dark themes",
+        "§\nHermes repo is at ~/.teamhermes/hermes-agent\n§\nUser prefers dark themes",
         encoding="utf-8",
     )
     (memories / "USER.md").write_text(
@@ -96,7 +96,7 @@ class TestMemoryReset:
 
     def test_reset_no_files_exist(self, tmp_path, monkeypatch):
         """Should return 'nothing' when no memory files exist."""
-        hermes_home = tmp_path / ".hermes"
+        hermes_home = tmp_path / ".teamhermes"
         (hermes_home / "memories").mkdir(parents=True)
         monkeypatch.setenv("HERMES_HOME", str(hermes_home))
 
@@ -147,7 +147,7 @@ class TestMemoryReset:
 
     def test_reset_empty_memories_dir(self, tmp_path, monkeypatch):
         """No memories dir at all should report nothing."""
-        hermes_home = tmp_path / ".hermes"
+        hermes_home = tmp_path / ".teamhermes"
         hermes_home.mkdir(parents=True)
         # No memories dir
         monkeypatch.setenv("HERMES_HOME", str(hermes_home))

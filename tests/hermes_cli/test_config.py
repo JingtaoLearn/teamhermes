@@ -29,7 +29,7 @@ class TestGetHermesHome:
         with patch.dict(os.environ, {}, clear=False):
             os.environ.pop("HERMES_HOME", None)
             home = get_hermes_home()
-            assert home == Path.home() / ".hermes"
+            assert home == Path.home() / ".teamhermes"
 
     def test_env_override(self):
         with patch.dict(os.environ, {"HERMES_HOME": "/custom/path"}):
@@ -121,7 +121,7 @@ class TestLoadConfigParseFailure:
             # stderr also got a user-visible message (with the ⚠️ marker so it
             # stands out at hermes startup before logging is configured)
             captured = capsys.readouterr()
-            assert "hermes config:" in captured.err
+            assert "thm config:" in captured.err
             assert str(tmp_path / "config.yaml") in captured.err
 
     def test_dedup_on_repeated_load_same_file(self, tmp_path, capsys):
@@ -133,7 +133,7 @@ class TestLoadConfigParseFailure:
 
             load_config()
             first = capsys.readouterr().err
-            assert "hermes config:" in first
+            assert "thm config:" in first
 
             load_config()
             second = capsys.readouterr().err
@@ -154,7 +154,7 @@ class TestLoadConfigParseFailure:
             (tmp_path / "config.yaml").write_text("\tstill broken differently:\n")
             load_config()
             after_edit = capsys.readouterr().err
-            assert "hermes config:" in after_edit, "edited file should re-warn"
+            assert "thm config:" in after_edit, "edited file should re-warn"
 
 
 class TestSaveAndLoadRoundtrip:
@@ -787,7 +787,7 @@ class TestEnvWriteDenylist:
     the session token lives in the SPA's HTML where any future plugin
     XSS or local process could exfiltrate it). Without this gate, an
     attacker who steals the token could plant
-    ``LD_PRELOAD=/tmp/evil.so`` in ``.env`` and own the next Hermes
+    ``LD_PRELOAD=/tmp/evil.so`` in ``.env`` and own the next TeamHermes
     process on next startup via the dotenv → ``os.environ`` chain in
     ``hermes_cli/env_loader.py``.
 

@@ -31,7 +31,7 @@ COMMON_HERMES_TOOLS = ["read_file", "search_files", "terminal", "patch", "write_
 
 class TestToolKindMap:
     def test_all_hermes_tools_have_kind(self):
-        """Every common hermes tool should appear in TOOL_KIND_MAP."""
+        """Every common thm tool should appear in TOOL_KIND_MAP."""
         for tool in COMMON_HERMES_TOOLS:
             assert tool in TOOL_KIND_MAP, f"{tool} missing from TOOL_KIND_MAP"
 
@@ -402,18 +402,18 @@ class TestBuildToolComplete:
         result = build_tool_complete(
             "tc-skill-manage",
             "skill_manage",
-            '{"success":true,"message":"Patched references/hermes-acp-zed-rendering.md in skill \'hermes-agent-operations\' (1 replacement)."}',
+            '{"success":true,"message":"Patched references/thm-acp-zed-rendering.md in skill \'hermes-agent-operations\' (1 replacement)."}',
             function_args={
                 "action": "patch",
                 "name": "hermes-agent-operations",
-                "file_path": "references/hermes-acp-zed-rendering.md",
+                "file_path": "references/thm-acp-zed-rendering.md",
             },
         )
         text = result.content[0].content.text
         assert "**✅ Skill updated**" in text
         assert "`patch`" in text
         assert "`hermes-agent-operations`" in text
-        assert "references/hermes-acp-zed-rendering.md" in text
+        assert "references/thm-acp-zed-rendering.md" in text
         assert "{\"success\"" not in text
         assert result.raw_output is None
 
@@ -561,12 +561,12 @@ class TestBuildToolComplete:
         result = build_tool_complete(
             "tc-search-files",
             "search_files",
-            '{"total_count":36,"files":["/home/nour/.hermes/config.yaml","/home/nour/.hermes/profiles/recall-test/config.yaml"],"truncated":true}',
+            '{"total_count":36,"files":["/home/nour/.teamhermes/config.yaml","/home/nour/.teamhermes/profiles/recall-test/config.yaml"],"truncated":true}',
         )
         text = result.content[0].content.text
         assert "File search results" in text
         assert "Found 36 files; showing 2." in text
-        assert "/home/nour/.hermes/config.yaml" in text
+        assert "/home/nour/.teamhermes/config.yaml" in text
         assert "use offset to page" in text
         assert "{\"total_count\"" not in text
         assert result.raw_output is None
