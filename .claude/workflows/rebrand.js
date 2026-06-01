@@ -264,6 +264,22 @@ await agent(
   `Run: git add -A && git diff --cached --stat | tail -1 && git commit -m "${COMMIT_PREFIX}rebrand: P4 brand string Hermes -> TeamHermes and CLI hermes -> thm" || echo "nothing to commit". Return JSON {filesChanged:0, commitSha:"<sha or empty>", summary:"P4 commit"}.`,
   { label: 'p4:commit', phase: 'P4 brand+CLI', schema: PHASE_RESULT_SCHEMA }
 )
+
+// P4 finalize sweep — parallel subtree agents miss the bulk of \bHermes\b
+// brand-word, backtick-quoted `hermes <cmd>` CLI references, and argparse
+// prog="hermes". E2E v4 proved that without this, P4 audit takes 5-6 cycles
+// (~50 minutes) classifying mechanical residuals one-by-one. The script
+// applies the same WHITELIST-aware filters CLAUDE.md prescribes (Nous Hermes
+// model names, NousResearch URLs, hermes-agent repo refs, providers/base.py
+// UA, refs/hermes git namespace, HERMES_* identifiers — all preserved).
+await agent(
+  `${CONTRACT}\n\nPHASE 4 FINALIZE SWEEP — deterministic batch replace for mechanical brand/CLI residuals so the audit gate doesn't spend 5+ cycles on them. Use .claude/scripts/p4-sweep.py (already in repo).\n\n` +
+  `Run: \`python .claude/scripts/p4-sweep.py | tee .claude/state/p4-sweep.log\` and read the TOTAL line.\n` +
+  `Commit: \`git add -A && git commit -m "${COMMIT_PREFIX}rebrand: P4 finalize sweep (deterministic batch replace)" || echo "nothing to commit"\`.\n` +
+  `Return JSON {filesChanged: <count from script>, commitSha: "<sha or empty>", summary: "P4 sweep: <count> files batch-replaced"}.`,
+  { label: 'p4:finalize-sweep', phase: 'P4 brand+CLI', schema: PHASE_RESULT_SCHEMA }
+)
+
 await runAudit('P4', 'full whitelist audit per CLAUDE.md: \\bHermes\\b residuals only in whitelist contexts; \\bhermes\\b in text only where the whitelist allows; all preserved identifiers/URLs/env vars still present')
 
 // ---------------- Phase 5 ----------------

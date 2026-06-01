@@ -129,6 +129,22 @@ After the parallel-subtree P2 commit, run `.claude/scripts/p2-sweep.py` as a sec
 
 The workflow runs this automatically between the P2 subtree commit and the P2 audit gate — see `.claude/workflows/rebrand.js` `p2:finalize-sweep` agent.
 
+### Phase 4 finalize sweep (deterministic safety net)
+
+After the P4 parallel-subtree commit, run `.claude/scripts/p4-sweep.py` as a second pass — the same pattern as P2. E2E v4 (2026-06-01) proved that without this, P4 audit takes **5-6 cycles, ~50 minutes** classifying the same mechanical brand residuals one-by-one (Sonnet auditor + Opus fixer doing 40-72 tool calls per cycle while the residuals are entirely mechanical).
+
+The script applies three WHITELIST-aware patterns:
+
+- **R2 argparse**: `prog="hermes"` / `prog='hermes'` → `"thm"` (strict, inside quotes only)
+- **R3 brand word**: `\bHermes\b` → `TeamHermes`, with per-line blocklist for `Hermes-3/4/2/1`, `Nous Hermes`, `NousResearch`, `nousresearch.com`, `hermes-agent`, `RELEASE_v` — these are model names, upstream attribution, and frozen release notes
+- **R4 CLI in markdown/help**: `` `hermes <cmd>` `` (backtick + hermes + space) → `` `thm <cmd>` ``
+
+Global excludes: `.git/`, `.venv/`, `node_modules/`, `__pycache__/`, `.claude/`, `.cursor/`, LICENSE, NOTICE, RELEASE_v\*.md, binary/asset extensions, and `providers/base.py` (whitelist rule 3 — that file's `hermes-cli/<version>` UA is the canonical wire-protocol identity).
+
+Verified on clean v2026.5.29.2 (post-P2 sweep state): 1584 files / ~12,200 lines batch-replaced in ~3 seconds. All whitelist symbols verified intact afterwards (`refs/hermes` × 2, `hermes@local`, `HERMES_HOME` × 2595, Nous Hermes / Hermes-3/4 × 50, NousResearch × 3790, `hermes-agent` × 5117, `providers/base.py` UA × 4).
+
+The workflow runs this automatically between the P4 subtree commit and the P4 audit gate — see `.claude/workflows/rebrand.js` `p4:finalize-sweep` agent.
+
 ### Phase 5 — Argparse + final report
 
 Find every `prog="hermes"` and `prog="hermes-acp"` in Python — replace with `prog="thm"` and `prog="thm-acp"`. (~7 files.)
