@@ -36,6 +36,21 @@ This task touches ~1,900 files across 5 semantic phases. Use Claude Code's **dyn
 
 **Persistence**: the saved `rebrand.js` becomes the reusable asset — future upstream tags re-run via `/rebrand` slash command (auto-registered from the saved workflow file).
 
+**Phase 6 automation (added 2026-06-01):** The smoke-tester subagent writes `.claude/state/failures.list`; the workflow then loops the `rebrand-fixer` subagent up to 16 cycles, each cycle classifies failures into the Phase 6 four-bucket taxonomy and commits a batch. If the loop hits a Bucket-C blast radius or stalls, it writes `.claude/state/p6-resume.list` so the orchestrator can hand-fix and re-trigger (the next workflow run skips those items).
+
+## Dry-run mode
+
+Touch `.claude/state/dry-run.flag` BEFORE launching the workflow. Effects:
+- All phase commits get a `[DRY-RUN]` subject prefix.
+- Phase 6 produces `.claude/state/p6-plan.md` (per-failure classification + proposed fix) instead of editing files or committing.
+- Handoff writes `.claude/state/dry-run-summary.md` listing every dry-run commit.
+
+To revert after a dry-run validation pass:
+    git reset --hard <upstream-tag>     # e.g. v2026.5.29.2
+    rm .claude/state/dry-run.flag
+
+Dry-run is the safe way to validate that the skill + workflow can reproduce a rebrand from a clean upstream checkout — diff the dry-run commits against a real rebrand and any delta signals hidden knowledge missing from the skill.
+
 ## The five phases (semantic contract)
 
 ### Phase 1 — Package metadata
@@ -182,17 +197,7 @@ After Phase 5, invoke `smoke-tester` subagent. Pass = ready for orchestrator han
 
 ### Run the gate
 
-```bash
-source .venv/bin/activate   # ensure full extras installed: .[messaging,web]
-pytest tests/ -q -n 4 --timeout=60 2>&1 | tee .claude/state/pytest-sweep.log
-```
-
-If installs are needed first:
-```bash
-uv pip install -e '.[messaging,web]' pytest-timeout pytest-xdist pytest-asyncio
-```
-
-Extract `FAILED tests/...` lines into `.claude/state/failures.list` for the fix loop.
+The smoke-tester subagent has already run the full suite and emitted `.claude/state/failures.list`. The fix loop reads this file — do NOT re-run full pytest each cycle, only re-run the remaining failures list.
 
 ### The bidirectional fix taxonomy
 
