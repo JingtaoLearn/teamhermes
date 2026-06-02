@@ -487,7 +487,12 @@ class DingTalkAdapter(BasePlatformAdapter):
     def _message_matches_mention_patterns(self, text: str) -> bool:
         if not text or not self._mention_patterns:
             return False
-        return any(pattern.search(text) for pattern in self._mention_patterns)
+        if any(pattern.search(text) for pattern in self._mention_patterns):
+            return True
+        aliased = re.sub(r'\bthm\b', 'hermes', text, flags=re.IGNORECASE)
+        if aliased != text:
+            return any(pattern.search(aliased) for pattern in self._mention_patterns)
+        return False
 
     def _should_process_message(self, message: "ChatbotMessage", text: str, is_group: bool, chat_id: str) -> bool:
         """Apply DingTalk group trigger rules.

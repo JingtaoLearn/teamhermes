@@ -330,8 +330,8 @@ def _load_config() -> dict:
         "retain_user_prefix": os.environ.get("HINDSIGHT_RETAIN_USER_PREFIX", "User"),
         "retain_assistant_prefix": os.environ.get("HINDSIGHT_RETAIN_ASSISTANT_PREFIX", "Assistant"),
         "banks": {
-            "thm": {
-                "bankId": os.environ.get("HINDSIGHT_BANK_ID", "thm"),
+            "hermes": {
+                "bankId": os.environ.get("HINDSIGHT_BANK_ID", "hermes"),
                 "budget": os.environ.get("HINDSIGHT_BUDGET", "mid"),
                 "enabled": True,
             }
@@ -383,8 +383,8 @@ def _utc_timestamp() -> str:
 
 def _embedded_profile_name(config: dict[str, Any]) -> str:
     """Return the Hindsight embedded profile name for this TeamHermes config."""
-    profile = config.get("profile", "thm")
-    return str(profile or "thm")
+    profile = config.get("profile", "hermes")
+    return str(profile or "hermes")
 
 
 def _load_simple_env(path) -> dict[str, str]:
