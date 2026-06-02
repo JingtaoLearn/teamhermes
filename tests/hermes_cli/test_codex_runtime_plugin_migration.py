@@ -489,7 +489,7 @@ class TestMigrate:
 
     def test_expose_hermes_tools_writes_callback_mcp_entry(self, tmp_path):
         """When expose_hermes_tools=True (production default), an
-        [mcp_servers.teamhermes-tools] entry is written so codex calls back
+        [mcp_servers.hermes-tools] entry is written so codex calls back
         into TeamHermes for browser/web/delegate_task/vision/memory tools.
 
         This is the fix for 'all other tools that codex doesn't provide
@@ -499,7 +499,7 @@ class TestMigrate:
                          default_permission_profile=None,
                          expose_hermes_tools=True)
         text = (tmp_path / "config.toml").read_text()
-        assert "[mcp_servers.teamhermes-tools]" in text
+        assert "[mcp_servers.hermes-tools]" in text
         assert "hermes_tools_mcp_server" in text
         # Must include startup + tool timeouts so codex doesn't give up
         assert "startup_timeout_sec" in text
@@ -627,7 +627,7 @@ class TestMigrate:
         assert "user-above" in final
         assert "user-below" in final
         # And our managed block is still there with the new content
-        assert "[mcp_servers.teamhermes-mcp]" in final
+        assert "[mcp_servers.hermes-mcp]" in final
 
     def test_skipped_keys_reported(self, tmp_path):
         report = migrate({

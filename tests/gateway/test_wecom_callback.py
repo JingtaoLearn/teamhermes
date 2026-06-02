@@ -5,6 +5,8 @@ from xml.etree import ElementTree as ET
 
 import pytest
 
+pytest.importorskip("defusedxml", reason="defusedxml required for WecomCallback XML parsing tests")
+
 from gateway.config import PlatformConfig
 from gateway.platforms.wecom_callback import WecomCallbackAdapter
 from gateway.platforms.wecom_crypto import WXBizMsgCrypt

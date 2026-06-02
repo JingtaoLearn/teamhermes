@@ -416,13 +416,16 @@ def _case_preserving_replacement(replacement: str):
 
     Keeps ``OpenClaw`` → ``TeamHermes`` but maps ``openclaw`` → ``thm`` so a
     filesystem path like ``~/.openclaw/config.yaml`` rewrites to
-    ``~/.teamhermes/config.yaml`` (the real TeamHermes home) instead of the broken
-    ``~/.TeamHermes/config.yaml``.
+    ``~/.hermes/config.yaml`` (the TeamHermes home directory) instead of the
+    broken ``~/.TeamHermes/config.yaml``.
     """
     def _sub(match: "re.Match[str]") -> str:
         matched = match.group(0)
         if matched and matched.islower():
-            return replacement.lower()
+            # All-lowercase matches are filesystem paths; use plain 'hermes'
+            # so ~/.openclaw → ~/.hermes (the actual home dir), not
+            # ~/.teamhermes which has a different casing convention.
+            return "hermes"
         return replacement
     return _sub
 
