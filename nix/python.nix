@@ -97,5 +97,5 @@ let
       ]);
 in
 pythonSet.mkVirtualEnv "thm-agent-env" {
-  thm-agent = dependency-groups;
+  teamhermes = dependency-groups;
 }

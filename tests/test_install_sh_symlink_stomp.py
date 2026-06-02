@@ -31,7 +31,7 @@ def _extract_setup_path_shim_block() -> str:
     """Return the install.sh shim-write block used by setup_path()."""
     text = INSTALL_SH.read_text()
     match = re.search(
-        r"(?P<block>mkdir -p \"\$command_link_dir\".*?chmod \+x \"\$command_link_dir/hermes\")",
+        r"(?P<block>mkdir -p \"\$command_link_dir\".*?chmod \+x \"\$command_link_dir/thm\")",
         text,
         re.DOTALL,
     )
@@ -44,10 +44,10 @@ def _extract_setup_path_shim_block() -> str:
 def test_setup_path_shim_block_removes_old_link_before_writing() -> None:
     """Static guard: the rm must precede the cat heredoc, not follow it."""
     block = _extract_setup_path_shim_block()
-    rm_idx = block.find('rm -f "$command_link_dir/hermes"')
-    cat_idx = block.find('cat > "$command_link_dir/hermes" <<EOF')
+    rm_idx = block.find('rm -f "$command_link_dir/thm"')
+    cat_idx = block.find('cat > "$command_link_dir/thm" <<EOF')
     assert rm_idx != -1, (
-        "setup_path() must `rm -f` $command_link_dir/hermes before the "
+        "setup_path() must `rm -f` $command_link_dir/thm before the "
         "`cat >` heredoc, otherwise an existing symlink (left by older "
         "installs) will be followed and the pip entry point overwritten. "
         "See #21454."
@@ -76,14 +76,14 @@ def test_re_running_setup_path_block_preserves_pip_entry_point(tmp_path: Path) -
     """
     venv_bin = tmp_path / "venv" / "bin"
     venv_bin.mkdir(parents=True)
-    pip_entry = venv_bin / "hermes"
+    pip_entry = venv_bin / "thm"
     pip_marker = "#!/usr/bin/env python\n# pip-generated entry point — must not be overwritten\n"
     pip_entry.write_text(pip_marker)
     pip_entry.chmod(pip_entry.stat().st_mode | stat.S_IXUSR)
 
     command_link_dir = tmp_path / "local_bin"
     command_link_dir.mkdir()
-    shim_path = command_link_dir / "hermes"
+    shim_path = command_link_dir / "thm"
     # Reproduce the prior-install state: shim path is a symlink to the
     # pip-generated entry point.
     shim_path.symlink_to(pip_entry)
@@ -105,14 +105,14 @@ def test_re_running_setup_path_block_preserves_pip_entry_point(tmp_path: Path) -
     # The pip entry point must still be the original pip script — not a
     # re-written self-recursing bash shim.
     assert pip_entry.read_text() == pip_marker, (
-        "venv/bin/hermes was overwritten by setup_path() — symlink-stomp "
+        "venv/bin/thm was overwritten by setup_path() — symlink-stomp "
         "regression (#21454)."
     )
 
     # The shim path itself must now be a regular file holding the launcher.
     assert shim_path.exists()
     assert not shim_path.is_symlink(), (
-        "command_link_dir/hermes must be replaced with a regular file, not "
+        "command_link_dir/thm must be replaced with a regular file, not "
         "left as a symlink — otherwise the next install will stomp again."
     )
     shim_text = shim_path.read_text()

@@ -46,6 +46,7 @@ These must remain after every rebrand. The auditor regression-checks for their p
 - **API wire-protocol fields**: api_server.py JSON keys (`owned_by: hermes`, `error.hermes`, `response_data.hermes`) — same class as X-Hermes-* headers.
 - **XDG state paths**: `~/.local/state/hermes/` (gateway/status.py) — same class as /opt/hermes; existing locks live there.
 - **External backend tags**: portal_tags.py `product=hermes-agent` / `hermes-client-v*` (Nous backend identifier), gemini X-Goog-Api-Client `gl-python/hermes` — backend routing/billing identifiers. *(gemini one is FIX, but tag in portal_tags is WHITELIST — backend telemetry.)*
+- **HTTP User-Agent header**: `HermesAgent/<version>` in `run_agent.py` auxiliary_client and `plugins/model-providers/gmi/__init__.py` — backend billing/whitelist identifier. Renaming breaks GMI quota attribution. Tests assert `startswith("HermesAgent/")`.
 - **OAuth redirect URL fragments**: agent/google_oauth.py `#hermes` — registered redirect at Google OAuth console; renaming breaks login.
 - **Logger names**: `hermes.lint.lsp` (agent/lsp/eventlog.py) — users have log-filter rules referencing this; renaming breaks their setup.
 - **ACP protocol identifiers**: copilot_acp_client `name: hermes-agent`, acp_adapter/auth.py `TERMINAL_SETUP_AUTH_METHOD_ID`, codex_app_server_session `hermes-tools` MCP server name — wire-protocol identity.

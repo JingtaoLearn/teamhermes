@@ -416,15 +416,38 @@ def _case_preserving_replacement(replacement: str):
 
     Keeps ``OpenClaw`` → ``TeamHermes`` but maps ``openclaw`` → ``thm`` so a
     filesystem path like ``~/.openclaw/config.yaml`` rewrites to
-    ``~/.teamhermes/config.yaml`` (the real TeamHermes home) instead of the broken
-    ``~/.TeamHermes/config.yaml``.
+    ``~/.hermes/config.yaml`` (the TeamHermes home directory) instead of the
+    broken ``~/.TeamHermes/config.yaml``.
     """
     def _sub(match: "re.Match[str]") -> str:
         matched = match.group(0)
         if matched and matched.islower():
-            return replacement.lower()
+            # Filesystem-path occurrences (preceded by '.' or '/') map to
+            # 'hermes' so ~/.openclaw → ~/.hermes (the real home dir).
+            # CLI command-shape occurrences (followed by a known subcommand
+            # like 'config', 'gateway', 'run', etc.) map to 'thm' (the
+            # binary). Plain prose occurrences stay 'hermes' so legacy
+            # workspace text rewrites stay readable.
+            start = match.start()
+            end = match.end()
+            prev = match.string[start - 1] if start > 0 else ""
+            if prev in (".", "/"):
+                return "hermes"
+            tail = match.string[end:]
+            tail_match = re.match(r"\s+([a-z][a-z0-9_-]*)", tail)
+            if tail_match and tail_match.group(1) in _CLI_SUBCOMMAND_HINTS:
+                return "thm"
+            return "hermes"
         return replacement
     return _sub
+
+
+_CLI_SUBCOMMAND_HINTS = frozenset({
+    "auth", "config", "cron", "dashboard", "gateway", "install", "kanban",
+    "lint", "memory", "mcp", "model", "ping", "profile", "run", "session",
+    "sessions", "setup", "skill", "skills", "start", "status", "stop",
+    "uninstall", "update", "version", "webhook",
+})
 
 
 def rebrand_text(text: str) -> str:

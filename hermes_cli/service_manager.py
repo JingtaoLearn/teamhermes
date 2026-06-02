@@ -127,7 +127,7 @@ def _s6_running() -> bool:
     ``/proc/1/exe`` is unreadable and ``resolve()`` silently returns the
     path unchanged, so the resolved name is the literal ``"exe"`` and
     detection always fails. Since every TeamHermes runtime call inside the
-    container drops to thm via ``s6-setuidgid``, that silent failure
+    container drops to hermes via ``s6-setuidgid``, that silent failure
     made the entire service-manager runtime-registration path inert in
     production (PR #30136 review).
 
@@ -158,7 +158,7 @@ def _s6_running() -> bool:
 # in ``hermes_cli.gateway`` (systemd/launchd) and ``hermes_cli.gateway_windows``
 # (Windows Scheduled Tasks). The protocol's ``name`` parameter is currently
 # unused for host backends — they operate on whichever profile is currently
-# active (set via the ``thm -p <profile>`` flag before the call). This
+# active (set via the ``hermes -p <profile>`` flag before the call). This
 # matches existing host-side semantics; the parameter shape is designed
 # for s6 where each profile maps to a distinct service directory.
 # ---------------------------------------------------------------------------
@@ -350,7 +350,7 @@ _HERMES_GID = 10000
 
 def _seed_supervise_skeleton(svc_dir: Path) -> None:
     """Pre-create the ``supervise/`` and top-level ``event/`` skeleton
-    inside a service directory, owned by the thm user.
+    inside a service directory, owned by the hermes user.
 
     Why this exists
     ---------------
@@ -366,7 +366,7 @@ def _seed_supervise_skeleton(svc_dir: Path) -> None:
     The PR #30136 review surfaced this as a real product gap: the
     entire S6ServiceManager lifecycle (``register/start/stop/unregister
     _profile_gateway``) was inert in production because every operation
-    is dispatched as the thm user.
+    is dispatched as the hermes user.
 
     Why this works
     --------------
@@ -376,7 +376,7 @@ def _seed_supervise_skeleton(svc_dir: Path) -> None:
     chown/chmod fix-up that would normally make event/ ``03730
     root:root`` is **skipped** entirely — s6-supervise just opens the
     pre-existing FIFOs and proceeds. So if we lay the skeleton down
-    with thm ownership before triggering ``s6-svscanctl -a``,
+    with hermes ownership before triggering ``s6-svscanctl -a``,
     s6-supervise inherits our layout and never touches it.
 
     Layout produced
@@ -390,7 +390,7 @@ def _seed_supervise_skeleton(svc_dir: Path) -> None:
     The ``death_tally``, ``lock``, and ``status`` regular files end up
     written by s6-supervise itself (as root), but those land mode 0644 —
     world-readable — and ``s6-svstat`` only needs read access, so the
-    thm user reads them fine.
+    hermes user reads them fine.
 
     If ``svc_dir/log/`` is present (the canonical s6 logger pattern —
     one s6-supervise instance per service, plus a second for its
@@ -426,7 +426,7 @@ def _seed_supervise_skeleton(svc_dir: Path) -> None:
         try:
             os.chown(path, _HERMES_UID, _HERMES_GID)
         except PermissionError:
-            # Running as the thm user already — directory is hermes-
+            # Running as the hermes user already — directory is hermes-
             # owned by default. The chown is a no-op in that case, so
             # swallowing this keeps both root and unprivileged callers
             # on one code path.
@@ -495,7 +495,7 @@ class S6Error(RuntimeError):
 class GatewayNotRegisteredError(S6Error):
     """Raised when a lifecycle method targets a slot that doesn't exist.
 
-    Most commonly: ``thm -p typo gateway start`` when no profile
+    Most commonly: ``hermes -p typo gateway start`` when no profile
     ``typo`` exists. Carries the unprefixed profile name (not the
     full ``gateway-<profile>`` service-dir name) so callers can phrase
     a user-facing message like "no such gateway 'typo'".
@@ -570,8 +570,8 @@ class S6ServiceManager:
              so with-contenv's root HOME does not leak into the
              unprivileged gateway process.
           3. Activates the bundled venv.
-          4. Drops to the thm user and exec's
-             ``thm -p <profile> gateway run`` (or just ``hermes
+          4. Drops to the hermes user and exec's
+             ``hermes -p <profile> gateway run`` (or just ``thm
              gateway run`` for the default profile — see below).
 
         Special case: ``profile == "default"`` emits ``thm gateway
@@ -615,10 +615,10 @@ class S6ServiceManager:
         # guard.
         lines.append("export HERMES_S6_SUPERVISED_CHILD=1")
         if profile == "default":
-            lines.append("exec s6-setuidgid thm thm gateway run")
+            lines.append("exec s6-setuidgid hermes thm gateway run")
         else:
             lines.append(
-                f"exec s6-setuidgid thm thm -p {shlex.quote(profile)} gateway run"
+                f"exec s6-setuidgid hermes thm -p {shlex.quote(profile)} gateway run"
             )
         return "\n".join(lines) + "\n"
 
@@ -819,11 +819,11 @@ class S6ServiceManager:
             log_run.write_text(self._render_log_run(profile))
             log_run.chmod(0o755)
 
-            # Pre-create the supervise/ skeleton with thm ownership
+            # Pre-create the supervise/ skeleton with hermes ownership
             # BEFORE we publish the slot. s6-supervise will EEXIST our
             # dirs/FIFOs and inherit the ownership, so the runtime
             # s6-svc / s6-svstat / s6-svwait calls (all dispatched as
-            # the thm user) won't hit EACCES on root-owned 0700
+            # the hermes user) won't hit EACCES on root-owned 0700
             # dirs. See ``_seed_supervise_skeleton`` for the full
             # rationale.
             _seed_supervise_skeleton(tmp_dir)

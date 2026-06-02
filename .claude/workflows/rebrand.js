@@ -13,7 +13,7 @@ export const meta = {
     { title: 'P4 audit' },
     { title: 'P5 argparse+report' },
     { title: 'P5 audit' },
-    { title: 'Smoke + tests' },
+    { title: 'P6 Smoke + tests + CI sweep' },
   ],
 }
 
@@ -87,8 +87,10 @@ async function runAudit(phaseLabel, phaseDescription) {
   let sameResidualStreak = 0
   for (let cycle = 1; cycle <= MAX_CYCLES; cycle++) {
     const audit = await agent(
-      `${CONTRACT}\n\n${CLASSIFICATION_RULES}\n\nRun the rebrand-auditor procedure for phase: ${phaseDescription}.\n` +
-      `Apply the FIX/WHITELIST classification rules above when judging each residual. Write .claude/state/audit-report.md with each residual classified.\n` +
+      `${CONTRACT}\n\n${CLASSIFICATION_RULES}\n\nRun the rebrand-auditor procedure SCOPED TO PHASE ${phaseLabel} ONLY.\n` +
+      `Phase scope: ${phaseDescription}.\n` +
+      `CRITICAL: per the auditor's scope-limited rule, run ONLY the grep categories that match this phase scope. Do NOT report residuals belonging to later phases (e.g. when auditing P2 home dir, do NOT report \\bHermes\\b brand strings or pyproject.toml comments — those belong to P4).\n` +
+      `Apply the FIX/WHITELIST classification rules above when judging in-scope residuals. Write .claude/state/audit-report.md with each in-scope residual classified.\n` +
       `Return JSON via StructuredOutput: { verdict: "PASS"|"FAIL", residuals: <int>, notes: "<short>" }.`,
       { label: `audit:${phaseLabel}:cycle${cycle}`, phase: `${phaseLabel} audit`, schema: AUDIT_SCHEMA, agentType: 'rebrand-auditor' }
     )
@@ -115,15 +117,42 @@ async function runAudit(phaseLabel, phaseDescription) {
 
     await agent(
       `${CONTRACT}\n\n${CLASSIFICATION_RULES}\n\nThe ${phaseLabel} audit reported ${audit?.residuals} residuals. Read .claude/state/audit-report.md.\n` +
-      `For each residual, apply the FIX/WHITELIST classification rules autonomously:\n` +
-      `- If WHITELIST: edit CLAUDE.md to add the entry under the existing whitelist section, commit as "contract: whitelist <thing> (matches rule <N>)".\n` +
+      `CRITICAL FILE-SCOPE RULE: You may ONLY edit files (and ideally only line ranges) explicitly named in audit-report.md under the residual list. Do NOT re-grep the repo for additional residuals. Do NOT edit any file not listed in the audit report. If you discover what looks like a new residual not in the report, IGNORE it — the auditor is authoritative and will catch it next cycle. Editing files outside the audit-report scope has caused regressions (e.g. rewriting wire-protocol UA strings in providers/base.py, internal hermes_cli/main.py help text containing whitelist symbols). Trust the audit report as the closed work list.\n` +
+      `IMPORTANT phase-scope rule: only act on residuals IN-SCOPE for phase ${phaseLabel} (${phaseDescription}). If the audit report contains items obviously belonging to a later phase (e.g. \\bHermes\\b brand strings reported during P2 home dir audit), SKIP those — note them in your summary as "deferred to later phase" but DO NOT edit them now. Editing out-of-scope items breaks the phase contract.\n` +
+      `For each IN-SCOPE residual, apply the FIX/WHITELIST classification rules autonomously:\n` +
+      `- If WHITELIST: edit CLAUDE.md to add the entry under the existing whitelist section, commit as "${COMMIT_PREFIX}contract: whitelist <thing> (matches rule <N>)".\n` +
       `- If FIX: apply the mechanical substitution per the rule.\n` +
-      `Then commit the fix batch as: "rebrand: ${phaseLabel} audit fixes (cycle ${cycle})". Return JSON {filesChanged, commitSha, summary}.`,
+      `If after filtering there are ZERO in-scope residuals to fix, do nothing and return JSON {filesChanged:0, commitSha:"", summary:"all reported residuals out-of-scope, deferred to later phase"}.\n` +
+      `Otherwise commit the fix batch as: "${COMMIT_PREFIX}rebrand: ${phaseLabel} audit fixes (cycle ${cycle})". Return JSON {filesChanged, commitSha, summary}.`,
       { label: `fix:${phaseLabel}:cycle${cycle}`, phase: `${phaseLabel} audit`, schema: PHASE_RESULT_SCHEMA }
     )
   }
 }
 
+
+// --- Dry-run flag: presence of .claude/state/dry-run.flag → DRY_RUN=true ---
+const dryRunCheck = await agent(
+  `Check if file .claude/state/dry-run.flag exists. Use: test -f .claude/state/dry-run.flag && echo true || echo false. Return JSON {dryRun: <true|false>}.`,
+  { label: 'dry-run-check', schema: { type: 'object', required: ['dryRun'], properties: { dryRun: { type: 'boolean' } } } }
+)
+const DRY_RUN = !!dryRunCheck?.dryRun
+const COMMIT_PREFIX = DRY_RUN ? '[DRY-RUN] ' : ''
+log(`Mode: ${DRY_RUN ? 'DRY-RUN' : 'LIVE'}`)
+
+const P6_FIX_SCHEMA = {
+  type: 'object',
+  required: ['verdict', 'fixedCount', 'remainingFailures', 'bucketTally', 'notes'],
+  properties: {
+    verdict: { enum: ['PROGRESS', 'DONE', 'BLOCKED'] },
+    fixedCount: { type: 'integer' },
+    remainingFailures: { type: 'integer' },
+    bucketTally: {
+      type: 'object',
+      properties: { A: {type:'integer'}, B: {type:'integer'}, C: {type:'integer'}, D: {type:'integer'} }
+    },
+    notes: { type: 'string' },
+  },
+}
 
 // ---------------- Phase 1 ----------------
 phase('P1 metadata')
@@ -133,7 +162,7 @@ const p1 = await agent(
   `- In every dependency-extras list, change "hermes-agent[xxx]" to "teamhermes[xxx]" (all ~15 occurrences across lines 141-211).\n` +
   `- In [project.scripts]: hermes = ... → thm = ...; hermes-agent = ... → thm-agent = ...; hermes-acp = ... → thm-acp = ...\n` +
   `DO NOT touch: project authors, license, urls, dependencies referring to upstream packages, py-modules list (those are import names), packages.find include list.\n` +
-  `After editing, run: git add pyproject.toml && git commit -m "rebrand: P1 package metadata (teamhermes, thm/thm-agent/thm-acp)".\n` +
+  `After editing, run: git add pyproject.toml && git commit -m "${COMMIT_PREFIX}rebrand: P1 package metadata (teamhermes, thm/thm-agent/thm-acp)".\n` +
   `Return JSON {filesChanged, commitSha, summary}.`,
   { label: 'p1:metadata', schema: PHASE_RESULT_SCHEMA }
 )
@@ -163,9 +192,21 @@ const p2Results = await parallel(P2_SUBTREES.map(sub => () => agent(
 const p2Total = p2Results.filter(Boolean).reduce((s, r) => s + (r.filesChanged || 0), 0)
 log(`P2: ${p2Total} files edited across ${p2Results.filter(Boolean).length} subtrees — committing`)
 await agent(
-  `Run: git add -A && git diff --cached --stat | tail -1 && git commit -m "rebrand: P2 default home dir .hermes -> .teamhermes" || echo "nothing to commit". Return JSON {filesChanged:0, commitSha:"<sha or empty>", summary:"P2 commit"}.`,
+  `Run: git add -A && git diff --cached --stat | tail -1 && git commit -m "${COMMIT_PREFIX}rebrand: P2 default home dir .hermes -> .teamhermes (subtree parallel pass)" || echo "nothing to commit". Return JSON {filesChanged:0, commitSha:"<sha or empty>", summary:"P2 subtree commit"}.`,
   { label: 'p2:commit', phase: 'P2 home dir', schema: PHASE_RESULT_SCHEMA }
 )
+
+// P2 finalize sweep — parallel subtree agents reliably miss many \.hermes\b hits
+// when the subtree has 100+ candidates (they sample and stop, no convergence pressure).
+// Run a deterministic Python batch-replace as a safety net BEFORE the audit gate.
+await agent(
+  `${CONTRACT}\n\nPHASE 2 FINALIZE SWEEP — deterministic batch replace for any \\.hermes\\b path literals the parallel subtree agents missed. Use the script .claude/scripts/p2-sweep.py (already in repo). If the script does not exist, create it with the canonical content from .claude/skills/rebrand-from-scratch.md "Phase 2 finalize sweep" section.\n\n` +
+  `Run: \`python .claude/scripts/p2-sweep.py | tee .claude/state/p2-sweep.log\` and read the total line.\n` +
+  `Commit: \`git add -A && git commit -m "${COMMIT_PREFIX}rebrand: P2 finalize sweep (deterministic batch replace)" || echo "nothing to commit"\`.\n` +
+  `Return JSON {filesChanged: <count from script>, commitSha: "<sha or empty>", summary: "P2 sweep: <count> files batch-replaced"}.`,
+  { label: 'p2:finalize-sweep', phase: 'P2 home dir', schema: PHASE_RESULT_SCHEMA }
+)
+
 await runAudit('P2', 'residual \\.hermes\\b path literals only in whitelist-allowed contexts (LICENSE/NOTICE/RELEASE_v*.md, test fixtures, docker/s6-rc.d/main-hermes/, .hermes_history/_build_sha/_sync.* deferred to P3)')
 
 // ---------------- Phase 3 ----------------
@@ -176,7 +217,7 @@ const p3 = await agent(
   `  .hermes_build_sha → .teamhermes_build_sha\n` +
   `  .hermes_sync.<anything> → .teamhermes_sync.<anything>\n` +
   `Use rg to find all occurrences across the repo (skip .git/, .venv/, node_modules/, __pycache__/, *.egg-info/, .claude/, docker/s6-rc.d/main-hermes/, LICENSE, NOTICE, RELEASE_v*.md). Edit each file. ~12 files expected.\n` +
-  `Commit: git add -A && git commit -m "rebrand: P3 home dir artifacts (.hermes_history etc.)".\n` +
+  `Commit: git add -A && git commit -m "${COMMIT_PREFIX}rebrand: P3 home dir artifacts (.hermes_history etc.)".\n` +
   `Return JSON {filesChanged, commitSha, summary}.`,
   { label: 'p3:artifacts', schema: PHASE_RESULT_SCHEMA }
 )
@@ -220,9 +261,25 @@ const p4Results = await parallel(P4_SUBTREES.map(sub => () => agent(
 const p4Total = p4Results.filter(Boolean).reduce((s, r) => s + (r.filesChanged || 0), 0)
 log(`P4: ${p4Total} files edited across ${p4Results.filter(Boolean).length} subtrees — committing`)
 await agent(
-  `Run: git add -A && git diff --cached --stat | tail -1 && git commit -m "rebrand: P4 brand string Hermes -> TeamHermes and CLI hermes -> thm" || echo "nothing to commit". Return JSON {filesChanged:0, commitSha:"<sha or empty>", summary:"P4 commit"}.`,
+  `Run: git add -A && git diff --cached --stat | tail -1 && git commit -m "${COMMIT_PREFIX}rebrand: P4 brand string Hermes -> TeamHermes and CLI hermes -> thm" || echo "nothing to commit". Return JSON {filesChanged:0, commitSha:"<sha or empty>", summary:"P4 commit"}.`,
   { label: 'p4:commit', phase: 'P4 brand+CLI', schema: PHASE_RESULT_SCHEMA }
 )
+
+// P4 finalize sweep — parallel subtree agents miss the bulk of \bHermes\b
+// brand-word, backtick-quoted `hermes <cmd>` CLI references, and argparse
+// prog="hermes". E2E v4 proved that without this, P4 audit takes 5-6 cycles
+// (~50 minutes) classifying mechanical residuals one-by-one. The script
+// applies the same WHITELIST-aware filters CLAUDE.md prescribes (Nous Hermes
+// model names, NousResearch URLs, hermes-agent repo refs, providers/base.py
+// UA, refs/hermes git namespace, HERMES_* identifiers — all preserved).
+await agent(
+  `${CONTRACT}\n\nPHASE 4 FINALIZE SWEEP — deterministic batch replace for mechanical brand/CLI residuals so the audit gate doesn't spend 5+ cycles on them. Use .claude/scripts/p4-sweep.py (already in repo).\n\n` +
+  `Run: \`python .claude/scripts/p4-sweep.py | tee .claude/state/p4-sweep.log\` and read the TOTAL line.\n` +
+  `Commit: \`git add -A && git commit -m "${COMMIT_PREFIX}rebrand: P4 finalize sweep (deterministic batch replace)" || echo "nothing to commit"\`.\n` +
+  `Return JSON {filesChanged: <count from script>, commitSha: "<sha or empty>", summary: "P4 sweep: <count> files batch-replaced"}.`,
+  { label: 'p4:finalize-sweep', phase: 'P4 brand+CLI', schema: PHASE_RESULT_SCHEMA }
+)
+
 await runAudit('P4', 'full whitelist audit per CLAUDE.md: \\bHermes\\b residuals only in whitelist contexts; \\bhermes\\b in text only where the whitelist allows; all preserved identifiers/URLs/env vars still present')
 
 // ---------------- Phase 5 ----------------
@@ -237,15 +294,15 @@ const p5 = await agent(
   `  ## Whitelist verified preserved\n  - [x] NousResearch/hermes-agent URL\n  - [x] hermes_* Python modules\n  - [x] Hermes* class/function names\n  - [x] HERMES_* env vars\n  - [x] LICENSE / NOTICE unchanged\n  - [x] RELEASE_v*.md unchanged\n  - [x] docker user hermes, /opt/hermes, docker/s6-rc.d/main-hermes/\n  - [x] test fixtures in test_openclaw_migration.py, test_dingtalk.py, test_matrix_mention.py\n` +
   `  ## Smoke + tests\n  - (to be filled by smoke-tester; leave placeholders for now)\n\n` +
   `Use the actual git stats from the prior commits to fill counts where possible (git show --stat HEAD~4..HEAD).\n` +
-  `Commit: git add -A && git commit -m "rebrand: P5 argparse prog + final report".\n` +
+  `Commit: git add -A && git commit -m "${COMMIT_PREFIX}rebrand: P5 argparse prog + final report".\n` +
   `Return JSON {filesChanged, commitSha, summary}.`,
   { label: 'p5:argparse+report', schema: PHASE_RESULT_SCHEMA }
 )
 log(`P5: ${p5?.summary}`)
 await runAudit('P5', 'full whitelist audit AND no remaining prog="hermes" / prog="hermes-acp" in any *.py')
 
-// ---------------- Smoke + tests ----------------
-phase('Smoke + tests')
+// ---------------- P6 Smoke + tests + CI sweep ----------------
+phase('P6 Smoke + tests + CI sweep')
 const smoke = await agent(
   `Run the smoke-tester procedure exactly as documented in your agent definition. Write .claude/state/smoke-report.md. ` +
   `Return JSON via StructuredOutput: { verdict: "PASS"|"FAIL", passed: <int>, failed: <int>, skipped: <int>, newRegressions: <int>, notes: "<short>" }.`,
@@ -268,6 +325,110 @@ const smoke = await agent(
 )
 log(`Smoke verdict: ${smoke?.verdict} (${smoke?.passed}P / ${smoke?.failed}F / ${smoke?.skipped}S, ${smoke?.newRegressions} new regressions)`)
 
+if (smoke?.verdict === 'PASS' && smoke?.newRegressions === 0) {
+  log('P6 smoke green, no failures — skipping sweep')
+} else if (smoke?.verdict === 'BLOCKED') {
+  throw new Error(`P6 smoke BLOCKED: ${smoke?.notes}`)
+} else {
+  const MAX_SWEEP_CYCLES = 16
+  let lastRemaining = -1
+  let stallStreak = 0
+  let converged = false
+  for (let cycle = 1; cycle <= MAX_SWEEP_CYCLES; cycle++) {
+    const fix = await agent(
+      `${CONTRACT}\n\nP6 ITERATIVE CONVERGENCE — cycle ${cycle}/${MAX_SWEEP_CYCLES}.\n\n` +
+      `STEP 1 — Read inputs:\n` +
+      `  - .claude/state/failures.list (pytest nodeids; the ONLY work for this cycle)\n` +
+      `  - .claude/state/p6-blocked.md if it exists (testids already given up — SKIP)\n` +
+      `  - .claude/state/p6-resume.list if it exists (orchestrator-handled — SKIP)\n\n` +
+      `STEP 2 — Run targeted pytest (HARD RULES — violating these is a fatal P6 error):\n` +
+      `  RULE 1 (FOREGROUND ONLY): pytest MUST run as a foreground subprocess with stdout/stderr captured via tee. NO background (&), NO nohup, NO disown, NO run_in_background. If pytest hangs, that is fatal — stop the workflow with a clear error, do NOT swallow it as "BLOCKED" and do NOT write a placeholder line like "# pytest still running" into failures.list.\n` +
+      `  RULE 2 (CHECK-AND-EXIT): immediately after rewriting failures.list, run \`wc -l < .claude/state/failures.list\`. If 0 → return {verdict:"DONE", remainingFailures:0, ...} this cycle. The outer loop will then stop. DO NOT run a "verification" pytest after convergence — that wastes time and tokens.\n` +
+      (cycle === 1
+        ? `  Cycle 1: failures.list was written by smoke-tester from the full sweep. Trust it. If wc -l shows 0, immediately return DONE without running anything else.\n`
+        : `  Command: pytest $(cat .claude/state/failures.list | tr '\\n' ' ') -q --no-header 2>&1 | tee .claude/state/p6-cycle-${cycle}.log    # foreground, blocks until exit\n` +
+          `  Then rewrite failures.list with current failing nodeids only.\n`) +
+      `  Convergence check: wc -l < .claude/state/failures.list == 0 → return DONE.\n\n` +
+      `STEP 3 — Classify EVERY remaining failure into Bucket A/B/C/D BEFORE editing anything. Write .claude/state/p6-cycle-${cycle}-buckets.md with one section per failure: nodeid, bucket, root file path, one-line reason.\n` +
+      `  A = test assertion stale (test wants "hermes", code correctly emits "thm") → fix the test\n` +
+      `  B = production code stale (test wants "thm", code still emits "hermes") → fix the code\n` +
+      `  C = compatibility surface incorrectly rebranded (wire protocol, OAuth URL, model id, PyPI dist name, etc — must REVERT in production)\n` +
+      `  D = real bug introduced by rebrand (NameError, broken import, dangling local) → fix the source\n\n` +
+      `STEP 4 — SCOPE FENCE (HARD RULES — violating these voids the cycle):\n` +
+      `  MAY EDIT: source files referenced by a failing test's trace, OR the test file itself.\n` +
+      `  MAY NOT: edit any file touched by P1-P5 phase commits unless it appears in failures.list trace.\n` +
+      `  MAY NOT: add new entries to CLAUDE.md (whitelist is FROZEN during P6; if a failure seems to need a new whitelist, mark that testid BLOCKED).\n` +
+      `  MAY NOT: re-grep for new patterns outside failures.list scope. P6 is convergence, not discovery.\n\n` +
+      `STEP 5 — Apply fixes in order A → B → D → C (C LAST because highest blast risk).\n` +
+      `  For each Bucket-C reversal BEFORE committing:\n` +
+      `    a. rg <symbol> repo-wide\n` +
+      `    b. pytest the WHOLE containing module\n` +
+      `    c. If reversal breaks ≥3 other tests in that module → mark this testid BLOCKED, do NOT commit the reversal.\n` +
+      `  After each fix re-run that single nodeid; must go green before moving on.\n\n` +
+      `STEP 6 — Per-testid BLOCKED degradation: any testid that failed for 3 consecutive cycles with no progress (track via .claude/state/p6-cycle-N-buckets.md history) → append to .claude/state/p6-blocked.md AND remove from failures.list so the loop can keep going.\n\n` +
+      `STEP 7 — Rewrite .claude/state/failures.list with current remaining failures.\n\n` +
+      (DRY_RUN
+        ? `DRY-RUN MODE: do NOT edit production files, do NOT commit. Write .claude/state/p6-plan.md with full classification. Return JSON {verdict:"DONE", fixedCount:0, remainingFailures:<count>, bucketTally, notes:"dry-run classification only"}.\n`
+        : `STEP 8 — Commit: "${COMMIT_PREFIX}P6 cycle ${cycle}: bucket A=<x> B=<y> C=<z> D=<w>, fixed <M>, remaining <K>".\n`) +
+      `Return JSON {verdict:"DONE"|"PROGRESS"|"BLOCKED", fixedCount, remainingFailures, bucketTally:{A,B,C,D}, notes}.`,
+      { label: `p6-fix:cycle${cycle}`, phase: 'P6 sweep', agentType: 'rebrand-fixer', schema: P6_FIX_SCHEMA }
+    )
+
+    if (DRY_RUN) { log(`P6 dry-run cycle ${cycle}: ${fix?.remainingFailures} failures classified into plan`); break }
+    if (fix?.verdict === 'DONE' || fix?.remainingFailures === 0) { log(`P6 CONVERGED on cycle ${cycle}`); converged = true; break }
+    if (fix?.verdict === 'BLOCKED') {
+      await agent(
+        `Write .claude/state/p6-resume.list with the current contents of .claude/state/failures.list, prefixed with a header line "# BLOCKED at cycle ${cycle}: ${fix?.notes}". Also ensure .claude/state/p6-blocked.md exists (touch if not). Return JSON {filesChanged:1, commitSha:"", summary:"resume list written"}.`,
+        { label: 'p6-blocked', schema: PHASE_RESULT_SCHEMA }
+      )
+      throw new Error(`P6 sweep BLOCKED at cycle ${cycle}: ${fix?.notes}. See .claude/state/p6-resume.list and p6-blocked.md.`)
+    }
+    if (fix?.remainingFailures === lastRemaining) {
+      stallStreak++
+      if (stallStreak >= 3) {
+        await agent(
+          `P6 stalled at ${fix?.remainingFailures} failures across 3 cycles. Move ALL remaining nodeids in .claude/state/failures.list into .claude/state/p6-blocked.md (append, with header "# STALLED at cycle ${cycle}"), then truncate failures.list to empty. Return JSON {filesChanged:2, commitSha:"", summary:"stall → blocked list"}.`,
+          { label: 'p6-stall-degrade', schema: PHASE_RESULT_SCHEMA }
+        )
+        throw new Error(`P6 stalled: ${fix?.remainingFailures} failures unchanged across 3 cycles → moved to p6-blocked.md`)
+      }
+    } else { stallStreak = 0; lastRemaining = fix?.remainingFailures ?? -1 }
+    if (cycle === MAX_SWEEP_CYCLES) {
+      await agent(
+        `P6 exhausted ${MAX_SWEEP_CYCLES} cycles. Write .claude/state/p6-blocked.md with the current failures.list contents, header "# EXHAUSTED at cycle ${MAX_SWEEP_CYCLES}, ${fix?.remainingFailures} remain". Return JSON {filesChanged:1, commitSha:"", summary:"exhaust written"}.`,
+        { label: 'p6-exhausted', schema: PHASE_RESULT_SCHEMA }
+      )
+      throw new Error(`P6 exhausted ${MAX_SWEEP_CYCLES} cycles, ${fix?.remainingFailures} failures remain — see .claude/state/p6-blocked.md`)
+    }
+  }
+
+  // Post-convergence push + outer remote-CI iteration loop (LIVE only)
+  if (converged && !DRY_RUN) {
+    await agent(
+      `P6 converged locally. Now enter the OUTER REMOTE-CI LOOP — push, watch, classify-and-fix, repeat until ALL non-skipped checks are green.\n\n` +
+      `Outer loop (max ${MAX_SWEEP_CYCLES} iterations):\n` +
+      `  1. branch=$(git rev-parse --abbrev-ref HEAD); pr=$(gh pr list --head "$branch" --json number --jq '.[0].number')\n` +
+      `  2. git push origin "$branch" 2>&1 | tail -3\n` +
+      `  3. gh pr checks "$pr" --watch | tee .claude/state/p6-ci-round-N.log\n` +
+      `  4. Read the log. If every non-skipped check is SUCCESS → break, write .claude/state/p6-final-report.md, done.\n` +
+      `  5. For each failed check, classify and fix:\n` +
+      `     - Tests: \`gh run view <run-id> --log-failed | grep "FAILED \\\\|^.*ERROR.*\\\\.py" | sort -u\` → nodeids to .claude/state/failures.list → re-run the P6 inner cycle loop (Bucket A/B/C/D from the skill) → commit "p6 ci-cycle: A/B/C/D fixes (NN tests)".\n` +
+      `     - Nix: \`gh run view <run-id> --log | grep "Check flake" | grep -iE "error|❌" | head\` → classify against the nix-glue hotspot table in the skill → commit "p6 ci-cycle: nix glue fix (<what>)".\n` +
+      `     - Lint / Attribution / uv.lock check / Docs: read targeted log, apply minimal fix, commit.\n` +
+      `     - Suspected infra flake: rerun once. If still fails AND upstream main is green on the same workflow, STOP and escalate — do NOT assume flake.\n` +
+      `  6. Special case: if two failing tests assert opposite directions on the same symbol, that symbol is Bucket-C (preserved). Add to CLAUDE.md whitelist, revert the code, align tests to the preserved direction.\n` +
+      `  7. Loop back to step 2 (next push retriggers CI).\n\n` +
+      `Return JSON {filesChanged, commitSha:"", summary:"<N> CI rounds, all green"}.`,
+      { label: 'p6-push+ci-iterate', phase: 'P6 sweep', schema: PHASE_RESULT_SCHEMA }
+    )
+  } else if (converged && DRY_RUN) {
+    await agent(
+      `Write a [DRY-RUN] convergence marker: \`git commit --allow-empty -m "${COMMIT_PREFIX}P6 CONVERGED (dry-run, no push)"\`. Return JSON {filesChanged:0, commitSha:"<sha>", summary:"dry-run converged marker"}.`,
+      { label: 'p6-dryrun-converged', schema: PHASE_RESULT_SCHEMA }
+    )
+  }
+}
+
 // ---------------- Handoff state ----------------
 await agent(
   `Update .claude/state/upstream-tag to contain exactly: v2026.5.29.2\n` +
@@ -275,6 +436,13 @@ await agent(
   `Return JSON {filesChanged, commitSha:"", summary:"handoff state written"}.`,
   { label: 'handoff', schema: PHASE_RESULT_SCHEMA }
 )
+
+if (DRY_RUN) {
+  await agent(
+    `Write .claude/state/dry-run-summary.md listing every commit on this branch with subject starting "[DRY-RUN]" (use: git log --grep='^\\[DRY-RUN\\]' --oneline). Add at the end: "To revert: git reset --hard v2026.5.29.2". Return JSON {filesChanged:1, commitSha:"", summary:"dry-run summary written"}.`,
+    { label: 'dry-run-summary', schema: PHASE_RESULT_SCHEMA }
+  )
+}
 
 return {
   upstreamTag: 'v2026.5.29.2',

@@ -692,7 +692,7 @@ class TestNewEndpoints:
         assert resp.status_code == 200
         wrapper_path = wrapper_dir / "writer"
         assert wrapper_path.exists()
-        assert wrapper_path.read_text() == '#!/bin/sh\nexec hermes -p writer "$@"\n'
+        assert wrapper_path.read_text() == '#!/bin/sh\nexec thm -p writer "$@"\n'
 
     def test_profiles_create_with_clone_from_default_copies_default_skills(self, monkeypatch):
         from hermes_constants import get_hermes_home
@@ -2067,8 +2067,19 @@ skip_on_windows = pytest.mark.skipif(
     sys.platform.startswith("win"), reason="PTY bridge is POSIX-only"
 )
 
+try:
+    import ptyprocess as _ptyprocess  # noqa: F401
+    _HAS_PTYPROCESS = True
+except ImportError:
+    _HAS_PTYPROCESS = False
+
+skip_without_ptyprocess = pytest.mark.skipif(
+    not _HAS_PTYPROCESS, reason="ptyprocess package not installed"
+)
+
 
 @skip_on_windows
+@skip_without_ptyprocess
 class TestPtyWebSocket:
     @pytest.fixture(autouse=True)
     def _setup(self, monkeypatch, _isolate_hermes_home):

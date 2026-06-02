@@ -45,6 +45,8 @@ ACP_REGISTRY_MANIFEST = REPO_ROOT / "acp_registry" / "agent.json"
 
 # Auto-extracted from noreply emails + manual overrides
 AUTHOR_MAP = {
+    "xiaozhang@openclaw.ai": "jingtaozhang18",
+    "zhang@teamhermes.dev": "jingtaozhang18",
     "9592417+adam91holt@users.noreply.github.com": "adam91holt",
     "kchuang1015@users.noreply.github.com": "kchuang1015",
     "45688690+fujinice@users.noreply.github.com": "fujinice",
@@ -1486,7 +1488,7 @@ def _update_acp_registry_versions(semver: str) -> None:
         manifest["version"] = semver
         uvx = manifest.get("distribution", {}).get("uvx", {})
         if "package" in uvx:
-            uvx["package"] = f"thm-agent[acp]=={semver}"
+            uvx["package"] = f"hermes-agent[acp]=={semver}"
         # Preserve trailing newline + 2-space indent the file already uses.
         ACP_REGISTRY_MANIFEST.write_text(
             json.dumps(manifest, indent=2) + "\n", encoding="utf-8"

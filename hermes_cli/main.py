@@ -6783,6 +6783,7 @@ def _find_stale_dashboard_pids() -> list[int]:
     """
     patterns = [
         "thm dashboard",
+        "hermes dashboard",
         "hermes_cli.main dashboard",
         "hermes_cli/main.py dashboard",
     ]

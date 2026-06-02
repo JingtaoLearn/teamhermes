@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-HOST = "thm"
+HOST = "hermes"
 
 
 def resolve_active_host() -> str:
@@ -275,7 +275,7 @@ class HonchoClientConfig:
     """Configuration for Honcho client, resolved for a specific host."""
 
     host: str = HOST
-    workspace_id: str = "thm"
+    workspace_id: str = "hermes"
     api_key: str | None = None
     environment: str = "production"
     # Optional base URL for self-hosted Honcho (overrides environment mapping)
@@ -284,7 +284,7 @@ class HonchoClientConfig:
     timeout: float | None = None
     # Identity
     peer_name: str | None = None
-    ai_peer: str = "thm"
+    ai_peer: str = "hermes"
     # When True, ``peer_name`` wins over any gateway-supplied runtime
     # identity (Telegram UID, Discord ID, …) when resolving the user peer.
     # This keeps memory unified across platforms for single-user deployments
@@ -364,7 +364,7 @@ class HonchoClientConfig:
     @classmethod
     def from_env(
         cls,
-        workspace_id: str = "thm",
+        workspace_id: str = "hermes",
         host: str | None = None,
     ) -> HonchoClientConfig:
         """Create config from environment variables (fallback)."""

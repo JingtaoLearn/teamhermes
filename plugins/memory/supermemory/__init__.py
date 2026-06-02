@@ -22,7 +22,7 @@ from tools.registry import tool_error
 
 logger = logging.getLogger(__name__)
 
-_DEFAULT_CONTAINER_TAG = "thm"
+_DEFAULT_CONTAINER_TAG = "hermes"
 _DEFAULT_MAX_RECALL_RESULTS = 10
 _DEFAULT_PROFILE_FREQUENCY = 50
 _DEFAULT_CAPTURE_MODE = "all"

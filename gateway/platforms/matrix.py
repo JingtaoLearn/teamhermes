@@ -2690,6 +2690,9 @@ class MatrixAdapter(BasePlatformAdapter):
                     flags=re.IGNORECASE,
                 )
 
+        # Also strip the new TeamHermes brand mention alias.
+        body = re.sub(r'(?<![\w])@thm\b', '', body, flags=re.IGNORECASE)
+
         # Normalize spacing after mention removal.
         body = re.sub(r'[ \t]{2,}', ' ', body)
         body = re.sub(r'\s+([,.;:!?])', r'\1', body)
