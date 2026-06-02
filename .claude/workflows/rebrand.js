@@ -341,12 +341,14 @@ if (smoke?.verdict === 'PASS' && smoke?.newRegressions === 0) {
       `  - .claude/state/failures.list (pytest nodeids; the ONLY work for this cycle)\n` +
       `  - .claude/state/p6-blocked.md if it exists (testids already given up — SKIP)\n` +
       `  - .claude/state/p6-resume.list if it exists (orchestrator-handled — SKIP)\n\n` +
-      `STEP 2 — Run targeted pytest:\n` +
+      `STEP 2 — Run targeted pytest (HARD RULES — violating these is a fatal P6 error):\n` +
+      `  RULE 1 (FOREGROUND ONLY): pytest MUST run as a foreground subprocess with stdout/stderr captured via tee. NO background (&), NO nohup, NO disown, NO run_in_background. If pytest hangs, that is fatal — stop the workflow with a clear error, do NOT swallow it as "BLOCKED" and do NOT write a placeholder line like "# pytest still running" into failures.list.\n` +
+      `  RULE 2 (CHECK-AND-EXIT): immediately after rewriting failures.list, run \`wc -l < .claude/state/failures.list\`. If 0 → return {verdict:"DONE", remainingFailures:0, ...} this cycle. The outer loop will then stop. DO NOT run a "verification" pytest after convergence — that wastes time and tokens.\n` +
       (cycle === 1
-        ? `  Cycle 1: failures.list was written by smoke-tester from the full sweep. Trust it.\n`
-        : `  pytest $(cat .claude/state/failures.list | tr '\\n' ' ') -q --no-header 2>&1 | tee .claude/state/p6-cycle-${cycle}.log\n` +
-          `  Then rewrite failures.list with the current failing nodeids only.\n`) +
-      `  If failures.list is empty → return {verdict:"DONE", fixedCount:0, remainingFailures:0, bucketTally:{A:0,B:0,C:0,D:0}, notes:"converged"}.\n\n` +
+        ? `  Cycle 1: failures.list was written by smoke-tester from the full sweep. Trust it. If wc -l shows 0, immediately return DONE without running anything else.\n`
+        : `  Command: pytest $(cat .claude/state/failures.list | tr '\\n' ' ') -q --no-header 2>&1 | tee .claude/state/p6-cycle-${cycle}.log    # foreground, blocks until exit\n` +
+          `  Then rewrite failures.list with current failing nodeids only.\n`) +
+      `  Convergence check: wc -l < .claude/state/failures.list == 0 → return DONE.\n\n` +
       `STEP 3 — Classify EVERY remaining failure into Bucket A/B/C/D BEFORE editing anything. Write .claude/state/p6-cycle-${cycle}-buckets.md with one section per failure: nodeid, bucket, root file path, one-line reason.\n` +
       `  A = test assertion stale (test wants "hermes", code correctly emits "thm") → fix the test\n` +
       `  B = production code stale (test wants "thm", code still emits "hermes") → fix the code\n` +

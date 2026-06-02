@@ -238,6 +238,14 @@ After Phase 5, invoke `smoke-tester` subagent. Pass = ready for orchestrator han
 - **Converged** when `failures.list` is empty → P6 PASS.
 - **Exhausted** when cycle 16 finishes with non-empty `failures.list` → P6 STOP. Write remaining to `.claude/state/p6-blocked.md` and exit non-zero. Do NOT declare PASS.
 
+### P6 pytest execution rules (HARD)
+
+These two rules are imperatives. Violating either invalidates the cycle.
+
+1. **pytest MUST run foreground.** Every pytest invocation in P6 (the cycle-1 full sweep done by smoke-tester AND every cycle-N targeted rerun) is a synchronous foreground subprocess with stdout/stderr captured via `tee`. **No** `&`, `nohup`, `disown`, `run_in_background`, or any other backgrounding. If pytest hangs or its pid dies mid-run, that is a **fatal P6 error** — stop the workflow with a clear message. Do NOT swallow the failure as "BLOCKED", and do NOT write placeholder lines like `# pytest still running at report time` into `failures.list`. (Verified 2026-06-02: v6 dry-run backgrounded pytest as pid 747851, the process died, the agent treated the empty result as BLOCKED.)
+
+2. **Exit the loop the instant `failures.list` is empty.** After each cycle's pytest finishes and `failures.list` is rewritten, the FIRST check is `wc -l < .claude/state/failures.list`. If 0 → write the `[DRY-RUN] P6 CONVERGED` marker commit (or push in live mode) and break. Do NOT run an additional "verification" pytest cycle — it wastes wall-clock and tokens. (Verified 2026-06-02: v6 cycle 3 ran a redundant pytest after cycle 2 converged, produced `1 skipped in 5.92s` noise.)
+
 ### Per-cycle workflow
 
 1. **Run pytest** (targeted from cycle 2 on) → capture the new failures list.

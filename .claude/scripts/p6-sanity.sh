@@ -10,21 +10,36 @@ tests/test_proxy_mode.py::test_session_header
 tests/test_auth_nous_provider.py::test_help_hint
 EOF
 
-prompt=$(grep -A 50 'P6 ITERATIVE CONVERGENCE' .claude/workflows/rebrand.js | head -80)
-
 fail=0
+# Workflow.js prompt template must carry the scope-fence + v6-hardening rules
+prompt=$(grep -A 80 'P6 ITERATIVE CONVERGENCE' .claude/workflows/rebrand.js | head -120)
 for needle in \
     'SCOPE FENCE' \
     'MAY NOT: add new entries to CLAUDE.md' \
     'Bucket A/B/C/D' \
     'order A → B → D → C' \
     'blast' \
-    'p6-blocked.md'
+    'p6-blocked.md' \
+    'FOREGROUND ONLY' \
+    'CHECK-AND-EXIT'
 do
   if ! echo "$prompt" | grep -qF "$needle"; then
-    echo "MISSING: $needle"
+    echo "MISSING in workflow.js: $needle"
     fail=1
   fi
 done
-[[ $fail -eq 0 ]] && echo "P6 scope-fence sanity check: OK"
+
+# Skill must document the two v6 hardening rules under a dedicated section
+for needle in \
+    'P6 pytest execution rules (HARD)' \
+    'pytest MUST run foreground' \
+    'instant `failures.list` is empty'
+do
+  if ! grep -qF "$needle" .claude/skills/rebrand-from-scratch.md; then
+    echo "MISSING in skill: $needle"
+    fail=1
+  fi
+done
+
+[[ $fail -eq 0 ]] && echo "P6 scope-fence + v6-hardening sanity check: OK"
 exit $fail
