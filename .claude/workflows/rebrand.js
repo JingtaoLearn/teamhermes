@@ -402,16 +402,24 @@ if (smoke?.verdict === 'PASS' && smoke?.newRegressions === 0) {
     }
   }
 
-  // Post-convergence push (LIVE only)
+  // Post-convergence push + outer remote-CI iteration loop (LIVE only)
   if (converged && !DRY_RUN) {
     await agent(
-      `P6 converged. Push to the current branch and watch CI:\n` +
-      `  branch=$(git rev-parse --abbrev-ref HEAD)\n` +
-      `  git push origin "$branch"\n` +
-      `  pr=$(gh pr list --head "$branch" --json number --jq '.[0].number')\n` +
-      `  gh pr checks "$pr" --watch | tee .claude/state/p6-final-report.md\n` +
-      `Return JSON {filesChanged:1, commitSha:"", summary:"pushed and CI watched"}.`,
-      { label: 'p6-push+watch', phase: 'P6 sweep', schema: PHASE_RESULT_SCHEMA }
+      `P6 converged locally. Now enter the OUTER REMOTE-CI LOOP — push, watch, classify-and-fix, repeat until ALL non-skipped checks are green.\n\n` +
+      `Outer loop (max ${MAX_SWEEP_CYCLES} iterations):\n` +
+      `  1. branch=$(git rev-parse --abbrev-ref HEAD); pr=$(gh pr list --head "$branch" --json number --jq '.[0].number')\n` +
+      `  2. git push origin "$branch" 2>&1 | tail -3\n` +
+      `  3. gh pr checks "$pr" --watch | tee .claude/state/p6-ci-round-N.log\n` +
+      `  4. Read the log. If every non-skipped check is SUCCESS → break, write .claude/state/p6-final-report.md, done.\n` +
+      `  5. For each failed check, classify and fix:\n` +
+      `     - Tests: \`gh run view <run-id> --log-failed | grep "FAILED \\\\|^.*ERROR.*\\\\.py" | sort -u\` → nodeids to .claude/state/failures.list → re-run the P6 inner cycle loop (Bucket A/B/C/D from the skill) → commit "p6 ci-cycle: A/B/C/D fixes (NN tests)".\n` +
+      `     - Nix: \`gh run view <run-id> --log | grep "Check flake" | grep -iE "error|❌" | head\` → classify against the nix-glue hotspot table in the skill → commit "p6 ci-cycle: nix glue fix (<what>)".\n` +
+      `     - Lint / Attribution / uv.lock check / Docs: read targeted log, apply minimal fix, commit.\n` +
+      `     - Suspected infra flake: rerun once. If still fails AND upstream main is green on the same workflow, STOP and escalate — do NOT assume flake.\n` +
+      `  6. Special case: if two failing tests assert opposite directions on the same symbol, that symbol is Bucket-C (preserved). Add to CLAUDE.md whitelist, revert the code, align tests to the preserved direction.\n` +
+      `  7. Loop back to step 2 (next push retriggers CI).\n\n` +
+      `Return JSON {filesChanged, commitSha:"", summary:"<N> CI rounds, all green"}.`,
+      { label: 'p6-push+ci-iterate', phase: 'P6 sweep', schema: PHASE_RESULT_SCHEMA }
     )
   } else if (converged && DRY_RUN) {
     await agent(

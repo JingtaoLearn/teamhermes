@@ -289,9 +289,63 @@ When `failures.list` is empty AND `DRY_RUN === false`:
 
 1. `git push origin <current-branch>` (this branch is the PR branch — e.g. `fix/ci-rebrand-residuals` = PR #6).
 2. `gh pr checks <PR#> --watch` (wait for remote CI).
-3. Write `.claude/state/p6-final-report.md` with the remote CI status.
+3. **If any CI check fails, you are NOT done** — enter the outer remote-CI loop below.
+4. When ALL non-skipped checks are green, write `.claude/state/p6-final-report.md` and stop.
 
 In DRY-RUN mode: skip the push, write a `[DRY-RUN] P6 CONVERGED` commit, stop.
+
+### Outer loop — remote CI iteration (MANDATORY when local converged but CI red)
+
+Local convergence ≠ CI green. CI uses `pytest -n auto` (more xdist workers than the local `-n 4`), runs Nix flake checks, runs lockfile checks, and runs on clean GitHub runners — each surface can expose failures invisible locally. (Verified 2026-06-02: local P6 converged to 0 fail in cycle 2, but the next 5 CI rounds surfaced 36 unit-test fails + 5 nix glue bugs + 2 contradictory User-Agent assertions across files.)
+
+```
+while True:
+    git push origin <branch>
+    gh pr checks <PR#> --watch
+    if all non-skipped checks SUCCESS: break
+    for each failed check:
+        case "Tests":
+            gh run view <run-id> --log-failed | extract failing nodeids
+            write to .claude/state/failures.list
+            re-run P6 cycle loop (apply Bucket A/B/C/D classification)
+            commit "p6 ci-cycle: A/B/C/D fixes (NN tests)"
+        case "Nix":
+            gh run view <run-id> --log | grep -E "❌|error:" | head
+            classify per nix-glue hotspots below
+            commit "p6 ci-cycle: nix glue fix (<what>)"
+        case "Lint" | "Attribution" | "uv.lock check" | "Docs":
+            read log, apply targeted fix, commit
+        case "infra flake" (e.g. determinate-nixd transient):
+            rerun once. If it still fails AND upstream main is green on the
+            same workflow, escalate to orchestrator — do NOT assume flake.
+    # next iteration's push will retrigger CI
+```
+
+**Bucket discipline carries over.** Anti-pattern observed 2026-06-02: one round changed `User-Agent: HermesAgent/` → `TeamHermesAgent/` (Bucket-B-style), which made `test_gmi_provider.py` (asserting old) pass but broke `test_provider_attribution_headers.py` (asserting new) — and vice versa next push. **When two tests in the same suite assert opposite directions on the same symbol, that symbol is Bucket-C (preserved). Add it to the CLAUDE.md whitelist, revert code, align all tests to the preserved direction.**
+
+### Known recurring hotspots — nix integration (verified 2026-06-02)
+
+Rebrand walks Python source and CLI strings but consistently misses the nix glue layer. After P1–P5 commit, **always** verify these in sequence (each layer's bug only surfaces after the previous is fixed):
+
+| File | Issue class | Fix |
+|---|---|---|
+| `nix/hermes-agent.nix` (filename) | Imports reference `./thm-agent.nix` but file was not renamed | `git mv nix/hermes-agent.nix nix/thm-agent.nix` |
+| `nix/python.nix` `mkVirtualEnv` key | `dependency-groups` keyed under old project name (`thm-agent`) | Key must match `pyproject.toml [project].name` (`teamhermes`) |
+| `uv.lock` root package entry | Still `name = "hermes-agent"` after pyproject rename | `uv lock` to regenerate (482-line rename diff, no version churn) |
+| `nix/checks.nix` `${pkg}/bin/hermes` greps | Wrapper installed as `thm` (entry_points renamed), check still greps `hermes` | `sed -i 's|/bin/hermes|/bin/thm|g' nix/checks.nix` |
+| `nix/checks.nix` entry-points-sync list | `for bin in hermes thm-agent thm-acp` doesn't match `pyproject.toml [project.scripts]` | `for bin in thm thm-agent thm-acp` |
+
+Verification block (must run in CI, not just locally — `nix flake check` needs Linux):
+
+```bash
+gh run view <nix-run-id> --log | grep "Check flake" | grep -iE "error|❌" | head
+```
+
+### Compatibility-preserve list — additions verified 2026-06-02
+
+Add to CLAUDE.md whitelist (Bucket-C surfaces):
+
+- **HTTP User-Agent header**: `HermesAgent/<version>` in `run_agent.py` auxiliary_client and `plugins/model-providers/gmi/__init__.py`. GMI backend billing/quota whitelist key, same class as `X-BILLING-INVOKE-ORIGIN`. Tests assert `startswith("HermesAgent/")`.
 
 ### Verification before declaring P6 done
 
